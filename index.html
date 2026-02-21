@@ -718,7 +718,7 @@ document.getElementById('multi-venta-selector').innerHTML = p.items.map((it, idx
             </div>
         </div>
         
-        <span class=" font-black text-slate-900 text-[9px]">$${it.precio.toLocaleString()}</span>
+        <span class=" font-black text-slate-900 text-[10px]">$${it.precio.toLocaleString()}</span>
     </div>`).join('');
     
     document.getElementById('envio-detalle-pequeno').innerText = `Envío: $${p.envio.toLocaleString()}`;
@@ -1088,3 +1088,4 @@ async function sincronizarPedidosDesdeSheets(event) {
 </script>
 </body>
 </html>
+
