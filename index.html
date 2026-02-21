@@ -126,7 +126,7 @@
                 </div>
             </div>
         </div>
-        <button id="btn-finalizar-todo" onclick="finalizarEntrega()" class="w-full bg-blue-600 text-white font-black py-7 rounded-[2rem] shadow-xl text-lg uppercase tracking-widest">Confirmar Transacción</button>
+        <button id="btn-finalizar-todo"onclick="irAVerificacion()" class="w-full bg-blue-600 text-white font-black py-7 rounded-[2rem] shadow-xl text-lg uppercase tracking-widest">Confirmar Transacción</button>
     </section>
 
     <section id="step7" class="step">
@@ -137,7 +137,25 @@
     <div class="text-center">
         <button id="global-back-btn" onclick="retroceder()" class="btn-back-ui hidden">← VOLVER</button>
     </div>
+
+<section id="step5" class="step">
+    <div class="bg-red-500 rounded-[2.5rem] p-6 text-white mb-6 shadow-lg">
+        <h2 class="text-xs font-black uppercase opacity-80 tracking-widest">Paso Final</h2>
+        <h3 class="text-2xl font-black">Verificar Retorno</h3>
+        <p class="text-[10px] font-bold opacity-90 mt-1">Asegúrate de subir estos productos al furgón:</p>
+    </div>
+    
+    <div id="lista-verificacion-devoluciones" class="space-y-3 mb-8">
+        </div>
+
+    <button id="btn-cerrar-ruta" onclick="confirmarFinalTotal()" disabled class="w-full bg-slate-900 text-white font-black py-7 rounded-[2rem] shadow-xl text-lg uppercase">
+        Finalizar Entrega
+    </button>
+</section>
+
 </main>
+
+
 
 <script>
 //--- CONFIGURACIÓN DE LINKS DE GOOGLE SHEETS ---
@@ -153,6 +171,29 @@ let pActualID = localStorage.getItem('z_pActualID') || null;
 let baseDeDatosProductos = [];
 const ABC = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
+
+// Configuración única de colores
+const CONFIG_LOGISTICA = {
+    colores: [
+        'bg-red-500', 'bg-blue-500', 'bg-green-500', 'bg-yellow-500', 
+        'bg-purple-500', 'bg-pink-500', 'bg-orange-500', 'bg-teal-500', 
+        'bg-indigo-500', 'bg-lime-500', 'bg-fuchsia-500', 'bg-cyan-500'
+    ],
+    // Función para obtener el color y letra de un pedido según su índice
+    getBadgeInfo: function(index) {
+        return {
+            letra: ABC[index % 26],
+            color: this.colores[index % this.colores.length]
+        };
+    },
+    // Helper para generar el HTML del cuadrito (Badge)
+    renderBadge: function(index, size = 'w-5 h-5') {
+        const info = this.getBadgeInfo(index);
+        return `<span class="${info.color} text-white ${size} rounded flex items-center justify-center text-[10px] font-black shadow-sm">${info.letra}</span>`;
+    }
+};
+
+
 // SONIDOS
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 function playSound(type) {
@@ -162,6 +203,28 @@ function playSound(type) {
         osc.frequency.setValueAtTime(1800, audioCtx.currentTime); 
         gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
         osc.start(); osc.stop(audioCtx.currentTime + 0.04);
+
+} 
+    else if(type === 'cash') { // <--- NUEVO SONIDO DE CAJA
+        const osc2 = audioCtx.createOscillator();
+        const gain2 = audioCtx.createGain();
+        osc2.connect(gain2); gain2.connect(audioCtx.destination);
+        
+        // Tono agudo inicial (el "clink")
+        osc.frequency.setValueAtTime(1500, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+        
+        // Tono secundario resonante (el "ching")
+        osc2.frequency.setValueAtTime(800, audioCtx.currentTime + 0.05);
+        gain2.gain.setValueAtTime(0, audioCtx.currentTime);
+        gain2.gain.linearRampToValueAtTime(0.15, audioCtx.currentTime + 0.05);
+        gain2.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+        
+        osc.start(); osc.stop(audioCtx.currentTime + 0.2);
+        osc2.start(audioCtx.currentTime + 0.05); osc2.stop(audioCtx.currentTime + 0.5);
+
+        
     } else if(type === 'complete') {
         [523.25, 659.25, 783.99].forEach((f, i) => {
             const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
@@ -194,6 +257,7 @@ function retroceder() {
     else if (currentStep === 2) nextStep(1);
     else if (currentStep === 3) nextStep(2);
     else if (currentStep === 4) nextStep(3);
+    else if (currentStep === 5) nextStep(4); // <--- ESTA ES LA LÍNEA QUE FALTABA
     else if (currentStep === 7) cerrarHistorial();
 }
 
@@ -212,6 +276,10 @@ function nextStep(n) {
     if(n === 2) renderStep2();
     if(n === 3) renderStep3();
     if(n === 4) renderVistaUnificada();
+    if(n === 5) {
+    let p = pedidos.find(x => x.id == pActualID);
+    if(p && p.temp_devoluciones) renderVerificacionDevoluciones(p.temp_devoluciones);
+}
     window.scrollTo(0,0);
 }
 
@@ -331,51 +399,165 @@ function editarPedido(id) {
     document.getElementById('contenedor-productos').innerHTML = "";
     p.items.forEach(it => agregarFilaProducto(it.desc, it.precio, it.bin));
 }
-
 function renderPicking() {
+    // 1. Definimos la misma paleta de colores de la etapa de clasificación
+    const colores = [
+        'bg-red-500', 
+        'bg-blue-500', 
+        'bg-green-500', 
+        'bg-yellow-500', 
+        'bg-purple-500',
+        'bg-pink-500',
+        'bg-orange-500',
+        'bg-teal-500', 
+        'bg-indigo-500',
+        'bg-lime-500',
+        'bg-fuchsia-500',
+        'bg-cyan-500'
+    ];
+
     let todosItems = [];
+    
+    // 2. Asignamos letra y color a cada pedido (consistente con las otras etapas)
     pedidos.forEach((p, i) => {
         p.letra = ABC[i % 26];
-        p.items.forEach(it => todosItems.push({...it, nPedido: p.nPedido, letra: p.letra}));
+        p.color = colores[i % colores.length]; 
+        
+        p.items.forEach(it => {
+            todosItems.push({ 
+                ...it, 
+                nPedido: p.nPedido, 
+                letra: p.letra, 
+                color: p.color 
+            });
+        });
     });
 
+    // 3. Agrupamos por Estante (Bin) y luego por Producto (Desc)
     const agrupado = todosItems.reduce((acc, it) => {
         const b = it.bin || 'S/U';
-        if(!acc[b]) acc[b] = []; acc[b].push(it); return acc;
+        if (!acc[b]) acc[b] = {};
+        
+        if (!acc[b][it.desc]) {
+            acc[b][it.desc] = {
+                desc: it.desc,
+                cantidad: 0,
+                pedidosRelacionados: [] // Guardamos letra y color de cada unidad
+            };
+        }
+        
+        acc[b][it.desc].cantidad += 1;
+        acc[b][it.desc].pedidosRelacionados.push({ letra: it.letra, color: it.color });
+        
+        return acc;
     }, {});
 
     let html = '';
-    for(const bin in agrupado) {
-        html += `<div class="bg-white rounded-2xl overflow-hidden border border-slate-200 mb-4">
+    for (const bin in agrupado) {
+        const unidadesEnBin = Object.values(agrupado[bin]).reduce((sum, item) => sum + item.cantidad, 0);
+
+        html += `
+        <div class="bg-white rounded-2xl overflow-hidden border border-slate-200 mb-4 shadow-sm">
             <div class="bg-slate-800 text-white px-4 py-2 text-[10px] font-black uppercase flex justify-between">
-                <span>ESTANTE: ${bin}</span><span>${agrupado[bin].length} UNID</span>
+                <span>ESTANTE: ${bin}</span>
+                <span>${unidadesEnBin} UNI</span>
             </div>
             <div class="p-2 space-y-2">
-                ${agrupado[bin].map(it => `
+                ${Object.values(agrupado[bin]).map(it => `
                     <label class="flex items-center gap-3 p-3 bg-slate-50 rounded-xl has-[:checked]:opacity-30 transition-all border border-transparent has-[:checked]:border-slate-200">
                         <input type="checkbox" onchange="validarPicking()" class="w-6 h-6 check-picking">
                         <div class="flex-1">
-                            <div class="flex justify-between items-center"><span class="text-xs font-black uppercase">${it.desc}</span><span class="bg-indigo-500 text-white w-5 h-5 rounded flex items-center justify-center text-[10px] font-black">${it.letra}</span></div>
-                            <span class="text-[8px] text-slate-400 font-bold"></span>
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <span class="text-xs font-black text-indigo-600">x${it.cantidad}</span>
+                                    <span class="text-[11px] font-bold uppercase ml-1 text-slate-700">${it.desc}</span>
+                                </div>
+                                <div class="flex gap-1 flex-wrap justify-end">
+                                    ${it.pedidosRelacionados.map(p => `
+                                        <span class="${p.color} text-white w-5 h-5 rounded flex items-center justify-center text-[10px] font-black shadow-sm">
+                                            ${p.letra}
+                                        </span>
+                                    `).join('')}
+                                </div>
+                            </div>
                         </div>
                     </label>`).join('')}
             </div>
         </div>`;
     }
+    
     document.getElementById('lista-picking').innerHTML = html || '<p class="text-center py-10">Sin productos</p>';
     validarPicking();
 }
 
-function validarPicking() { playSound('scanner'); const todos = Array.from(document.querySelectorAll('.check-picking')).every(c => c.checked); const btn = document.getElementById('btn-picking-done'); btn.disabled = !todos; btn.className = todos ? "w-full mt-10 bg-blue-600 text-white font-black py-6 rounded-3xl" : "w-full mt-10 bg-slate-200 text-slate-400 font-black py-6 rounded-3xl uppercase"; }
+// La función validarPicking se mantiene igual ya que busca los checkboxes presentes
+function validarPicking() { 
+    playSound('scanner');
+
+
+    // playSound('scanner'); // Opcional: solo si quieres que suene al marcar
+    const todos = Array.from(document.querySelectorAll('.check-picking')).every(c => c.checked); 
+    const btn = document.getElementById('btn-picking-done'); 
+    btn.disabled = !todos; 
+    btn.className = todos 
+        ? "w-full mt-10 bg-blue-600 text-white font-black py-6 rounded-3xl" 
+        : "w-full mt-10 bg-slate-200 text-slate-400 font-black py-6 rounded-3xl uppercase"; 
+}
 
 function renderChecklistCarga() {
-    document.getElementById('checklist-furgon').innerHTML = pedidos.map((p, i) => `
-        <label class="flex items-center gap-4 bg-white p-5 rounded-[2rem] border-2 border-transparent has-[:checked]:border-blue-500 shadow-sm"><input type="checkbox" class="w-6 h-6 check-carga" onchange="validarCarga()"><div class="font-black text-indigo-500 uppercase">${p.letra} - ${p.cliente}</div></label>`).join('');
+    // 1. Definimos los colores para cada letra (puedes cambiarlos a tu gusto)
+    const coloresLetras = {
+        'A': 'bg-red-500',    // Rojo suave
+        'B': 'bg-blue-500',   // Naranja/Ámbar
+        'C': 'bg-green-500', // Verde
+        'D': 'bg-yellow-500',     // Celeste
+        'E': 'bg-purple-500',  // Azul/Violeta
+        'F': 'bg-pink-500', // Rosado
+        'G': 'bg-orange-600',  // Naranja fuerte
+        'DEFAULT': 'bg-slate-500'
+    };
+
+    document.getElementById('checklist-furgon').innerHTML = pedidos.map((p, i) => {
+        const letra = (p.letra || '?').toUpperCase();
+        const colorClase = coloresLetras[letra] || coloresLetras['DEFAULT'];
+        const totalProductos = p.items ? p.items.length : 0;
+
+        return `
+        <label class="flex items-center gap-5 bg-white p-4 rounded-[2rem] border-2 border-transparent has-[:checked]:border-blue-500 shadow-md cursor-pointer active:scale-95 transition-all">
+            
+            <input type="checkbox" class="w-8 h-8 check-carga accent-blue-600 ml-2" onchange="validarCarga()">
+            
+            <div class="${colorClase} w-16 h-16 flex items-center justify-center rounded-2xl text-white text-3xl font-black shadow-lg">
+                ${letra}
+            </div>
+
+            <div class="flex flex-col">
+                <div class="font-black text-slate-800 uppercase text-xl leading-none">
+                    ${p.cliente}
+                </div>
+                <div class="text-xs font-bold text-slate-400 uppercase mt-2 bg-slate-100 self-start px-2 py-1 rounded-lg">
+                    📦 ${totalProductos} ${totalProductos === 1 ? 'Producto' : 'Productos'}
+                </div>
+            </div>
+
+        </label>
+        `;
+    }).join('');
+    
     document.getElementById('btn-start-route').disabled = true;
 }
 
-function validarCarga() { playSound('scanner'); const todos = Array.from(document.querySelectorAll('.check-carga')).every(c => c.checked); const btn = document.getElementById('btn-start-route'); btn.disabled = !todos; btn.className = todos ? "w-full mt-10 bg-blue-600 text-white font-black py-6 rounded-3xl shadow-xl" : "w-full mt-10 bg-slate-200 text-slate-400 font-black py-6 rounded-3xl uppercase"; }
-
+function validarCarga() { 
+    playSound('scanner'); 
+    const todos = Array.from(document.querySelectorAll('.check-carga')).every(c => c.checked); 
+    const btn = document.getElementById('btn-start-route'); 
+    
+    btn.disabled = !todos; 
+    // He mejorado un poco la transición de colores para que se note el cambio
+    btn.className = todos 
+        ? "w-full mt-10 bg-blue-600 text-white font-black py-6 rounded-3xl shadow-xl scale-105 transition-transform" 
+        : "w-full mt-10 bg-slate-200 text-slate-400 font-black py-6 rounded-3xl uppercase pointer-events-none"; 
+}
 function renderStep2() {
     if(pedidos.length === 0) return nextStep(0);
     const p = pedidos[0];
@@ -402,7 +584,7 @@ function renderStep3() {
             </div>
             <div class="bg-slate-50 p-4 rounded-2xl text-[10px] text-slate-400 font-bold space-y-1 border border-slate-100 opacity-60">
                 <p class="text-[8px] uppercase tracking-widest mb-1">Productos del pedido:</p>
-                ${p.items.map(it => `<div class="flex justify-between"><span>• ${it.desc}</span> <span>$${it.precio.toLocaleString()}</span></div>`).join('')}
+                ${p.items.map(it => `<div class="flex justify-between"><span>📦  ${it.desc}</span> <span>$${it.precio.toLocaleString()}</span></div>`).join('')}
             </div>
         </div>`;
 
@@ -415,25 +597,77 @@ function renderStep3() {
 }
 
 function renderVistaUnificada() {
-    let p = pedidos.find(x => x.id == pActualID); if(!p) return;
+    let p = pedidos.find(x => x.id == pActualID); 
+    if(!p) return;
     
+    // Generamos la lista de ítems
     document.getElementById('multi-venta-selector').innerHTML = p.items.map((it, idx) => `
-        <label id="item-row-${idx}" class="flex justify-between items-center bg-white p-5 rounded-3xl border-2 border-emerald-500 transition-all shadow-sm">
+        <div id="item-row-${idx}" 
+             onclick="const c = document.querySelector('.check-${idx}'); c.checked = !c.checked; actualizarEstadoSimple(${idx})" 
+             class="flex justify-between items-center bg-white p-6 rounded-3xl border-2 border-slate-100 shadow-sm mb-3 active:scale-95 transition-all">
+            
             <div class="flex items-center gap-4">
-                <div class="relative">
-                    <input type="checkbox" checked class="w-8 h-8 rounded-full venta-check-consolidado appearance-none border-2 border-emerald-500 checked:bg-emerald-500 transition-all" data-idx="${idx}" onchange="toggleItemVisual(${idx})">
-                    <span class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white font-black text-xs pointer-events-none">✓</span>
-                </div>
-                <div class="flex flex-col">
-                    <span id="label-${idx}" class="font-black uppercase text-sm text-slate-800">📦 ${it.desc}</span>
-                    <span id="status-${idx}" class="text-[9px] font-bold text-emerald-500 uppercase tracking-widest">Listo para cobro</span>
+                <input type="checkbox" 
+                       class="w-8 h-8 venta-check-consolidado check-${idx} appearance-none border-2 border-slate-300 checked:bg-blue-600 rounded-xl transition-all" 
+                       data-idx="${idx}" 
+                       onclick="event.stopPropagation();" 
+                       onchange="actualizarEstadoSimple(${idx})">
+                
+                <div>
+                    <span class="font-black uppercase text-sm text-slate-800">📦 ${it.desc}</span>
+                    <p id="label-estado-${idx}" class="text-[10px] font-bold text-slate-400 uppercase">Pendiente</p>
                 </div>
             </div>
-            <span class="font-black text-slate-900">$${it.precio.toLocaleString()}</span>
-        </label>`).join('');
+            
+            <span class="font-black text-slate-900 text-lg">$${it.precio.toLocaleString()}</span>
+        </div>`).join('');
     
-    document.getElementById('envio-detalle-pequeno').innerText = `+ Envío incluído: $${p.envio.toLocaleString()}`;
+    document.getElementById('envio-detalle-pequeno').innerText = `Envío: $${p.envio.toLocaleString()}`;
+    recalcularTotalConsolidado(); 
+}
+
+function actualizarEstadoSimple(idx) {
+    const check = document.querySelector(`.check-${idx}`);
+    const row = document.getElementById(`item-row-${idx}`);
+    const label = document.getElementById(`label-estado-${idx}`);
+
+    if(check.checked) {
+        row.classList.add('border-blue-500', 'bg-blue-50');
+        row.classList.remove('border-slate-100', 'bg-white');
+        label.innerText = "✅ Seleccionado para venta";
+        label.className = "text-[10px] font-bold text-blue-600 uppercase";
+    } else {
+        row.classList.remove('border-blue-500', 'bg-blue-50');
+        row.classList.add('border-slate-100', 'bg-white');
+        label.innerText = "Pendiente / Devolución";
+        label.className = "text-[10px] font-bold text-slate-400 uppercase";
+    }
     recalcularTotalConsolidado();
+}
+
+function recalcularTotalConsolidado() {
+    let p = pedidos.find(x => x.id == pActualID); 
+    if(!p) return;
+    
+    const checks = document.querySelectorAll('.venta-check-consolidado');
+    let subtotal = 0;
+    
+    checks.forEach(c => { 
+        if(c.checked) {
+            subtotal += p.items[c.dataset.idx].precio; 
+        }
+    });
+
+    const totalFinal = subtotal + p.envio;
+    document.getElementById('total-cobro-consolidado').innerText = `$${totalFinal.toLocaleString()}`;
+}
+
+function marcarTodo(check) {
+    const checks = document.querySelectorAll('.venta-check-consolidado');
+    checks.forEach((c, idx) => {
+        c.checked = check;
+        toggleItemVisual(idx);
+    });
 }
 
 function toggleItemVisual(idx) {
@@ -441,28 +675,70 @@ function toggleItemVisual(idx) {
     const row = document.getElementById(`item-row-${idx}`);
     const label = document.getElementById(`label-${idx}`);
     const status = document.getElementById(`status-${idx}`);
+
     if(check.checked) {
-        row.className = "flex justify-between items-center bg-white p-5 rounded-3xl border-2 border-emerald-500 transition-all shadow-sm";
-        label.className = "font-black uppercase text-sm text-slate-800";
-        status.innerText = "Listo para cobro";
-        status.className = "text-[9px] font-bold text-emerald-500 uppercase tracking-widest";
+        // SI LO SELECCIONAS: ES VENTA
+        row.className = "flex justify-between items-center bg-emerald-50 p-5 rounded-3xl border-2 border-emerald-500 transition-all mb-3 shadow-sm";
+        label.className = "font-black uppercase text-sm text-emerald-900";
+        status.innerText = "✅ VENDIDO";
+        status.className = "text-[10px] font-black text-emerald-600 uppercase tracking-widest";
     } else {
-        row.className = "flex justify-between items-center bg-slate-50 p-5 rounded-3xl border-2 border-slate-200 opacity-60 transition-all";
-        label.className = "font-black uppercase text-sm text-slate-400 line-through";
-        status.innerText = "Se devuelve al furgón";
-        status.className = "text-[9px] font-bold text-red-400 uppercase tracking-widest";
+        // SI LO DESMARCAS: ES DEVOLUCIÓN
+        row.className = "flex justify-between items-center bg-red-50 p-5 rounded-3xl border-2 border-red-400 opacity-70 transition-all mb-3";
+        label.className = "font-black uppercase text-sm text-red-400 line-through";
+        status.innerText = "❌ DEVOLUCIÓN";
+        status.className = "text-[10px] font-black text-red-500 uppercase tracking-widest";
     }
+    
     recalcularTotalConsolidado();
 }
 
+
+
+
 function recalcularTotalConsolidado() {
-    let p = pedidos.find(x => x.id == pActualID); if(!p) return;
+    let p = pedidos.find(x => x.id == pActualID); 
+    if(!p) return;
+    
     const checks = document.querySelectorAll('.venta-check-consolidado');
     let subtotal = 0;
-    checks.forEach(c => { if(c.checked) subtotal += p.items[c.dataset.idx].precio; });
+    let cantVendidos = 0;
+    let cantDevueltos = 0;
+    
+    checks.forEach(c => { 
+        if(c.checked) {
+            subtotal += p.items[c.dataset.idx].precio; 
+            cantVendidos++;
+        } else {
+            cantDevueltos++;
+        }
+    });
+
     p.totalFinal = subtotal + p.envio;
+    
+    // Actualizamos el dinero
     document.getElementById('total-cobro-consolidado').innerText = `$${p.totalFinal.toLocaleString()}`;
-    calcularVueltoConsolidado();
+    
+    // NUEVO: Actualizamos el "Tablero de Control" (Crea estos IDs en tu HTML o usa este bloque)
+    const infoControl = `
+        <div class="flex justify-around bg-slate-100 rounded-2xl p-3 mb-4 border border-slate-200">
+            <div class="text-center">
+                <p class="text-[8px] font-black text-slate-400 uppercase">Entregas</p>
+                <p class="text-xl font-black text-emerald-600">${cantVendidos}</p>
+            </div>
+            <div class="border-l border-slate-300"></div>
+            <div class="text-center">
+                <p class="text-[8px] font-black text-slate-400 uppercase">Devoluciones</p>
+                <p class="text-xl font-black text-red-500">${cantDevueltos}</p>
+            </div>
+        </div>
+    `;
+    
+    // Insertamos este tablero antes de la lista de productos
+    let tableroContainer = document.getElementById('tablero-resumen');
+    if(tableroContainer) tableroContainer.innerHTML = infoControl;
+
+    if(typeof calcularVueltoConsolidado === "function") calcularVueltoConsolidado();
 }
 
 function calcularVueltoConsolidado() {
@@ -478,18 +754,113 @@ function calcularVueltoConsolidado() {
 function finalizarEntrega() {
     const met = document.getElementById('metodo-pago').value; 
     if(!met) return alert("Selecciona método de pago");
-    let p = pedidos.find(x => x.id == pActualID); if(!p) return;
+
+    let p = pedidos.find(x => x.id == pActualID);
+    
+
+
+    // Guardamos qué se vendió y qué se devolvió específicamente
     const checks = document.querySelectorAll('.venta-check-consolidado');
     p.vendidos = [];
-    checks.forEach(c => { if(c.checked) p.vendidos.push(p.items[c.dataset.idx]); });
-    p.metodoPago = met; p.estado = 'completado';
-    p.fechaFinal = new Date().toLocaleDateString();
+    p.devoluciones = [];
+
+    checks.forEach(c => {
+        if(c.checked) {
+            p.vendidos.push(p.items[c.dataset.idx]);
+        } else {
+            p.devoluciones.push(p.items[c.dataset.idx]);
+        }
+    });
+
+    p.estado = 'completado';
+    p.metodoPago = met;
     p.horaFinal = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
     historial.unshift({...p}); 
     pedidos = pedidos.filter(x => x.id != pActualID);
-    playSound('complete'); pActualID = null; save();
-    if(pedidos.length === 0) verHistorial(); else nextStep(2);
+    save();
+    
+    nextStep(pedidos.length === 0 ? 0 : 2);
 }
+
+function irAVerificacion() {
+    const met = document.getElementById('metodo-pago').value; 
+    if(!met) return alert("Selecciona método de pago antes de continuar");
+
+    // --- EL SONIDO VA AQUÍ ---
+    playSound('cash');
+
+    let p = pedidos.find(x => x.id == pActualID);
+    const checks = document.querySelectorAll('.venta-check-consolidado');
+    
+    // Guardamos temporalmente qué se marcó como vendido
+    p.temp_vendidos = [];
+    p.temp_devoluciones = [];
+
+    checks.forEach(c => {
+        if(c.checked) p.temp_vendidos.push(p.items[c.dataset.idx]);
+        else p.temp_devoluciones.push(p.items[c.dataset.idx]);
+    });
+
+    // Si no hay devoluciones, saltamos directo al final
+    if (p.temp_devoluciones.length === 0) {
+        confirmarFinalTotal();
+        return;
+    }
+
+    renderVerificacionDevoluciones(p.temp_devoluciones);
+    nextStep(5);
+}
+
+function renderVerificacionDevoluciones(devoluciones) {
+    const lista = document.getElementById('lista-verificacion-devoluciones');
+    lista.innerHTML = devoluciones.map((it, idx) => `
+        <label class="flex justify-between items-center bg-white p-6 rounded-3xl border-2 border-transparent has-[:checked]:border-red-500 shadow-sm transition-all">
+            <div class="flex items-center gap-4">
+                <input type="checkbox" class="w-8 h-8 check-retorno appearance-none border-2 border-slate-200 checked:bg-red-500 rounded-xl transition-all" onchange="validarChecklistRetorno()">
+                <div>
+                    <p class="font-black text-slate-800 uppercase text-sm">${it.desc}</p>
+                    <p class="text-[9px] font-bold text-red-500 uppercase">Debes recuperarlo</p>
+                </div>
+            </div>
+            <span class="text-2xl">📦</span>
+        </label>
+    `).join('');
+}
+
+function validarChecklistRetorno() {
+    const todos = Array.from(document.querySelectorAll('.check-retorno')).every(c => c.checked);
+    const btn = document.getElementById('btn-cerrar-ruta');
+    btn.disabled = !todos;
+    btn.className = todos 
+        ? "w-full bg-emerald-600 text-white font-black py-7 rounded-[2rem] shadow-xl text-lg uppercase animate-pulse" 
+        : "w-full bg-slate-200 text-slate-400 font-black py-7 rounded-[2rem] text-lg uppercase";
+}
+
+function confirmarFinalTotal() {
+    let p = pedidos.find(x => x.id == pActualID);
+    
+    // Ahora sí, pasamos los datos temporales al historial final
+    p.vendidos = p.temp_vendidos || p.items;
+    p.devoluciones = p.temp_devoluciones || [];
+    p.metodoPago = document.getElementById('metodo-pago').value;
+    p.estado = 'completado';
+    p.fechaFinal = new Date().toLocaleDateString();
+    p.horaFinal = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+    historial.unshift({...p}); 
+    pedidos = pedidos.filter(x => x.id != pActualID);
+    
+    playSound('complete');
+    pActualID = null;
+    save();
+
+
+    
+    // Volvemos a la ruta o al inicio
+    nextStep(pedidos.length === 0 ? 0 : 2);
+}
+
 
 function moverAlFinal() { let idx = pedidos.findIndex(x => x.id == pActualID); if (idx !== -1) { const p = pedidos.splice(idx, 1)[0]; pedidos.push(p); save(); pActualID = null; nextStep(2); } }
 function abrirPerfil(id) { pActualID = id; nextStep(3); }
@@ -533,64 +904,63 @@ function buscarEnDB(codigo) {
     return baseDeDatosProductos.find(p => p.codigo === codigo.toUpperCase()) || null;
 }
 
-// 2. FUNCIÓN DE SINCRONIZACIÓN DE PEDIDOS (La que pediste)
 async function sincronizarPedidosDesdeSheets(event) {
     if(!confirm("¿Sincronizar pedidos desde Google Sheets?")) return;
     
+    // --- CONFIGURACIÓN DE COLUMNAS (A=0, B=1, C=2, D=3, E=4, F=5...) ---
+    const COL = {
+        CLIENTE: 1,   // Columna B (Antes era 0)
+        DIRECCION: 2, // Columna C
+        TELEFONO: 3,  // Columna D
+        ENVIO: 4,     // Columna E
+        CODIGO: 5,    // Columna F
+        PRECIO: 6,    // Columna G
+        BIN: 7        // Columna H
+    };
+    // ------------------------------------------------------------------
+
     try {
         console.log("--- INICIANDO SINCRONIZACIÓN ---");
         const respuesta = await fetch(URL_PEDIDOS_CSV);
         let textoFull = await respuesta.text();
         
-        // LIMPIEZA INICIAL: Quitamos el BOM (carácter invisible que suele ensuciar el primer dato)
         textoFull = textoFull.replace(/^\uFEFF/, '');
         
-        console.log("Contenido bruto recibido:", textoFull);
-
         const filas = textoFull.split(/\r?\n/).filter(linea => linea.trim() !== "");
-        const datos = filas.slice(1); // Saltamos la cabecera
+        const datos = filas.slice(1); 
         
-        if (datos.length === 0) {
-            console.warn("No se encontraron filas de datos después de la cabecera.");
-            return;
-        }
+        if (datos.length === 0) return;
 
         const separador = datos[0].includes(',') ? ',' : ';';
-        console.log("Separador detectado:", separador);
-
         let ultimoPedido = null;
         let count = 0;
 
         datos.forEach((linea, index) => {
-            // Limpieza profunda de cada celda
             const d = linea.split(separador).map(celda => celda.trim().replace(/^"|"$/g, ''));
             
-            console.log(`Fila ${index + 2} procesada:`, d);
-
-            const nombreCliente = d[0];
-            const cod = d[4]?.toUpperCase();
+            // Usamos nuestro mapa de columnas COL
+            const nombreCliente = d[COL.CLIENTE] || "";
+            const cod = d[COL.CODIGO]?.toUpperCase();
 
             if(!cod) {
-                console.error(`Fila ${index + 2} descartada: No tiene código en la Columna E`);
+                console.warn(`Fila ${index + 2} omitida: Sin código en columna definida.`);
                 return;
             }
 
             const dbInfo = buscarEnDB(cod);
 
-            // Verificamos si d[0] realmente tiene contenido
             if (nombreCliente !== "") {
-                console.log(`> Nuevo pedido detectado: ${nombreCliente}`);
                 ultimoPedido = {
                     id: Date.now() + Math.random(),
                     nPedido: sigNum++,
                     cliente: nombreCliente,
-                    direccion: d[1] || '',
-                    telefono: d[2] || '',
-                    envio: parseInt(d[3]) || 0,
+                    direccion: d[COL.DIRECCION] || '',
+                    telefono: d[COL.TELEFONO] || '',
+                    envio: parseInt(d[COL.ENVIO]) || 0,
                     items: [{
                         desc: cod,
-                        precio: parseInt(d[5]) || dbInfo?.precio || 0,
-                        bin: d[6] ? d[6].toUpperCase() : (dbInfo?.bin || 'S/U')
+                        precio: parseInt(d[COL.PRECIO]) || dbInfo?.precio || 0,
+                        bin: d[COL.BIN] ? d[COL.BIN].toUpperCase() : (dbInfo?.bin || 'S/U')
                     }],
                     estado: 'pendiente'
                 };
@@ -598,25 +968,21 @@ async function sincronizarPedidosDesdeSheets(event) {
                 count++;
             } 
             else if (ultimoPedido) {
-                console.log(`  + Agregando producto extra [${cod}] a ${ultimoPedido.cliente}`);
                 ultimoPedido.items.push({
                     desc: cod,
-                    precio: parseInt(d[5]) || dbInfo?.precio || 0,
-                    bin: d[6] ? d[6].toUpperCase() : (dbInfo?.bin || 'S/U')
+                    precio: parseInt(d[COL.PRECIO]) || dbInfo?.precio || 0,
+                    bin: d[COL.BIN] ? d[COL.BIN].toUpperCase() : (dbInfo?.bin || 'S/U')
                 });
-            } else {
-                console.warn(`Fila ${index + 2} huérfana: Tiene producto pero no tiene nombre de cliente arriba.`);
             }
         });
 
         save();
         renderStep0();
-        console.log("--- SINCRONIZACIÓN FINALIZADA ---");
         alert(`Sincronización exitosa: ${count} pedidos nuevos.`);
         
     } catch (e) {
-        alert("Error crítico. Revisa la consola (F12).");
-        console.error("DETALLE DEL ERROR:", e);
+        alert("Error crítico. Revisa la consola.");
+        console.error(e);
     }
 }
 
