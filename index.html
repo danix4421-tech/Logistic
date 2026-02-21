@@ -714,11 +714,11 @@ document.getElementById('multi-venta-selector').innerHTML = p.items.map((it, idx
             
             <div class="leading-tight">
                 <span class="font-bold uppercase text-xs text-slate-700">${ICONOS.caja} ${it.desc}</span>
-                <p id="label-estado-${idx}" class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Pendiente</p>
+                <p id="label-estado-${idx}" class="text-[9px] font text-slate-400  tracking-wider">Pendiente</p>
             </div>
         </div>
         
-        <span class="font-black text-slate-900 text-base">$${it.precio.toLocaleString()}</span>
+        <span class=" font-black text-slate-900 text-[9px]">$${it.precio.toLocaleString()}</span>
     </div>`).join('');
     
     document.getElementById('envio-detalle-pequeno').innerText = `Envío: $${p.envio.toLocaleString()}`;
@@ -733,13 +733,13 @@ function actualizarEstadoSimple(idx) {
     if(check.checked) {
         row.classList.add('border-blue-500', 'bg-blue-50');
         row.classList.remove('border-slate-100', 'bg-white');
-        label.innerText = "✅ Seleccionado para venta";
-        label.className = "text-[10px] font-bold text-blue-600 uppercase";
+        label.innerText = "Seleccionado para venta";
+        label.className = "text-[9px] font-bold text-blue-600 uppercase";
     } else {
         row.classList.remove('border-blue-500', 'bg-blue-50');
         row.classList.add('border-slate-100', 'bg-white');
-        label.innerText = "Pendiente / Devolución";
-        label.className = "text-[10px] font-bold text-slate-400 uppercase";
+        label.innerText = "Pendiente";
+        label.className = "text-[9px] font text-slate-400";
     }
     recalcularTotalConsolidado();
 }
