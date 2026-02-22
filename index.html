@@ -206,12 +206,15 @@ const ICONOS = {
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
         </svg>`,
-
-     
    eliminar:  `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>`,   
-   check: `<svg class="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>`
+   check: `<svg class="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>`,
+cliente: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+  <circle cx="12" cy="7" r="4"></circle>
+</svg>  `,
 
-   
+
+
 };
 
 // Ejemplo de uso en cualquier parte del código:
@@ -624,20 +627,44 @@ function validarCarga() {
         : "w-full mt-10 bg-slate-200 text-slate-400 font-black py-6 rounded-3xl uppercase pointer-events-none"; 
 }
 function renderStep2() {
-    if(pedidos.length === 0) return nextStep(0);
-    const p = pedidos[0];
-    document.getElementById('next-delivery-info').innerHTML = `
-        <div class="flex justify-between items-start" onclick="abrirPerfil(${p.id})">
-            <div>
-                <h4 class="text-sm font-black opacity-80 uppercase mb-2 tracking-widest text-white">Próxima Entrega:</h4>
-                <h3 class="text-4xl font-black uppercase leading-tight mb-2">${p.cliente}</h3>
-                <p class="text-lg font-bold opacity-90 uppercase leading-snug">${p.direccion}</p>
-            </div>
-            <div class="bg-white text-blue-600 w-16 h-16 rounded-3xl flex items-center justify-center font-black text-4xl shadow-2xl">${p.letra}</div>
-        </div>`;
-    document.getElementById('lista-ruta-activa').innerHTML = pedidos.slice(1).map((p) => `<div onclick="abrirPerfil(${p.id})" class="bg-white p-4 rounded-2xl border border-slate-100 flex items-center gap-3 opacity-60"><div class="bg-slate-200 text-slate-500 w-10 h-10 rounded-xl flex items-center justify-center font-black">${p.letra}</div><div class="font-bold text-sm uppercase">${p.cliente}</div></div>`).join('');
-}
+    if (pedidos.length === 0) return nextStep(0);
+    
+    const [p, ...resto] = pedidos;
+    const iconWS = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>`;
 
+    // CUADRO AZUL: Reducido de p-2 a p-1.5, y el avatar de w-14 a w-10
+    document.getElementById('next-delivery-info').innerHTML = `
+        <div class="bg-blue-600 p-1.5 rounded-lg text-white flex items-center gap-2 shadow-sm">
+            <div class="bg-white/10 w-10 h-10 rounded flex-shrink-0 flex items-center justify-center font-black text-xl border border-white/20">
+                ${p.letra}
+            </div>
+            
+            <div class="flex-1 min-w-0 leading-tight" onclick="abrirPerfil(${p.id})">
+                <h1 class="text-[15px] font-bold uppercase truncate">${p.cliente}</h1>
+                <p class="text-[10px] opacity-80 truncate">${p.direccion}</p>
+            </div>
+
+            <a href="https://wa.me/${p.telefono}" class="bg-green-500 p-2 rounded-md active:scale-90 transition-transform flex-shrink-0">
+                ${iconWS}
+            </a>
+        </div>`;
+
+    // LISTA: Reducido el padding vertical a py-1 y eliminado gaps excesivos
+    document.getElementById('lista-ruta-activa').innerHTML = resto.map((item) => `
+        <div class="flex items-center gap-1 py-2 px-2 border-b border-slate-100 last:border-0">
+            <div onclick="abrirPerfil(${item.id})" class="w-7 h-7 flex-shrink-0 flex items-center justify-center font-bold text-[12px] text-slate-400 bg-slate-50 rounded border border-slate-200">
+                ${item.letra}
+            </div>
+            <div class="flex-1 min-w-0 leading-none" onclick="abrirPerfil(${item.id})">
+                <div class="font-semibold text-[11px] uppercase truncate text-slate-700">${item.cliente}</div>
+                <div class="text-[9px] text-slate-400 truncate">${item.direccion}</div>
+            </div>
+            <a href="https://wa.me/${item.telefono}" class="text-green-500 p-1.5 opacity-60 active:opacity-100">
+                ${iconWS}
+            </a>
+        </div>
+    `).join('');
+}
 function renderStep3() {
     const p = pedidos.find(x => x.id == pActualID); 
     if(!p) return nextStep(2);
@@ -791,7 +818,6 @@ function toggleItemVisual(idx) {
     
     recalcularTotalConsolidado();
 }
-
 
 
 
@@ -1008,13 +1034,13 @@ async function sincronizarPedidosDesdeSheets(event) {
     
     // --- CONFIGURACIÓN DE COLUMNAS (A=0, B=1, C=2, D=3, E=4, F=5...) ---
     const COL = {
-        CLIENTE: 1,   // Columna B (Antes era 0)
-        DIRECCION: 2, // Columna C
-        TELEFONO: 3,  // Columna D
-        ENVIO: 4,     // Columna E
-        CODIGO: 5,    // Columna F
-        PRECIO: 6,    // Columna G
-        BIN: 7        // Columna H
+        CLIENTE: 6,   // Columna B (Antes era 0)
+        DIRECCION: 7, // Columna C
+        TELEFONO: 8,  // Columna D
+        ENVIO: 5,     // Columna E
+        CODIGO: 2,    // Columna F
+        PRECIO: 4,    // Columna G
+        BIN: 3       // Columna H
     };
     // ------------------------------------------------------------------
 
@@ -1088,4 +1114,3 @@ async function sincronizarPedidosDesdeSheets(event) {
 </script>
 </body>
 </html>
-
