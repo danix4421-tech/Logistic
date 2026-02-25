@@ -49,10 +49,10 @@
     <div class="max-w-xl mx-auto flex justify-between items-center">
         
         <div class="flex items-center gap-2">
-            <h1 class="font-black text-blue-400 text-[18px] tracking-tighter">Pedidos</h1>
+            <h1 class="font-black text-blue-400 text-[16px] tracking-tighter">Pedidos</h1>
             <button onclick="sincronizarPedidosDesdeSheets(event)" 
                 class="flex items-center p-1 rounded-full text-slate-500    borde-none hover:text-emerald-500 p-1.5 rounded-lg transition-colors" title="Sincronizar">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 group-active:animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 group-active:animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                 </svg>
             </button>
@@ -67,7 +67,7 @@
             <button id="btn-ir-a-picking" onclick="nextStep(0.5)" 
         class="hidden text-slate-500 hover:bg-blue-50 p-1.5 rounded-lg transition-colors relative" 
         title="Iniciar Picking">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
             <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
         <span class="absolute top-1 right-1 flex h-2 w-2">
@@ -79,17 +79,17 @@
 
             <div class="flex items-center gap-2 border-l pl-2 border-slate-100    ">
                 <button onclick="abrirModalVentaRapida()" class=" " title="Venta Rápida">
-                    <span class="text">⚡</span>
+                    <span class="text-xl">⚡</span>
                 </button>
                 
                 <button onclick="verHistorial()" class="text-slate-600 hover:text-blue-500 p-2 rounded-lg transition-colors">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
                 </button>
 
                 <button onclick="limpiarTodo()" class="text-slate-600 hover:text-red-500 p-1.5 rounded-lg transition-colors">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                     </svg>
                 </button>
@@ -106,10 +106,14 @@
 
     
 <section id="step0" class="step active">
+
+
+     <!-- FORMULARIO -->
+
     
-  <div id="contenedor-formulario" class=" hidden bg-white rounded-[2rem] p-5 shadow-2xl border border-slate-100 mb-6 border-b-4 border-b-blue-500">
+  <div id="contenedor-formulario" class=" hidden bg-white rounded-[2rem] p-5 shadow-2xl border border-slate-100 mb-6 border-b-4">
         <div class="flex justify-between items-center mb-6">
-            <span class="bg-blue-100 text-blue-700 text-[9px] font-black px-2 py-1 rounded-lg uppercase">Editor de Pedido</span>
+            <span class=" text-blue-500 text-[9px] font-black px-2 py-1 rounded-lg uppercase">Editor de Pedido</span>
             <button onclick="toggleMasivo()" class="text-slate-400 font-black text-[9px] uppercase hover:text-blue-600">Carga Masiva</button>
         </div>
         
@@ -118,38 +122,46 @@
             <button onclick="procesarMasivo()" class="w-full bg-blue-100 text-blue-700 font-black py-2 rounded-xl text-[9px] uppercase tracking-widest">Importar Datos</button>
         </div>
 
-        <div class="grid grid-cols-2 gap-2 mb-3">
-            <input type="hidden" id="f-edit-id">
-            
-            <input type="text" id="f-nombre" placeholder="Nombre del cliente" class="form-input col-span-2 border-slate-100">
-            <input type="text" id="f-direccion" placeholder="Dirección exacta" class="form-input col-span-2 border-slate-100">
-            
-            <input type="tel" id="f-telefono" placeholder="WhatsApp" class="form-input col-span-2 border-slate-100">
-            
-            <div class="col-span-1">
-                <label class="text-[8px] font-black text-slate-400 ml-2 uppercase">Envío $</label>
-                <input type="number" id="f-envio" placeholder="0.00" class="form-input border-slate-100">
-            </div>
-            
-            <div class="col-span-1">
-                <label class="text-[8px] font-black text-blue-500 ml-2 uppercase">Total $</label>
-                <input type="number" id="f-total" placeholder="0.00" class="form-input border-blue-100 bg-blue-50 font-bold text-blue-700" >
-            </div>
-
-            <textarea id="f-detalles" placeholder="Detalles o notas del pedido..." rows="2" class="form-input col-span-2 border-slate-100 text-xs"></textarea>
+        <div class="grid grid-cols-12 gap-2 mb-3">
+    <input type="hidden" id="f-edit-id">
+    
+    <input type="text" id="f-nombre" placeholder="Nombre" class="form-input col-span-5 border-slate-100 text-xs py-2">
+    <input type="text" id="f-direccion" placeholder="Dirección exacta" class="form-input col-span-7 border-slate-100 text-xs py-2">
+    
+    <div class="col-span-6">
+        <input type="tel" id="f-telefono" placeholder="WhatsApp" class="form-input border-slate-100 text-xs py-2">
+    </div>
+    <div class="col-span-3">
+        <div class="relative">
+            <span class="absolute left-2 top-0.5 text-[7px] font-black text-slate-400 uppercase">Envío</span>
+            <input type="number" id="f-envio" placeholder="0.00" class="form-input border-slate-100 text-xs pt-3 pb-1">
         </div>
+    </div>
+    <div class="col-span-3">
+        <div class="relative">
+            <span class="absolute left-2 top-0.5 text-[7px] font-black text-blue-500 uppercase">Total</span>
+            <input type="number" id="f-total" placeholder="0.00" class="form-input border-blue-100 bg-blue-50 font-bold text-blue-500 text-xs pt-3 pb-1">
+        </div>
+    </div>
+
+    <textarea id="f-detalles" placeholder="Detalles o notas del pedido..." rows="1" class="form-input col-span-12 border-slate-100 text-xs py-2"></textarea>
+</div>
 
         <div id="contenedor-productos" class="space-y-2  pr-1"></div>
         
-        <button onclick="agregarFilaProducto()" class="w-full mt-3 py-2 border-2 border-dashed border-slate-100 rounded-xl text-slate-400 font-black text-[10px] uppercase hover:bg-slate-50 transition-colors">
+        <button onclick="agregarFilaProducto()" class="w-full mt-3 py-2 border-2 border-dashed border-slate-100 rounded-xl text-slate-400 font-black text-[9px] uppercase hover:bg-slate-50 transition-colors">
             + Añadir Producto
         </button>
         
-        <div class="flex gap-2 mt-6">
-            <button onclick="guardarPedidoFormulario()" class="flex-1 bg-slate-900 text-white font-black py-4 rounded-2xl shadow-lg uppercase text-xs tracking-widest">Guardar en Ruta</button>
-            <button onclick="toggleForm(false)" class="px-5 bg-slate-100 text-slate-500 font-black rounded-2xl text-xs uppercase">X</button>
+        <div class="flex gap-2 mt-2">
+            <button onclick="guardarPedidoFormulario()" class="flex-1 bg-blue-500 text-white font-black py-2 rounded-2xl shadow-lg uppercase text-[9px] tracking-widest">Guardar en Ruta</button>
+            <button onclick="resetFormulario();toggleForm(false)" class="px-5 bg-slate-100 text-slate-500 font-black rounded-2xl text-xs uppercase">X</button>
         </div>
     </div>
+
+
+
+ <!-- lISTA PRE CARGA -->
 
     <div id="lista-pre-carga" class="space-y-2 mb-8 min-h-[50px]"></div>
 
@@ -159,11 +171,10 @@
         Iniciar Picking
     </button>
 </section>
-    <!-- Resto de secciones (step_picking, step1, etc.) permanecen iguales, ya que no afectan el formulario. Para brevedad, no las repito aquí, pero en el archivo completo las mantengo. -->
 
 
 
-
+ <!-- PICKING-->
     <section id="step_picking" class="step"> 
     <h2 class="text-[16px] font-black mb-1  z-10 bg-white px-4 py-2 text-blue-500">
         Picking
@@ -343,6 +354,9 @@
 
 
 
+ <!--boton flotante -->
+
+
 <div id="contenedor-boton-flotante" class="fixed bottom-6 right-6 z-[100] transition-opacity duration-300">
     <button onclick="toggleForm(true)" 
         class="w-14 h-14 flex items-center justify-center bg-blue-600 text-white rounded-full shadow-2xl shadow-blue-400/50 hover:bg-blue-700 hover:scale-110 active:scale-90 transition-all border-2 border-white/20">
@@ -351,6 +365,10 @@
         </svg>
     </button>
 </div>
+
+
+
+
 
 
 
@@ -711,22 +729,6 @@ function renderStep0() {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // 2. EDITAR PEDIDO (Sincronizado con tus campos)
 function editarPedido(id) {
     const p = pedidos.find(x => x.id == id);
@@ -758,16 +760,30 @@ function editarPedido(id) {
 // 3. AGREGAR FILA (Mantiene tu diseño)
 function agregarFilaProducto(codigo='', precio='', bin='') {
     const div = document.createElement('div');
-    div.className = "fila-producto bg-slate-50 p-3 rounded-xl flex flex-col gap-2 border border-slate-100 mb-2";
+    // Usamos grid-cols-12 para un control total del ancho de cada campo
+    div.className = "fila-producto bg-slate-50/50 p-1.5 rounded-lg grid grid-cols-12 gap-2 items-center border border-slate-100 mb-1.5";
+    
     div.innerHTML = `
-        <div class="grid grid-cols-2 gap-2">
-            <input type="text" placeholder="Código" class="f-codigo form-input !bg-white !p-2 uppercase" value="${codigo}">
-            <input type="number" placeholder="Precio ($)" class="f-precio form-input !bg-white !p-2" value="${precio}">
-        </div>
-        <div class="flex gap-2">
-            <input type="text" placeholder="BIN" class="f-bin form-input !bg-white !p-2 uppercase" value="${bin}">
-            <button type="button" onclick="this.parentElement.parentElement.remove()" class="text-red-400 font-bold px-2">✕</button>
-        </div>`;
+        <input type="text" placeholder="Código" 
+            class="f-codigo form-input !bg-white !p-1.5 uppercase col-span-5 text-[9px] border-slate-100" 
+            value="${codigo}">
+        
+        <input type="number" placeholder="Precio" 
+            class="f-precio form-input !bg-white !p-1.5 col-span-3 text-[9px] border-slate-100" 
+            value="${precio}">
+        
+        <input type="text" placeholder="BIN" 
+            class="f-bin form-input !bg-white !p-1.5 uppercase col-span-3 text-[9px] border-slate-100" 
+            value="${bin}">
+        
+        <button type="button" onclick="this.parentElement.remove()" 
+            class="col-span-1 text-slate-300 hover:text-red-500 transition-colors flex justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
+    `;
+    
     document.getElementById('contenedor-productos').appendChild(div);
 }
 
@@ -820,6 +836,9 @@ function guardarPedidoFormulario() {
     toggleForm(false);
     renderStep0();
 }
+
+
+
 
 
 
@@ -1412,7 +1431,7 @@ function confirmarFinalTotal() {
     p.metodoPago = document.getElementById('metodo-pago').value;
     p.estado = 'completado';
     p.fechaFinal = new Date().toLocaleDateString();
-    p.horaFinal = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    p.hora = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
     historial.unshift({...p}); 
     pedidos = pedidos.filter(x => x.id != pActualID);
@@ -1428,6 +1447,54 @@ function confirmarFinalTotal() {
 }
 
 
+function eliminarDelHistorial(id) {
+    if (confirm('¿Seguro que quieres eliminar este registro permanentemente?')) {
+        // Filtramos tanto pedidos como historial
+        pedidos = pedidos.filter(p => p.id !== id);
+        historial = historial.filter(h => h.id !== id);
+        
+        // Guardamos cambios si usas localStorage
+        // localStorage.setItem('pedidos', JSON.stringify(pedidos));
+        
+        // Refrescamos la vista actual
+        verHistorial(filtroHistorial);
+    }
+}
+
+
+function editarDesdeHistorial(id) {
+    // 1. Buscar el pedido
+    const pedido = [...pedidos, ...historial].find(p => p.id === id);
+    if (!pedido) return;
+
+    // 2. Llenar los campos del formulario (ajusta los IDs a los tuyos)
+    document.getElementById('input-cliente').value = pedido.cliente || '';
+    document.getElementById('input-direccion').value = pedido.direccion || '';
+    document.getElementById('input-telefono').value = pedido.telefono || '';
+    document.getElementById('input-detalles').value = pedido.detalles || '';
+    
+    // 3. (Opcional) Si manejas una variable de 'pedidoActual' o 'modoEdicion'
+    idEdicionActual = id; 
+
+    // 4. Cambiar a la vista del formulario (por ejemplo, paso 1)
+    nextStep(1); 
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 function moverAlFinal() { let idx = pedidos.findIndex(x => x.id == pActualID); if (idx !== -1) { const p = pedidos.splice(idx, 1)[0]; pedidos.push(p); save(); pActualID = null; nextStep(2); } }
 function abrirPerfil(id) { pActualID = id; nextStep(3); }
 function cambiarEstado(est) { let p = pedidos.find(x => x.id == pActualID); if(p) p.estado = est; save(); renderStep3(); }
@@ -1437,16 +1504,17 @@ function cancelarPedido() { if(!confirm("¿Cancelar este pedido?")) return; let 
 let filtroHistorial = 'completado'; 
 
 
-//FUNCION : HISTORIAL
+
+
+
+
 function verHistorial(filtro = 'completado') {
     filtroHistorial = filtro;
     const listaH = document.getElementById('lista-historial');
     if (!listaH) return;
 
-    // Combinamos pedidos actuales e historial cargado
     const todos = [...pedidos, ...historial];
     
-    // Aplicamos el filtro según el tab seleccionado
     const filtrados = todos.filter(h => {
         if (filtro === 'completado') return h.estado === 'completado';
         if (filtro === 'cancelado') return h.estado === 'cancelado';
@@ -1455,10 +1523,7 @@ function verHistorial(filtro = 'completado') {
     });
 
     const contenidoHistorial = filtrados.map(h => {
-        // Estilo de badge según estado
         let colorE = h.estado === 'completado' ? 'text-emerald-500 bg-emerald-50' : (h.estado === 'cancelado' ? 'text-red-400 bg-red-50' : 'text-blue-500 bg-blue-50');
-        
-        // Determinar qué ítems mostrar
         const itemsAMostrar = (h.estado === 'completado' && h.vendidos) ? h.vendidos : h.items;
         
         let prodHtml = itemsAMostrar.map(it => `
@@ -1467,8 +1532,16 @@ function verHistorial(filtro = 'completado') {
                 <span class="text-slate-400 font-mono flex-shrink-0">$${(it.precio || 0).toLocaleString()}</span>
             </div>
         `).join('');
+
+            let prodHtml2 = itemsAMostrar.map(it => `
+            <div class="flex justify-between items-center text-[11px] mb-1">
+                <span class="text-slate-600 truncate mr-2">• ${it.envio}</span>
+                <span class="text-slate-400 font-mono flex-shrink-0">$${(h.envio || 0).toLocaleString()}</span>
+            </div>
+        `).join('');
+
+
             
-        // Cálculo de monto (Prioriza totalFinal de Venta Rápida o calcula de ítems)
         const monto = h.totalFinal || (h.items.reduce((acc, it) => acc + (it.precio || 0), 0) + (h.envio || 0));
         const mostrarMonto = h.estado !== 'cancelado';
 
@@ -1477,40 +1550,46 @@ function verHistorial(filtro = 'completado') {
                 <div class="flex justify-between items-start mb-2">
                     <div>
                         <span class="px-2 py-0.5 rounded-full text-[8px] font-black uppercase ${colorE}">
-                            ${h.estado || 'Pendiente'} • ${h.fechaFinal || 'Hoy'}
+                            ${h.estado || 'Pendiente'} • ${h.fechaFinal || 'Hoy'} • ${h.hora || '--:--'}
                         </span>
-                       <h4 class="font-bold uppercase mt-1 text-slate-800 text- flex items-center gap-1.5">
-                       <span class="text-slate-500 w-3.5 h-3.5 flex items-center">
-                        ${ICONOS.cliente}
-                     </span>
-                    <span class="truncate">
-                        ${h.cliente}
-                     </span>
-                     </h4>
+                       <h4 class="font-bold uppercase mt-1 text-slate-800 flex items-center gap-1.5">
+                            <span class="text-slate-500 w-3.5 h-3.5"></span>
+                            <span class="truncate">${h.cliente}</span>
+                       </h4>
                     </div>
                     
-                    <button onclick="editarDesdeHistorial(${h.id})" class="p-2 bg-slate-50 text-slate-400 rounded-xl active:bg-blue-50 active:text-blue-600 transition-all shadow-sm">
-                        ${ICON_EDIT}
-                    </button>
+                    <div class="flex gap-1">
+                        <button onclick="editarDesdeHistorial(${h.id})" class="p-2 bg-slate-50 text-blue-500 rounded-xl active:scale-90 transition-all shadow-sm">
+                            ${ICON_EDIT}
+                        </button>
+                        <button onclick="eliminarDelHistorial(${h.id})" class="p-2 bg-red-50 text-red-500 rounded-xl active:scale-90 transition-all shadow-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>
+                        </button>
+                    </div>
                 </div>
 
-                <p class="text-[12px] text-slate-500  mb-1">${ICONOS.mapa || '📍'} ${h.direccion}</p>
-                <p class="text-[12px] text-slate-500  mb-1">${ICONOS.telefono || '📍'} ${h.telefono}</p>
-                <p class="text-[10px] text-slate-500  mb-1">${ICONOS.editar|| '📍'} ${h.detalles}</p>
-                
+                <p class="text-[12px] text-slate-500 mb-1">${ICONOS.mapa} ${h.direccion}</p>
+                <p class="text-[11px] text-slate-400 mb-2 italic px-2 border-l-2 border-slate-100">${h.detalles || 'Sin notas'}</p>
 
                 <div class="my-3 py-2 border-y border-slate-50">
                     ${prodHtml}
                 </div>
 
+                <div class="my-3 py-2 border-y border-slate-50">
+                    ${prodHtml2}
+                </div>
+
+
+
+
                 <div class="flex justify-between items-center mt-2">
                     <span class="text-[9px] text-slate-500 font-bold uppercase tracking-tighter">${h.metodoPago || 'EFECTIVO'}</span>
-                    ${mostrarMonto ? `<span class="font-black text-emerald-600 text-sm">$${monto.toLocaleString()}</span>` : '<span class="text-red-400 font-bold text-[10px] uppercase">Sin Cargo</span>'}
+                    ${mostrarMonto ? `<span class="font-black text-emerald-600 text-sm">$${monto.toLocaleString()}</span>` : '<span class="text-red-400 font-bold text-[10px] uppercase">Cancelado</span>'}
                 </div>
             </div>`;
     }).join('') || '<p class="text-center text-slate-400 py-10 text-xs italic">Sin registros</p>';
 
-    // Estructura de la Interfaz del Historial
+    // ... (Mantener el resto del innerHTML de la interfaz igual)
     listaH.innerHTML = `
         <div class="sticky top-0 bg-slate-50/95 backdrop-blur-sm z-20 pb-2">
             <div class="flex justify-between items-center py-3 px-1">
@@ -1536,8 +1615,17 @@ function verHistorial(filtro = 'completado') {
         <div class="mt-4 pb-20">${contenidoHistorial}</div>
     `;
 
-    nextStep(7); // Cambia a la vista del historial
+    nextStep(7);
 }
+
+
+
+
+
+
+
+
+
 
 //FUNCION : EXPORTAR A SHEETS
 // Función para exportar a un CSV que Sheets pueda abrir
@@ -1585,7 +1673,7 @@ function actualizarArqueoHeader() {
     document.getElementById('h-digital').innerText = `Digital $${digi.toLocaleString()}`;
 }
 function cerrarHistorial() { nextStep(pedidos.length > 0 ? 2 : 0); }
-function resetFormulario() { document.getElementById('f-edit-id').value = ""; document.getElementById('f-nombre').value = ""; document.getElementById('f-direccion').value = ""; document.getElementById('f-telefono').value = ""; document.getElementById('f-envio').value = ""; document.getElementById('contenedor-productos').innerHTML = ""; agregarFilaProducto(); }
+function resetFormulario() { document.getElementById('f-edit-id').value = ""; document.getElementById('f-nombre').value = ""; document.getElementById('f-direccion').value = ""; document.getElementById('f-telefono').value = ""; document.getElementById('f-envio').value = "";  document.getElementById('f-total').value = ""  ;document.getElementById('f-detalles').value = "";document.getElementById('contenedor-productos').innerHTML = ""; agregarFilaProducto(); }
 function eliminarPedido(id) { if(confirm("¿Eliminar?")) { pedidos = pedidos.filter(x => x.id != id); save(); renderStep0(); } }
 function limpiarTodo() { if(confirm("¿Borrar todo?")) { localStorage.clear(); location.reload(); } }
 function llamar() { let p = pedidos.find(x => x.id == pActualID); if(p) window.location.href = `tel:${p.telefono}`; }
@@ -1867,12 +1955,18 @@ function guardarPedidoFormulario() {
 
     save(); 
     renderStep0();
+     resetFormulario()
     toggleForm(false);
-    
+    resetFormulario()
     // Limpiar campos específicos
     document.getElementById('f-detalles').value = "";
     document.getElementById('f-total').value = "";
+   
+
 }
+
+
+
 
 // Alternar visibilidad del formulario
 function toggleForm(show = true) {
@@ -1887,6 +1981,17 @@ function toggleForm(show = true) {
 
 
 
+
+
+
+
+
+
+
+
+
+
+//Boton Flotante
 function toggleForm(show) {
     const form = document.getElementById('contenedor-formulario');
     const btnFlotante = document.getElementById('contenedor-boton-flotante');
@@ -1937,11 +2042,10 @@ function actualizarBotonFlotante(n) {
 
 
 
+
 </script>
 
 
 
 </body>
 </html>
-
-
