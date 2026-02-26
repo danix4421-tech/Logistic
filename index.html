@@ -193,7 +193,7 @@
     <section id="step1" class="step">
         <h2 class="text-[16px] text-blue-500 font-black py-2 top-10">Carga Furgón</h2>
         <div id="checklist-furgon" class="space-y-3"></div>
-        <button id="btn-start-route" onclick="nextStep(2)" disabled class="w-full mt-10 bg-slate-200 text-slate-400 font-black py-6 rounded-3xl ">CONTINUAR</button>
+        <button id="btn-start-route" onclick="mostrarFondoInicialSiEsNecesario()" disabled class="w-full mt-10 bg-slate-200 text-slate-400 font-black py-6 rounded-3xl ">CONTINUAR</button>
     </section>
 
 
@@ -379,28 +379,17 @@
         <p class="text-[10px] font-bold opacity-90 mt-1">Confirma los montos y que todos los productos devueltos han sido recuperados.</p>
     </div>
     
-    <!-- Montos totales -->
-    <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-100 mb-6">
-        <h3 class="text-[10px] font-black text-slate-400 uppercase mb-4 tracking-widest">Arqueo Total</h3>
-        <div class="grid grid-cols-2 gap-4">
-            <div class="bg-emerald-50 rounded-2xl p-4">
-                <p class="text-[9px] font-bold text-emerald-600 uppercase">Efectivo</p>
-                <p id="total-efectivo-final" class="text-2xl font-black text-emerald-800">$0</p>
-            </div>
-            <div class="bg-purple-50 rounded-2xl p-4">
-                <p class="text-[9px] font-bold text-purple-600 uppercase">Digital</p>
-                <p id="total-digital-final" class="text-2xl font-black text-purple-800">$0</p>
-            </div>
-        </div>
-    </div>
+    
     
     <!-- Lista de devoluciones globales -->
-    <h3 class="text-[10px] font-black text-slate-400 uppercase mb-3 ml-2 tracking-widest">Devoluciones Totales</h3>
+   
     <div id="lista-devoluciones-globales" class="space-y-3 mb-8 bg-white rounded-[2rem] p-6 shadow-sm border border-slate-100"></div>
-
+ 
     <button id="btn-fin-ruta" onclick="confirmarFinRuta()" disabled class="w-full bg-slate-300 text-white font-black py-7 rounded-[2rem] shadow-xl text-lg uppercase">
         Finalizar Ruta
     </button>
+
+   
 </section>
 
 
@@ -1562,70 +1551,153 @@ function confirmarFinalTotal() {
 
 // NUEVO: Render para Verificación Final de Ruta (step6) - con letra del pedido
 function renderVerificacionFinalRuta() {
-    // 1. Calcular montos totales
-    let efec = 0, digi = 0;
-    historial.forEach(h => { 
-        if(h.estado === 'completado') { 
-            if(h.metodoPago === 'Efectivo') efec += h.totalFinal || 0; 
-            else digi += h.totalFinal || 0; 
-        } 
-    });
-    document.getElementById('total-efectivo-final').innerText = `$${efec.toLocaleString()}`;
-    document.getElementById('total-digital-final').innerText = `$${digi.toLocaleString()}`;
-
-    // 2. Recolectar todas las devoluciones con su letra de pedido
-    const devolucionesGlobales = [];
     
+
+// 1. Calcular montos totales cobrados en la ruta
+    let cobradoEfectivo = 0;
+    let cobradoDigital = 0;
+    let cobradoTappDani = 0;
+    let cobradoTappLore = 0;
+    let cobradoRutDani = 0;
+    let cobradoRutLore = 0;
+
     historial.forEach(h => {
-        if (h.estado === 'completado' && h.devoluciones && h.devoluciones.length > 0) {
+        if (h.estado === 'completado') {
+            const monto = h.totalFinal || 0;
+            if (h.metodoPago === 'Efectivo') {
+                cobradoEfectivo += monto;
+            } else if (h.metodoPago.includes('TAPP Dani')) {
+                cobradoTappDani += monto;
+            } else if (h.metodoPago.includes('TAPP Lore')) {
+                cobradoTappLore += monto;
+            } else if (h.metodoPago.includes('RUT Dani')) {
+                cobradoRutDani += monto;
+            } else if (h.metodoPago.includes('RUT Lore')) {
+                cobradoRutLore += monto;
+            } else {
+                cobradoDigital += monto; // otros métodos digitales no especificados
+            }
+        }
+    });
+
+    // 2. Calcular esperados (fondo inicial + cobrado)
+    const esperadoEfectivo = (fondoInicial.efectivo || 0) + cobradoEfectivo;
+    const esperadoTappDani = (fondoInicial.tapp_dani || 0) + cobradoTappDani;
+    const esperadoTappLore = (fondoInicial.tapp_lore || 0) + cobradoTappLore;
+    const esperadoRutDani  = (fondoInicial.rut_dani  || 0) + cobradoRutDani;
+    const esperadoRutLore  = (fondoInicial.rut_lore  || 0) + cobradoRutLore;
+
+    const totalEsperadoDigital = esperadoTappDani + esperadoTappLore + esperadoRutDani + esperadoRutLore;
+
+    // 3. HTML del arqueo comparativo
+    const arqueoComparativo = `
+        <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-200 mb-6">
+            <h3 class="text-[10px] font-black text-slate-500 uppercase mb-4 tracking-widest">Arqueo Esperado</h3>
+            <div class="space-y-4">
+                <div class="flex justify-between items-center py-1 border-b border-slate-100">
+                    <span class="text-slate-400 text-[10px] font-black ">Efectivo (inicial + cobrado)</span>
+                    <span class="font-black   text-emerald-700 text-xl">$${esperadoEfectivo.toLocaleString()}</span>
+                </div>
+                <div class=" grid grid-cols-2 gap-4">
+                    <div class="text-center">
+                        <p class="text-xs text-slate-500">TAPP Dani</p>
+                        <p class="font-bold text-slate-700">$${esperadoTappDani.toLocaleString()}</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-xs text-slate-500">TAPP Lore</p>
+                        <p class="font-bold text-slate-700">$${esperadoTappLore.toLocaleString()}</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-xs text-slate-500">RUT Dani</p>
+                        <p class="font-bold text-slate-700">$${esperadoRutDani.toLocaleString()}</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-xs text-slate-500">RUT Lore</p>
+                        <p class="font-bold text-slate-700">$${esperadoRutLore.toLocaleString()}</p>
+                    </div>
+                </div>
+                <div class="pt-3  border-slate-200 text-center">
+                    <p class="text-xs  font-bold text-slate-400">Total Digital Esperado</p>
+                    <p class="text-2xl  font-black text-indigo-700">$${totalEsperadoDigital.toLocaleString()}</p>
+                </div>
+            </div>
+            <p class="text-[10px] text-slate-400 italic mt-4 text-center">
+                Registra lo que realmente tienes ahora y compara
+            </p>
+        </div>
+    `;
+
+    // 4. Insertar el arqueo comparativo ANTES de la lista de devoluciones
+    const contenedor = document.getElementById('lista-devoluciones-globales');
+    contenedor.insertAdjacentHTML('beforebegin', arqueoComparativo);
+
+    // 5. (el resto de la función sigue igual: calcular devoluciones, renderizarlas, validar checkboxes...)
+    // ... aquí va el código de letras + devoluciones que ya teníamos ...
+
+    // Por ejemplo:
+    const devolucionesGlobales = [];
+    historial.forEach(h => {
+        if (h.estado === 'completado' && h.devoluciones?.length > 0) {
             h.devoluciones.forEach(item => {
                 devolucionesGlobales.push({
                     letra: h.letra || '?',
                     codigo: item.desc,
-                    pedidoCliente: h.cliente || 'Sin nombre'
+                    cliente: h.cliente || 'Sin nombre'
                 });
             });
         }
     });
 
+    // 2. ORDENAR POR LETRA (A → Z)
+    devolucionesGlobales.sort((a, b) => {
+        // Orden natural por letra (A antes que B, etc.)
+        return a.letra.localeCompare(b.letra);
+    });
+
+
+
+    
     // 3. Renderizar lista
     const lista = document.getElementById('lista-devoluciones-globales');
+
+
     
-    if (devolucionesGlobales.length === 0) {
-        lista.innerHTML = '<p class="text-center text-slate-400 py-6 text-sm">No hay devoluciones en esta ruta</p>';
-    } else {
-        lista.innerHTML = devolucionesGlobales.map((dev, idx) => `
-            <label class="flex justify-between items-center bg-red-50 p-4 rounded-2xl border-2 border-transparent has-[:checked]:border-emerald-500 shadow-sm transition-all mb-3 cursor-pointer">
-                <div class="flex items-center gap-4 flex-1">
-                    <input type="checkbox" 
-                           class="w-6 h-6 check-global-dev appearance-none border-2 border-red-300 checked:bg-emerald-500 rounded-lg transition-all" 
-                           onchange="validarChecklistDevolucionesGlobales()">
+    // Dentro de renderVerificacionFinalRuta(), en la parte donde renderizas devolucionesGlobales
+
+lista.innerHTML = devolucionesGlobales.map((dev, idx) => {
+    const colorClase = getColorRuta(dev.letra);  // ← Aquí usamos la función existente
+
+    return `
+        
+        <label class="flex justify-between items-center bg-white p-2 rounded-2xl border-2 border-transparent has-[:checked]:border-emerald-500 shadow-sm transition-all mb-3 cursor-pointer hover:bg-slate-50">
+            
+            <div class="flex items-center gap-4 flex-1">
+                
+                <input type="checkbox" 
+                       class="w-6 h-6 check-global-dev appearance-none border-2 border-slate-300 checked:bg-emerald-500 rounded-lg transition-all" 
+                       onchange="validarChecklistDevolucionesGlobales()">
+                
+                <div class="flex items-center gap-3">
+                    <!-- Círculo con el color de la letra -->
+                    <div class="${colorClase} text-white w-10 h-10 rounded-full flex items-center justify-center font-black text-xl shadow-md">
+                        ${dev.letra}
+                    </div>
+                    
                     <div>
-                        <div class="flex items-center gap-2">
-                            <span class="font-black text-xl text-red-700 w-8 h-8 flex items-center justify-center bg-red-100 rounded-full">
-                                ${dev.letra}
-                            </span>
-                            <p class="font-black text-red-800 uppercase text-base">${dev.codigo}</p>
-                        </div>
-                        <p class="text-[10px] text-red-600 mt-1">
-                            ${dev.pedidoCliente}
-                        </p>
+                        <p class="font-black uppercase text-base text-slate-800">${dev.codigo}</p>
+                        <p class="text-[11px] text-slate-500 mt-0.5 hidden">${dev.cliente || 'Cliente no registrado'}</p>
                     </div>
                 </div>
-                <span class="text-red-500 opacity-70">${ICONOS.caja}</span>
-            </label>
-        `).join('');
-    }
+            </div>
+            
+            <span class="text-slate-400 opacity-70">${ICONOS.caja}</span>
+        </label>
+    `;
+}).join('') || '<p class="text-center text-slate-400 py-6 text-sm">No hay devoluciones en esta ruta</p>';
 
     // 4. Validar botón
     validarChecklistDevolucionesGlobales();
 }
-
-
-
-
-
-
 
 
 
@@ -1649,6 +1721,9 @@ function confirmarFinRuta() {
         nextStep(0); // Volver al inicio
     }
 }
+
+
+
 
 
 
@@ -2183,6 +2258,70 @@ function actualizarBotonFlotante(n) {
         btnContainer.classList.remove('flex');
     }
 }
+
+
+
+
+
+//NUEVA 
+// Al cargar la página o al iniciar
+let fondoInicial = JSON.parse(localStorage.getItem('z_fondo_inicial_ruta')) || {
+    efectivo: 0,
+    tapp_dani: 0,
+    tapp_lore: 0,
+    rut_dani: 0,
+    rut_lore: 0,
+    fecha: null
+};
+
+
+// Guardar fondo
+function guardarFondoInicial() {
+    fondoInicial = {
+        efectivo: parseInt(document.getElementById('fondo-efectivo-inicial').value) || 0,
+        tapp_dani: parseInt(document.getElementById('fondo-tapp-dani').value) || 0,
+        tapp_lore: parseInt(document.getElementById('fondo-tapp-lore').value) || 0,
+        rut_dani: parseInt(document.getElementById('fondo-rut-dani').value) || 0,
+        rut_lore: parseInt(document.getElementById('fondo-rut-lore').value) || 0,
+        fecha: new Date().toISOString()
+    };
+    
+    localStorage.setItem('z_fondo_inicial_ruta', JSON.stringify(fondoInicial));
+    cerrarModalFondoInicial();
+    nextStep(2); // o la etapa que corresponda
+}
+
+
+function cerrarModalFondoInicial() {
+    document.getElementById('modal-fondo-inicial').classList.add('hidden');
+}
+
+
+document.getElementById('lista-devoluciones-globales').insertAdjacentHTML('beforebegin', arqueoComparativo);
+
+
+
+
+
+function mostrarFondoInicialSiEsNecesario() {
+    // Solo mostramos el modal si NO hay fondo guardado para esta ruta
+    // (o si quieres forzar cada vez, quita la condición)
+    if (!localStorage.getItem('z_fondo_inicial_ruta')) {
+        document.getElementById('modal-fondo-inicial').classList.remove('hidden');
+        // Opcional: precargar valores si ya existían de rutas anteriores
+        if (fondoInicial.efectivo) {
+            document.getElementById('fondo-efectivo-inicial').value = fondoInicial.efectivo;
+        }
+    } else {
+        // Ya existe fondo → continuamos directo
+        asignarLetrasFijas();
+        nextStep(1);
+    }
+}
+
+
+
+
 
 </script>
 
