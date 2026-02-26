@@ -43,8 +43,6 @@
 <div class="h-2"></div>
 
 
-
-
 <header id="main-header" class="bg-white border-b border-slate-200 p-2 sticky top-0 z-50 shadow-sm">
     <div class="max-w-xl mx-auto flex justify-between items-center">
         
@@ -75,6 +73,8 @@
             <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
         </span>
     </button>
+
+    
 
 
             <div class="flex items-center gap-2 border-l pl-2 border-slate-100    ">
@@ -111,12 +111,12 @@
      <!-- FORMULARIO -->
 
     
-  <div id="contenedor-formulario" class=" hidden bg-white rounded-[2rem] p-5 shadow-2xl border border-slate-100 mb-6 border-b-4">
-        <div class="flex justify-between items-center mb-6">
-            <span class=" text-blue-500 text-[9px] font-black px-2 py-1 rounded-lg uppercase">Editor de Pedido</span>
+  <div id="contenedor-formulario" class=" hidden bg-white rounded-[2rem] p-5 shadow-2xl border border-slate-100 mb-1 border-b-2">
+        <div class="flex justify-between items-center mb-1">
+            <span class=" text-slate-500 text-[9px] font-black px py-1 rounded-lg uppercase">Pedido</span>
             <button onclick="toggleMasivo()" class="text-slate-400 font-black text-[9px] uppercase hover:text-blue-600">Carga Masiva</button>
         </div>
-        
+        <span class=" text-blue-500 text-[9px] font-black px-0 py-3 rounded-lg">Datos clientes</span>
         <div id="area-masiva" class="hidden mb-4 p-4 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200">
             <textarea id="input-masivo" rows="4" class="form-input text-xs mb-2" placeholder="Pega desde Sheets..."></textarea>
             <button onclick="procesarMasivo()" class="w-full bg-blue-100 text-blue-700 font-black py-2 rounded-xl text-[9px] uppercase tracking-widest">Importar Datos</button>
@@ -147,6 +147,7 @@
     <textarea id="f-detalles" placeholder="Detalles o notas del pedido..." rows="1" class="form-input col-span-12 border-slate-100 text-xs py-2"></textarea>
 </div>
 
+<span class=" text-blue-500 text-[8px] font-black px-2 py-1 rounded-lg">Productos</span>
         <div id="contenedor-productos" class="space-y-2  pr-1"></div>
         
         <button onclick="agregarFilaProducto()" class="w-full mt-3 py-2 border-2 border-dashed border-slate-100 rounded-xl text-slate-400 font-black text-[9px] uppercase hover:bg-slate-50 transition-colors">
@@ -170,9 +171,10 @@
     <button id="btn-ir-a-picking" onclick="nextStep(0.5)" class="hidden w-full bg-blue-600 text-white font-black py-6 rounded-3xl shadow-2xl bottom-4 uppercase text-sm tracking-widest">
         Iniciar Picking
     </button>
+
+ 
+
 </section>
-
-
 
  <!-- PICKING-->
     <section id="step_picking" class="step"> 
@@ -195,6 +197,61 @@
     </section>
 
 
+<!-- Modal Fondo Inicial (solo se muestra al iniciar ruta) -->
+<div id="modal-fondo-inicial" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden">
+        <div class="p-6">
+            <h3 class="text-xl font-black text-slate-800 mb-5">Fondo Inicial de Ruta</h3>
+            
+            <p class="text-sm text-slate-600 mb-4">Registra cuánto llevas para dar vuelto y saldos aproximados de cuentas digitales (opcional pero recomendado para mejor arqueo).</p>
+
+            <!-- Efectivo -->
+            <div class="mb-5">
+                <label class="block text-sm font-bold text-slate-700 mb-2">Efectivo para vuelto</label>
+                <input type="number" id="fondo-efectivo-inicial" placeholder="Ej: 50000" 
+                       class="w-full bg-slate-50 border border-slate-300 rounded-xl py-3 px-4 text-lg font-bold text-center focus:ring-2 focus:ring-emerald-500">
+            </div>
+
+            <!-- Saldos digitales (puedes agregar los que uses) -->
+            <div class="grid grid-cols-2 gap-4 mb-6">
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">TAPP Dani</label>
+                    <input type="number" id="fondo-tapp-dani" placeholder="0" class="w-full bg-slate-50 border border-slate-300 rounded-xl py-2 px-3 text-center">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">TAPP Lore</label>
+                    <input type="number" id="fondo-tapp-lore" placeholder="0" class="w-full bg-slate-50 border border-slate-300 rounded-xl py-2 px-3 text-center">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">RUT Dani</label>
+                    <input type="number" id="fondo-rut-dani" placeholder="0" class="w-full bg-slate-50 border border-slate-300 rounded-xl py-2 px-3 text-center">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">RUT Lore</label>
+                    <input type="number" id="fondo-rut-lore" placeholder="0" class="w-full bg-slate-50 border border-slate-300 rounded-xl py-2 px-3 text-center">
+                </div>
+            </div>
+
+            <div class="flex gap-3">
+                <button onclick="guardarFondoInicial()" 
+                        class="flex-1 bg-emerald-600 text-white font-black py-4 rounded-2xl shadow-lg">
+                    Guardar y Continuar
+                </button>
+                <button onclick="cerrarModalFondoInicial()" 
+                        class="px-6 py-4 bg-slate-200 text-slate-700 font-bold rounded-2xl">
+                    Omitir
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+    <!--rutas -->
+
     <section id="step2" class="step">
         <div id="next-delivery-info" class=" [2.5rem] p-1 text-white mb-6 stycky top-0 "></div>
         <h3 class="text-xs font-black text-slate-400 uppercase mb-4 ml-2">Próximas paradas</h3>
@@ -202,6 +259,8 @@
     </div>
     </section>
 
+
+    <!--verificacion con llamado-->
     <section id="step3" class="step">
         <div id="cliente-perfil" class="space-y-4"></div>
         <div class="grid grid-cols-2 gap-2 mb-4">
@@ -216,6 +275,9 @@
             <button onclick="cancelarPedido()" class="bg-rose-100 text-red-500  px-4 py-2 rounded-xl  font-bold text-[14px] uppercase tracking-tighter opacity-60"><svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>
         </div>
     </section>
+
+
+    <!-- Etapa4, pago-->
 
     <section id="step4" class="step">
     <div class="mb-4">
@@ -239,23 +301,31 @@
         Efectivo
     </button>
 
-    <button type="button" onclick="seleccionarMetodo(this, 'Transferencia Dani')" 
+    <button type="button" onclick="seleccionarMetodo(this, 'Transferencia Cta RUT Dani')" 
         class="metodo-btn p-4 border-2 border-slate-100 rounded-2xl font-bold text-[10px] uppercase transition-all flex flex-col items-center gap-2">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
         </svg>
-        TAPP (DANI)
+        RUT (DANI)
     </button>
 
-    <button type="button" onclick="seleccionarMetodo(this, 'Transferencia Dani')" 
+    <button type="button" onclick="seleccionarMetodo(this, 'Transferencia TAPP Dani')" 
         class="metodo-btn p-4 border-2 border-slate-100 rounded-2xl font-bold text-[10px] uppercase transition-all flex flex-col items-center gap-2">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
         </svg>
-        RUT (DANI)
+        TAPP (DANI)
     </button>
 
-    <button type="button" onclick="seleccionarMetodo(this, 'Transferencia Lore')" 
+    <button type="button" onclick="seleccionarMetodo(this, 'Transferencia Cta RUT Lore')" 
+        class="metodo-btn p-4 border-2 border-slate-100 rounded-2xl font-bold text-[10px] uppercase transition-all flex flex-col items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+        </svg>
+        RUT (LORE)
+    </button>
+
+      <button type="button" onclick="seleccionarMetodo(this, 'Transferencia TAPP Lore')" 
         class="metodo-btn p-4 border-2 border-slate-100 rounded-2xl font-bold text-[10px] uppercase transition-all flex flex-col items-center gap-2">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
@@ -284,10 +354,7 @@
     </section>
 
 
-   
-
-
-  <!--ETAPA 5 -->
+  <!--ETAPA 5 verificacion final -->
 
 <section id="step5" class="step">
     <div class="bg-red-500 rounded-[2.5rem] p-6  text-white mb-6 shadow-lg">
@@ -301,6 +368,38 @@
 
     <button id="btn-cerrar-ruta" onclick="confirmarFinalTotal()" disabled class="w-full bg-slate-300 text-white font-black py-7 rounded-[2rem] shadow-xl text-lg uppercase">
         Finalizar Entrega
+    </button>
+</section>
+
+<!-- NUEVO: Step6 - Verificación Final de Ruta (al llegar a casa) -->
+<section id="step6" class="step">
+    <div class="bg-blue-500 rounded-[2.5rem] p-6 text-white mb-6 shadow-lg">
+        <h2 class="text-xs font-black uppercase opacity-80 tracking-widest">Fin de Ruta</h2>
+        <h3 class="text-2xl font-black">Verificar Arqueo y Devoluciones</h3>
+        <p class="text-[10px] font-bold opacity-90 mt-1">Confirma los montos y que todos los productos devueltos han sido recuperados.</p>
+    </div>
+    
+    <!-- Montos totales -->
+    <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-100 mb-6">
+        <h3 class="text-[10px] font-black text-slate-400 uppercase mb-4 tracking-widest">Arqueo Total</h3>
+        <div class="grid grid-cols-2 gap-4">
+            <div class="bg-emerald-50 rounded-2xl p-4">
+                <p class="text-[9px] font-bold text-emerald-600 uppercase">Efectivo</p>
+                <p id="total-efectivo-final" class="text-2xl font-black text-emerald-800">$0</p>
+            </div>
+            <div class="bg-purple-50 rounded-2xl p-4">
+                <p class="text-[9px] font-bold text-purple-600 uppercase">Digital</p>
+                <p id="total-digital-final" class="text-2xl font-black text-purple-800">$0</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Lista de devoluciones globales -->
+    <h3 class="text-[10px] font-black text-slate-400 uppercase mb-3 ml-2 tracking-widest">Devoluciones Totales</h3>
+    <div id="lista-devoluciones-globales" class="space-y-3 mb-8 bg-white rounded-[2rem] p-6 shadow-sm border border-slate-100"></div>
+
+    <button id="btn-fin-ruta" onclick="confirmarFinRuta()" disabled class="w-full bg-slate-300 text-white font-black py-7 rounded-[2rem] shadow-xl text-lg uppercase">
+        Finalizar Ruta
     </button>
 </section>
 
@@ -350,6 +449,7 @@
 
 
 
+
 </main>
 
 
@@ -365,7 +465,6 @@
         </svg>
     </button>
 </div>
-
 
 
 
@@ -493,10 +592,6 @@ function getColorRuta(letra) {
 
 
 
-
-
-
-
 // --- LOGICA CORE ---
 function save() {
     localStorage.setItem('z_pedidos', JSON.stringify(pedidos));
@@ -519,6 +614,7 @@ function retroceder() {
     else if (currentStep === 3) nextStep(2);
     else if (currentStep === 4) nextStep(3);
     else if (currentStep === 5) nextStep(4); // <--- ESTA ES LA LÍNEA QUE FALTABA
+    else if (currentStep === 6) nextStep(2); // NUEVO: Retroceder desde step6
     else if (currentStep === 7) cerrarHistorial();
 }
 
@@ -559,6 +655,8 @@ actualizarBotonFlotante(n);
         let p = pedidos.find(x => x.id == pActualID);
         if(p && p.temp_devoluciones) renderVerificacionDevoluciones(p.temp_devoluciones);
     }
+    // NUEVO: Render para step6
+    if(n === 6) renderVerificacionFinalRuta();
     
     window.scrollTo(0,0);
 }
@@ -571,7 +669,6 @@ function irAlInicio() {
 }
 
 function toggleMasivo() { document.getElementById('area-masiva').classList.toggle('hidden'); }
-
 
 
 
@@ -647,8 +744,6 @@ function procesarMasivo() {
 
 
 
-
-
 // Constantes para los iconos SVG
 const ICON_EDIT = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>`;
 const ICON_DELETE = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>`;
@@ -671,55 +766,51 @@ function renderStep0() {
 
     // 2. Renderizado y ASIGNACIÓN DE IDENTIDAD
     lista.innerHTML = pedidosPendientes.map((p, i) => {
-        
-        // ASIGNACIÓN DINÁMICA: La letra depende de su posición en esta lista
-        const letraAsignada = ABC[i % 26];
-        
-        // GUARDADO PERMANENTE: Grabamos la letra en el objeto original
-        // Esto hace que en el historial o picking, p.letra ya tenga valor
-        p.letra = letraAsignada; 
+    const letraAsignada = ABC[i % 26];
+    p.letra = letraAsignada; 
+    const colorClase = getColorRuta(letraAsignada);
 
-        // OBTENEMOS EL COLOR (Usando la función que creamos antes)
-        const colorClase = getColorRuta(letraAsignada);
-
-        return `
-        <div class="bg-white p-3 rounded-xl border border-slate-100 flex items-center gap-3 shadow-sm hover:shadow-md transition-shadow" data-id="${p.id}">
-            
-            <div class="${colorClase} text-white min-w-[36px] h-9 rounded-full flex items-center justify-center font-black text-sm shadow-lg shadow-inner">
-                ${letraAsignada}
+    return `
+    <div onclick="editarPedido(${p.id})" 
+         class="cursor-pointer bg-white p-3 rounded-xl border border-slate-100 flex items-center gap-3 shadow-sm hover:shadow-md transition-shadow active:scale-[0.98]" 
+         data-id="${p.id}">
+        
+        <div class="${colorClase} text-white min-w-[36px] h-9 rounded-full flex items-center justify-center font-black text-sm shadow-lg shadow-inner">
+            ${letraAsignada}
+        </div>
+        
+        <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2">
+                <h4 class="font-black text-[13px] truncate text-slate-800 flex items-center gap-1.5">
+                    <span class="opacity-40 scale-90">${ICONOS.cliente}</span>
+                    ${p.cliente}
+                </h4>
             </div>
             
-            <div class="flex-1 min-w-0">
-                <div class="flex items-center gap-2">
-                    <h4 class="font-black text-[13px] truncate text-slate-800  flex items-center gap-1.5">
-                        <span class="opacity-40 scale-90">${ICONOS.cliente}</span>
-                        ${p.cliente}
-                    </h4>
-                </div>
-                
-                <div class="flex items-center gap-2 flex-wrap mt-0.5">
-                    <p class="text-[11px] truncate font-medium text-slate-500">${p.direccion}</p>
-                    <div class="flex gap-1">
-                        <span class="bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded text-[9px] font-black">
-                            ${(p.items || []).length} CAJAS
-                        </span>
-                        <span class="bg-emerald-50 text-emerald-600 px-1.5 py-0.5 rounded text-[10px] font-black">
-                            $${(p.total || 0).toLocaleString()}
-                        </span>
-                    </div>
+            <div class="flex items-center gap-2 flex-wrap mt-0.5">
+                <p class="text-[11px] truncate font-medium text-slate-500">${p.direccion}</p>
+                <div class="flex gap-1">
+                    <span class="bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded text-[9px] font-black">
+                        ${(p.items || []).length} CAJAS
+                    </span>
+                    <span class="bg-emerald-50 text-emerald-600 px-1.5 py-0.5 rounded text-[10px] font-black">
+                        $${(p.total || 0).toLocaleString()}
+                    </span>
                 </div>
             </div>
+        </div>
 
-            <div class="flex items-center border-l border-slate-50 pl-2 gap-1">
-                <button onclick="editarPedido(${p.id})" class="p-2 text-slate-300 hover:text-blue-600 transition-colors">
-                    ${ICON_EDIT}
-                </button>
-                <button onclick="eliminarPedido(${p.id})" class="p-2 text-slate-200 hover:text-red-500 transition-colors">
-                    ${ICON_DELETE}
-                </button>
-            </div>
-        </div>`;
-    }).join('');
+        <div class="flex items-center border-l border-slate-50 pl-2 gap-1">
+            <button onclick="event.stopPropagation(); editarPedido(${p.id})" class="p-2 text-slate-300 hover:text-blue-600 transition-colors hidden">
+                ${ICON_EDIT}
+            </button>
+            
+            <button onclick="event.stopPropagation(); eliminarPedido(${p.id})" class="p-2 text-slate-500 hover:text-red-500 transition-colors">
+                ${ICON_DELETE}
+            </button>
+        </div>
+    </div>`;
+}).join('');
 
     // Actualizar botón de siguiente etapa
     const btnPicking = document.getElementById('btn-ir-a-picking');
@@ -779,7 +870,7 @@ function agregarFilaProducto(codigo='', precio='', bin='') {
         <button type="button" onclick="this.parentElement.remove()" 
             class="col-span-1 text-slate-300 hover:text-red-500 transition-colors flex justify-center">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="6 18L18 6M6 6l12 12" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
         </button>
     `;
@@ -836,6 +927,7 @@ function guardarPedidoFormulario() {
     toggleForm(false);
     renderStep0();
 }
+
 
 
 
@@ -927,7 +1019,6 @@ function renderPicking() {
     validarPicking();
 }
 
-
 function validarPicking() { 
     playSound('scanner');
 
@@ -940,6 +1031,7 @@ function validarPicking() {
         ? "w-full mt-10 bg-blue-600 text-white font-black py-6 rounded-3xl" 
         : "w-full mt-10 bg-slate-200 text-slate-400 font-black py-6 rounded-3xl uppercase"; 
 }
+
 
 function renderChecklistCarga() {
     // 1. FILTRO: Solo pedidos pendientes
@@ -1085,6 +1177,12 @@ function renderStep2() {
         </div>`;
     }).join('');
 }
+
+
+
+
+
+
 
 
 
@@ -1297,6 +1395,8 @@ function recalcularTotalConsolidado() {
     });
 
     p.totalFinal = subtotal + p.envio;
+
+
     
     // Actualizamos el dinero
     document.getElementById('total-cobro-consolidado').innerText = `$${p.totalFinal.toLocaleString()}`;
@@ -1368,6 +1468,10 @@ function finalizarEntrega() {
     nextStep(pedidos.length === 0 ? 0 : 2);
 }
 
+
+
+
+
 function irAVerificacion() {
     const met = document.getElementById('metodo-pago').value; 
     if(!met) return alert("Selecciona método de pago antes de continuar");
@@ -1397,6 +1501,9 @@ function irAVerificacion() {
     nextStep(5);
 }
 
+
+
+
 function renderVerificacionDevoluciones(devoluciones) {
     const lista = document.getElementById('lista-verificacion-devoluciones');
     lista.innerHTML = devoluciones.map((it, idx) => `
@@ -1413,6 +1520,8 @@ function renderVerificacionDevoluciones(devoluciones) {
     `).join('');
 }
 
+
+
 function validarChecklistRetorno() {
     const todos = Array.from(document.querySelectorAll('.check-retorno')).every(c => c.checked);
     const btn = document.getElementById('btn-cerrar-ruta');
@@ -1421,6 +1530,7 @@ function validarChecklistRetorno() {
         ? "w-full bg-emerald-600 text-white font-black py-7 rounded-[2rem] shadow-xl text-lg uppercase animate-pulse" 
         : "w-full bg-slate-200 text-slate-400 font-black py-7 rounded-[2rem] text-lg uppercase";
 }
+
 
 function confirmarFinalTotal() {
     let p = pedidos.find(x => x.id == pActualID);
@@ -1440,11 +1550,106 @@ function confirmarFinalTotal() {
     pActualID = null;
     save();
 
-
     
     // Volvemos a la ruta o al inicio
-    nextStep(pedidos.length === 0 ? 0 : 2);
+    // NUEVO: Si no quedan pedidos, ir a step6 (verificación final de ruta)
+    nextStep(pedidos.length === 0 ? 6 : 2);
 }
+
+
+
+
+
+// NUEVO: Render para Verificación Final de Ruta (step6) - con letra del pedido
+function renderVerificacionFinalRuta() {
+    // 1. Calcular montos totales
+    let efec = 0, digi = 0;
+    historial.forEach(h => { 
+        if(h.estado === 'completado') { 
+            if(h.metodoPago === 'Efectivo') efec += h.totalFinal || 0; 
+            else digi += h.totalFinal || 0; 
+        } 
+    });
+    document.getElementById('total-efectivo-final').innerText = `$${efec.toLocaleString()}`;
+    document.getElementById('total-digital-final').innerText = `$${digi.toLocaleString()}`;
+
+    // 2. Recolectar todas las devoluciones con su letra de pedido
+    const devolucionesGlobales = [];
+    
+    historial.forEach(h => {
+        if (h.estado === 'completado' && h.devoluciones && h.devoluciones.length > 0) {
+            h.devoluciones.forEach(item => {
+                devolucionesGlobales.push({
+                    letra: h.letra || '?',
+                    codigo: item.desc,
+                    pedidoCliente: h.cliente || 'Sin nombre'
+                });
+            });
+        }
+    });
+
+    // 3. Renderizar lista
+    const lista = document.getElementById('lista-devoluciones-globales');
+    
+    if (devolucionesGlobales.length === 0) {
+        lista.innerHTML = '<p class="text-center text-slate-400 py-6 text-sm">No hay devoluciones en esta ruta</p>';
+    } else {
+        lista.innerHTML = devolucionesGlobales.map((dev, idx) => `
+            <label class="flex justify-between items-center bg-red-50 p-4 rounded-2xl border-2 border-transparent has-[:checked]:border-emerald-500 shadow-sm transition-all mb-3 cursor-pointer">
+                <div class="flex items-center gap-4 flex-1">
+                    <input type="checkbox" 
+                           class="w-6 h-6 check-global-dev appearance-none border-2 border-red-300 checked:bg-emerald-500 rounded-lg transition-all" 
+                           onchange="validarChecklistDevolucionesGlobales()">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="font-black text-xl text-red-700 w-8 h-8 flex items-center justify-center bg-red-100 rounded-full">
+                                ${dev.letra}
+                            </span>
+                            <p class="font-black text-red-800 uppercase text-base">${dev.codigo}</p>
+                        </div>
+                        <p class="text-[10px] text-red-600 mt-1">
+                            ${dev.pedidoCliente}
+                        </p>
+                    </div>
+                </div>
+                <span class="text-red-500 opacity-70">${ICONOS.caja}</span>
+            </label>
+        `).join('');
+    }
+
+    // 4. Validar botón
+    validarChecklistDevolucionesGlobales();
+}
+
+
+
+
+
+
+
+
+
+
+// NUEVO: Validar checkboxes de devoluciones globales
+function validarChecklistDevolucionesGlobales() {
+    const checks = document.querySelectorAll('.check-global-dev');
+    const todosMarcados = Array.from(checks).every(c => c.checked);
+    const btn = document.getElementById('btn-fin-ruta');
+    btn.disabled = !todosMarcados;
+    btn.className = todosMarcados 
+        ? "w-full bg-emerald-600 text-white font-black py-7 rounded-[2rem] shadow-xl text-lg uppercase animate-pulse" 
+        : "w-full bg-slate-300 text-white font-black py-7 rounded-[2rem] shadow-xl text-lg uppercase";
+}
+
+// NUEVO: Confirmar fin de ruta
+function confirmarFinRuta() {
+    if (confirm("¿Confirmar que los montos y devoluciones están correctos?")) {
+        alert("Ruta finalizada exitosamente. ¡Buen trabajo!");
+        // Opcional: Limpiar temporales o resetear variables si es necesario
+        nextStep(0); // Volver al inicio
+    }
+}
+
 
 
 function eliminarDelHistorial(id) {
@@ -1480,21 +1685,6 @@ function editarDesdeHistorial(id) {
     nextStep(1); 
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 function moverAlFinal() { let idx = pedidos.findIndex(x => x.id == pActualID); if (idx !== -1) { const p = pedidos.splice(idx, 1)[0]; pedidos.push(p); save(); pActualID = null; nextStep(2); } }
 function abrirPerfil(id) { pActualID = id; nextStep(3); }
 function cambiarEstado(est) { let p = pedidos.find(x => x.id == pActualID); if(p) p.estado = est; save(); renderStep3(); }
@@ -1502,10 +1692,6 @@ function cancelarPedido() { if(!confirm("¿Cancelar este pedido?")) return; let 
 
 // Variable global para controlar qué pestaña ver (puedes inicializarla en 0)
 let filtroHistorial = 'completado'; 
-
-
-
-
 
 
 function verHistorial(filtro = 'completado') {
@@ -1527,63 +1713,56 @@ function verHistorial(filtro = 'completado') {
         const itemsAMostrar = (h.estado === 'completado' && h.vendidos) ? h.vendidos : h.items;
         
         let prodHtml = itemsAMostrar.map(it => `
-            <div class="flex justify-between items-center text-[11px] mb-1">
-                <span class="text-slate-600 truncate mr-2">• ${it.desc}</span>
+            <div class="flex justify-between items-center text-[11px] mb-1 ">
+                <span class="text-slate-600 truncate mr-2 "> ${ICONOS.caja} ${it.desc}</span>
                 <span class="text-slate-400 font-mono flex-shrink-0">$${(it.precio || 0).toLocaleString()}</span>
             </div>
         `).join('');
 
-            let prodHtml2 = itemsAMostrar.map(it => `
-            <div class="flex justify-between items-center text-[11px] mb-1">
-                <span class="text-slate-600 truncate mr-2">• ${it.envio}</span>
-                <span class="text-slate-400 font-mono flex-shrink-0">$${(h.envio || 0).toLocaleString()}</span>
-            </div>
-        `).join('');
-
-
-            
+                       
         const monto = h.totalFinal || (h.items.reduce((acc, it) => acc + (it.precio || 0), 0) + (h.envio || 0));
         const mostrarMonto = h.estado !== 'cancelado';
 
         return `
-            <div class="bg-white p-4 rounded-2xl border border-slate-100 mb-3 shadow-sm relative">
+            <div class="bg-white p-2 rounded-2xl border border-slate-100 mb-1 shadow-sm relative">
                 <div class="flex justify-between items-start mb-2">
                     <div>
-                        <span class="px-2 py-0.5 rounded-full text-[8px] font-black uppercase ${colorE}">
+                        <span class="px-1 py-0.5 rounded-full text-[8px] font-black uppercase ${colorE}">
                             ${h.estado || 'Pendiente'} • ${h.fechaFinal || 'Hoy'} • ${h.hora || '--:--'}
                         </span>
                        <h4 class="font-bold uppercase mt-1 text-slate-800 flex items-center gap-1.5">
                             <span class="text-slate-500 w-3.5 h-3.5"></span>
+                            <span class="text-slate-500 w-3.5 h-3.5 flex items-center">${ICONOS.cliente}</span>
                             <span class="truncate">${h.cliente}</span>
                        </h4>
                     </div>
                     
                     <div class="flex gap-1">
-                        <button onclick="editarDesdeHistorial(${h.id})" class="p-2 bg-slate-50 text-blue-500 rounded-xl active:scale-90 transition-all shadow-sm">
+                        <button onclick="editarDesdeHistorial(${h.id})" class="p-1 bg-slate-50 text-blue-500 rounded-xl active:scale-90 transition-all shadow-sm">
                             ${ICON_EDIT}
                         </button>
-                        <button onclick="eliminarDelHistorial(${h.id})" class="p-2 bg-red-50 text-red-500 rounded-xl active:scale-90 transition-all shadow-sm">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>
+                        <button onclick="eliminarDelHistorial(${h.id})" class="p-1 bg-red-50 text-red-500 rounded-xl active:scale-90 transition-all shadow-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H5c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>
                         </button>
                     </div>
                 </div>
 
                 <p class="text-[12px] text-slate-500 mb-1">${ICONOS.mapa} ${h.direccion}</p>
-                <p class="text-[11px] text-slate-400 mb-2 italic px-2 border-l-2 border-slate-100">${h.detalles || 'Sin notas'}</p>
+                <p class="text-[12px] text-slate-500 mb-1">${ICONOS.telefono} ${h.telefono}</p>
+                <p class="text-[11px] text-slate-400 mb-1 italic px-1 border-l-2 border-slate-100">${h.detalles || 'Sin notas'}</p>
 
-                <div class="my-3 py-2 border-y border-slate-50">
+                <div class="my-1 py-1 border-y border-slate-50">
                     ${prodHtml}
+
                 </div>
 
-                <div class="my-3 py-2 border-y border-slate-50">
-                    ${prodHtml2}
+               <div class="text-slate-400 font-mono flex-shrink-0">
+                    Envio :                        ${h.envio}
                 </div>
 
 
-
-
-                <div class="flex justify-between items-center mt-2">
-                    <span class="text-[9px] text-slate-500 font-bold uppercase tracking-tighter">${h.metodoPago || 'EFECTIVO'}</span>
+                <div class="flex justify-between items-center mt-1">
+                    <span class="text-[9px] text-slate-500 font-bold uppercase tracking-tighter">${h.metodoPago || 'sin Registrar'}</span>
                     ${mostrarMonto ? `<span class="font-black text-emerald-600 text-sm">$${monto.toLocaleString()}</span>` : '<span class="text-red-400 font-bold text-[10px] uppercase">Cancelado</span>'}
                 </div>
             </div>`;
@@ -1617,14 +1796,6 @@ function verHistorial(filtro = 'completado') {
 
     nextStep(7);
 }
-
-
-
-
-
-
-
-
 
 
 //FUNCION : EXPORTAR A SHEETS
@@ -1672,6 +1843,10 @@ function actualizarArqueoHeader() {
     document.getElementById('h-efectivo').innerText = `EFECTIVO $${efec.toLocaleString()}`;
     document.getElementById('h-digital').innerText = `Digital $${digi.toLocaleString()}`;
 }
+
+
+
+
 function cerrarHistorial() { nextStep(pedidos.length > 0 ? 2 : 0); }
 function resetFormulario() { document.getElementById('f-edit-id').value = ""; document.getElementById('f-nombre').value = ""; document.getElementById('f-direccion').value = ""; document.getElementById('f-telefono').value = ""; document.getElementById('f-envio').value = "";  document.getElementById('f-total').value = ""  ;document.getElementById('f-detalles').value = "";document.getElementById('contenedor-productos').innerHTML = ""; agregarFilaProducto(); }
 function eliminarPedido(id) { if(confirm("¿Eliminar?")) { pedidos = pedidos.filter(x => x.id != id); save(); renderStep0(); } }
@@ -1839,9 +2014,6 @@ function validarContinuar(id) {
     cambiarEstado('en-camino');
 }
 
-
-
-
 // FUNCION: VENTA RAPIDA
 
 // Abrir el modal y limpiar campos
@@ -1906,8 +2078,6 @@ function calcularTotalAutomatico() {
     document.getElementById('f-total').value = sumaPrecios + envio;
 }
 
-
-
 //FUNCION: fORMULARIO
 
 function guardarPedidoFormulario() {
@@ -1961,12 +2131,7 @@ function guardarPedidoFormulario() {
     // Limpiar campos específicos
     document.getElementById('f-detalles').value = "";
     document.getElementById('f-total').value = "";
-   
-
 }
-
-
-
 
 // Alternar visibilidad del formulario
 function toggleForm(show = true) {
@@ -1974,22 +2139,6 @@ function toggleForm(show = true) {
     formContainer.classList.toggle('hidden', !show);
     if (!show) resetFormulario();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 //Boton Flotante
 function toggleForm(show) {
@@ -2004,8 +2153,6 @@ function toggleForm(show) {
         btnFlotante?.classList.remove('hidden'); // Mostrar al cerrar form
     }
 }
-
-
 
 function actualizarVisibilidadBotonFlotante(stepActual) {
     const btnFlotante = document.getElementById('contenedor-boton-flotante');
@@ -2022,9 +2169,6 @@ function actualizarVisibilidadBotonFlotante(stepActual) {
     }
 }
 
-
-
-
 function actualizarBotonFlotante(n) {
     const btnContainer = document.getElementById('contenedor-boton-flotante');
     if (!btnContainer) return;
@@ -2040,12 +2184,7 @@ function actualizarBotonFlotante(n) {
     }
 }
 
-
-
-
 </script>
-
-
 
 </body>
 </html>
