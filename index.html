@@ -47,10 +47,10 @@
     <div class="max-w-xl mx-auto flex justify-between items-center">
         
         <div class="flex items-center gap-2">
-            <h1 class="font-black text-blue-400 text-[16px] tracking-tighter">Pedidos</h1>
+            <h1 class="font-black text-blue-400 text-[18px] tracking-tighter">Pedidos</h1>
             <button onclick="sincronizarPedidosDesdeSheets(event)" 
-                class="flex items-center p-1 rounded-full text-slate-500    borde-none hover:text-emerald-500 p-1.5 rounded-lg transition-colors" title="Sincronizar">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 group-active:animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                class="flex items-center p-1  text-slate-500    borde-none hover:text-emerald-500 p-1.5 rounded transition-colors" title="Sincronizar">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 group-active:animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                 </svg>
             </button>
@@ -65,7 +65,7 @@
             <button id="btn-ir-a-picking" onclick="nextStep(0.5)" 
         class="hidden text-slate-500 hover:bg-blue-50 p-1.5 rounded-lg transition-colors relative" 
         title="Iniciar Picking">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
             <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
         <span class="absolute top-1 right-1 flex h-2 w-2">
@@ -83,16 +83,25 @@
                 </button>
                 
                 <button onclick="verHistorial()" class="text-slate-600 hover:text-blue-500 p-2 rounded-lg transition-colors">
-                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
                 </button>
 
                 <button onclick="limpiarTodo()" class="text-slate-600 hover:text-red-500 p-1.5 rounded-lg transition-colors">
-                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                     </svg>
                 </button>
+
+                <!-- NUEVO: Botón para Inventario -->
+                <button onclick="fetchInventory(); nextStep('inventory')" class="text-slate-600 hover:text-indigo-500 p-2 rounded-lg transition-colors" title="Inventario">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h12a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM4 10h16M4 14h16M4 18h16" />
+                    </svg>
+                </button>
+
+
             </div>
         </div>
         
@@ -264,15 +273,15 @@
     <section id="step3" class="step">
         <div id="cliente-perfil" class="space-y-4"></div>
         <div class="grid grid-cols-2 gap-2 mb-4">
-            <button onclick="llamar()" class="bg-blue-500 text-white py-4 rounded-2xl font-black flex flex-col items-center"><span><svg class="w-4 h-4 inline-block mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg></span><span class="text-[10px]">LLAMAR</span></button>
-            <button onclick="abrirMapa()" class="bg-indigo-500 text-white py-4 rounded-2xl font-black flex flex-col items-center"><span><svg class="w-4 h-4 inline-block mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg></span><span class="text-[10px]">MAPA</span></button>
+            <button onclick="llamar()" class="bg-blue-100 text-blue-500 py-4 rounded-2xl font-black flex flex-col items-center"><span><svg class="w-4 h-4 inline-block mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg></span><span class="text-[10px]">LLAMAR</span></button>
+            <button onclick="abrirMapa()" class="bg-indigo-100 text-indigo-500 py-4 rounded-2xl font-black flex flex-col items-center"><span><svg class="w-4 h-4 inline-block mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg></span><span class="text-[10px]">MAPA</span></button>
         </div>
         <div id="controles-flujo" class="space-y-3"></div>
         <div class="mt-4 flex justify">
-            <button onclick="moverAlFinal()" class="bg-slate-900 text-slate-100 px-4 py-2 rounded-xl font-black text-[9px] uppercase">al final</button>
+            <button onclick="moverAlFinal()" class="bg-slate-200 text-slate-400 px-4 py-2 rounded-xl font-black text-[9px] uppercase">Enviar al final de Ruta</button>
         </div>
         <div class="mt-6 flex justify-">
-            <button onclick="cancelarPedido()" class="bg-rose-100 text-red-500  px-4 py-2 rounded-xl  font-bold text-[14px] uppercase tracking-tighter opacity-60"><svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>
+            <button onclick="cancelarPedido()" class="bg-slate-200 text-slate-500  px-4 py-2 rounded-xl  font-bold text-[14px] uppercase tracking-tighter opacity-60"><svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>
         </div>
     </section>
 
@@ -380,6 +389,72 @@
     </div>
     
     
+<!-- Conteo manual de efectivo - versión compacta -->
+<div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 mb-6">
+    <h3 class="text-[11px] font-black text-slate-600 uppercase mb-3 tracking-wider">Conteo real efectivo</h3>
+    
+    <div class="grid grid-cols-3 gap-3 mb-4">
+        <!-- $20.000 -->
+        <div class="text-center">
+            <div class="text-[10px] font-bold text-slate-700 mb-1">$20.000</div>
+            <input type="number" min="0" id="billete-20000" placeholder="0" 
+                   class="w-full bg-slate-50 border border-slate-200 rounded-lg py-2 px-2 text-center text-base font-semibold focus:ring-1 focus:ring-emerald-500 focus:border-emerald-400" 
+                   oninput="calcularEfectivoContado()">
+        </div>
+        
+        <!-- $10.000 -->
+        <div class="text-center">
+            <div class="text-[10px] font-bold text-slate-700 mb-1">$10.000</div>
+            <input type="number" min="0" id="billete-10000" placeholder="0" 
+                   class="w-full bg-slate-50 border border-slate-200 rounded-lg py-2 px-2 text-center text-base font-semibold focus:ring-1 focus:ring-emerald-500 focus:border-emerald-400" 
+                   oninput="calcularEfectivoContado()">
+        </div>
+        
+        <!-- $5.000 -->
+        <div class="text-center">
+            <div class="text-[10px] font-bold text-slate-700 mb-1">$5.000</div>
+            <input type="number" min="0" id="billete-5000" placeholder="0" 
+                   class="w-full bg-slate-50 border border-slate-200 rounded-lg py-2 px-2 text-center text-base font-semibold focus:ring-1 focus:ring-emerald-500 focus:border-emerald-400" 
+                   oninput="calcularEfectivoContado()">
+        </div>
+        
+        <!-- $2.000 -->
+        <div class="text-center">
+            <div class="text-[10px] font-bold text-slate-700 mb-1">$2.000</div>
+            <input type="number" min="0" id="billete-2000" placeholder="0" 
+                   class="w-full bg-slate-50 border border-slate-200 rounded-lg py-2 px-2 text-center text-base font-semibold focus:ring-1 focus:ring-emerald-500 focus:border-emerald-400" 
+                   oninput="calcularEfectivoContado()">
+        </div>
+        
+        <!-- $1.000 -->
+        <div class="text-center">
+            <div class="text-[10px] font-bold text-slate-700 mb-1">$1.000</div>
+            <input type="number" min="0" id="billete-1000" placeholder="0" 
+                   class="w-full bg-slate-50 border border-slate-200 rounded-lg py-2 px-2 text-center text-base font-semibold focus:ring-1 focus:ring-emerald-500 focus:border-emerald-400" 
+                   oninput="calcularEfectivoContado()">
+        </div>
+        
+        <!-- $500 -->
+        <div class="text-center">
+            <div class="text-[10px] font-bold text-slate-700 mb-1">$500</div>
+            <input type="number" min="0" id="moneda-500" placeholder="0" 
+                   class="w-full bg-slate-50 border border-slate-200 rounded-lg py-2 px-2 text-center text-base font-semibold focus:ring-1 focus:ring-emerald-500 focus:border-emerald-400" 
+                   oninput="calcularEfectivoContado()">
+        </div>
+    </div>
+
+    <!-- Resultado compacto -->
+    <div class="bg-emerald-50/70 rounded-xl p-3.5 text-center border border-emerald-100">
+        <p class="text-[11px] font-medium text-emerald-700 mb-0.5">Total contado</p>
+        <p id="total-contado-efectivo" class="text-2xl font-black text-emerald-800">$0</p>
+    </div>
+
+    <!-- Diferencia -->
+    <div id="diferencia-arqueo" class="mt-3 text-center text-[13px] font-medium min-h-[1.5rem]"></div>
+</div>
+
+
+
     
     <!-- Lista de devoluciones globales -->
    
@@ -438,6 +513,70 @@
 
 
 
+<!-- SECCIÓN INVENTARIO - Estilo Google Sheets -->
+<section id="step_inventory" class="step">
+    <div class="flex items-center justify-between mb-4">
+        <h2 class="text-[18px] font-black text-indigo-600">Inventario Actual</h2>
+        <button onclick="fetchInventory()" class="text-sm text-indigo-600 hover:text-indigo-800 font-medium flex items-center gap-1">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+            Actualizar
+        </button>
+    </div>
+
+    <!-- Búsqueda rápida -->
+    <div class="mb-3">
+        <input type="text" id="search-inventory" placeholder="Buscar por código o BIN..." 
+               class="w-full form-input text-sm py-2.5 px-3 border-slate-300 focus:border-indigo-500 focus:ring-indigo-200"
+               oninput="filtrarInventario(this.value)">
+    </div>
+
+    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden max-h-[40vh] overflow-y-auto">
+        <table class="min-w-full divide-y divide-slate-200  table-fixed">
+            <thead class="bg-slate-50 sticky top-0 z-5">
+                <tr class="text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                    <th class="w-24 px-10 py-3">Código</th>
+                    <th class="w-20 px-3 py-3">Bin</th>
+                    <th class="w-16 px-2 py-3 text-center">E</th>
+                    <th class="w-16 px-2 py-3 text-center">S</th>
+                    <th class="w-16 px-2 py-3 text-center font-bold">Stck</th>
+                    <th class="w-16 px-2 py-3 text-center text-blue-700">ruta</th>
+                    <th class="w-20 px-2 py-3 text-center font-bold text-emerald-700">Disp</th>
+                    <th class="w-16 px-3 py-3 text-center">Foto</th>
+                </tr>
+            </thead>
+            <tbody id="inventory-table-body" class="bg-white divide-y divide-slate-100 text-sm">
+                <tr><td colspan="8" class="text-center py-10 text-slate-400">Cargando inventario...</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <p class="text-xs text-slate-500 mt-3 text-center italic">
+        Datos desde Google Sheets • <span id="inventory-last-update">actualizado ahora</span>
+    </p>
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 </main>
 
@@ -463,7 +602,7 @@
 
 <script>
 //--- CONFIGURACIÓN DE LINKS DE GOOGLE SHEETS ---
-const URL_PRODUCTOS_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQxmMtrLlKEH1uQUNmUvQxXUmFJQNQc46rwfOpKMNzJytrGDRxyMjo_S2DhQIDJmXTv1o6G2fvZQZgi/pubhtml?gid=1794389307&single=true_AQUÍ";
+const URL_PRODUCTOS_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQxmMtrLlKEH1uQUNmUvQxXUmFJQNQc46rwfOpKMNzJytrGDRxyMjo_S2DhQIDJmXTv1o6G2fvZQZgi/pub?gid=441262518&single=true&output=csv";
 const URL_PEDIDOS_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQxmMtrLlKEH1uQUNmUvQxXUmFJQNQc46rwfOpKMNzJytrGDRxyMjo_S2DhQIDJmXTv1o6G2fvZQZgi/pub?gid=271238087&single=true&output=csv";
 
 
@@ -602,53 +741,99 @@ function retroceder() {
     else if (currentStep === 2) nextStep(1);
     else if (currentStep === 3) nextStep(2);
     else if (currentStep === 4) nextStep(3);
-    else if (currentStep === 5) nextStep(4); // <--- ESTA ES LA LÍNEA QUE FALTABA
-    else if (currentStep === 6) nextStep(2); // NUEVO: Retroceder desde step6
+    else if (currentStep === 5) nextStep(4);
+    else if (currentStep === 6) nextStep(2);           // Retrocede de step6
+    else if (currentStep === 'inventory') nextStep(0); // Retrocede de inventario a inicio
+    else if (currentStep === 7) cerrarHistorial();
+}
+
+
+function retroceder() {
+    if (currentStep === 0.5) nextStep(0);
+    else if (currentStep === 1) nextStep(0.5);
+    else if (currentStep === 2) nextStep(1);
+    else if (currentStep === 3) nextStep(2);
+    else if (currentStep === 4) nextStep(3);
+    else if (currentStep === 5) nextStep(4);
+    else if (currentStep === 6) nextStep(2);           // Retrocede de step6
+    else if (currentStep === 'inventory') nextStep(0); // Retrocede de inventario a inicio
     else if (currentStep === 7) cerrarHistorial();
 }
 
 function nextStep(n) {
-    currentStep = n; 
+    currentStep = n;
     save();
-    
-    // Gestión de clases active
+
+    // Ocultar todas las secciones
     document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
-    const stepEl = document.getElementById(n === 0.5 ? 'step_picking' : `step${n}`);
-    if(stepEl) stepEl.classList.add('active');
-    
-    // Visibilidad del Header
-    document.getElementById('main-header').style.display = (n === 0) ? 'block' : 'none';
-    
-    // Control de botones de navegación (Volver y Home)
+
+    // Determinar el ID de la sección según el tipo de n
+    let stepId;
+    if (n === 0.5) {
+        stepId = 'step_picking';
+    } else if (typeof n === 'string') {
+        stepId = `step_${n}`;          // ej: step_inventory
+    } else {
+        stepId = `step${n}`;           // ej: step0, step2, step6
+    }
+
+    const stepEl = document.getElementById(stepId);
+    if (stepEl) {
+        stepEl.classList.add('active');
+    } else {
+        console.error(`No se encontró la sección con ID: ${stepId}`);
+        // Fallback: volver al inicio si falla
+        currentStep = 0;
+        document.getElementById('step0').classList.add('active');
+    }
+
+    // Visibilidad del header (mostrar en inicio e inventario)
+    const header = document.getElementById('main-header');
+    header.style.display = (n === 0 || n === 'inventory') ? 'block' : 'none';
+
+    // Botones de navegación (volver y home)
     const backBtn = document.getElementById('global-back-btn');
-    const homeBtn = document.getElementById('btn-inicio-home'); // Nuevo botón
-    
-    if(n === 0) {
+    const homeBtn = document.getElementById('btn-inicio-home');
+
+    if (n === 0) {
         backBtn.classList.add('hidden');
-        if(homeBtn) homeBtn.classList.add('hidden');
+        if (homeBtn) homeBtn.classList.add('hidden');
     } else {
         backBtn.classList.remove('hidden');
-        if(homeBtn) homeBtn.classList.remove('hidden');
+        if (homeBtn) homeBtn.classList.remove('hidden');
     }
-    
-    // Al cambiar de vista (n es el número de la etapa)
-actualizarBotonFlotante(n);
-    // Renderizado de vistas
-    if(n === 0) renderStep0();
-    if(n === 0.5) renderPicking();
-    if(n === 1) renderChecklistCarga();
-    if(n === 2) renderStep2();
-    if(n === 3) renderStep3();
-    if(n === 4) renderVistaUnificada();
-    if(n === 5) {
-        let p = pedidos.find(x => x.id == pActualID);
-        if(p && p.temp_devoluciones) renderVerificacionDevoluciones(p.temp_devoluciones);
+
+    // Render específico según la sección
+    if (n === 0) renderStep0();
+    if (n === 0.5) renderPicking();
+    if (n === 1) renderChecklistCarga(); // Si tienes esta función
+    if (n === 2) renderStep2();
+    if (n === 3) renderStep3();
+    if (n === 4) renderVistaUnificada();
+    if (n === 5) {
+        const p = pedidos.find(x => x.id == pActualID);
+        if (p && p.temp_devoluciones) renderVerificacionDevoluciones(p.temp_devoluciones);
     }
-    // NUEVO: Render para step6
-    if(n === 6) renderVerificacionFinalRuta();
+    if (n === 6) renderVerificacionFinalRuta();
     
-    window.scrollTo(0,0);
+    // NUEVO: Para inventario → cargar datos automáticamente al entrar
+    if (n === 'inventory') {
+        fetchInventory(); // Esto ya renderiza la tabla dentro de la función
+    }
+
+    actualizarBotonFlotante(n);
+    window.scrollTo(0, 0);
 }
+
+
+
+
+
+
+
+
+
+
 
 // Función auxiliar para el botón Home
 function irAlInicio() {
@@ -657,7 +842,126 @@ function irAlInicio() {
     }
 }
 
+
+
+
+
 function toggleMasivo() { document.getElementById('area-masiva').classList.toggle('hidden'); }
+
+
+
+
+// NUEVO: Función para fetch de inventario desde Sheets (similar a sincronizarPedidos)
+async function fetchInventory() {
+    const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQxmMtrLlKEH1uQUNmUvQxXUmFJQNQc46rwfOpKMNzJytrGDRxyMjo_S2DhQIDJmXTv1o6G2fvZQZgi/pub?gid=441262518&single=true&output=csv";
+    
+    try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error(`Error HTTP ${response.status}`);
+        
+        const text = await response.text();
+        const rows = text.split('\n').map(row => row.split(','));
+        
+        // Saltamos la fila de encabezados (fila 0)
+        const inventoryData = rows.slice(1).map(cols => {
+            // Aseguramos que haya suficientes columnas
+            if (cols.length < 11) return null;
+            
+            return {
+                codigo:     (cols[2] || '').trim(),     // C
+                bin:        (cols[3] || '').trim(),     // D
+                entradas:   parseInt(cols[5]) || 0,     // F
+                salidas:    parseInt(cols[6]) || 0,     // G
+                stock:      parseInt(cols[7]) || 0,     // H
+                enRuta:     parseInt(cols[8]) || 0,     // I
+                disponibles:parseInt(cols[9]) || 0,     // J
+                foto:       parseInt(cols[10])|| 0,     // K
+            };
+        }).filter(item => item && item.codigo); // Filtrar filas vacías o sin código
+        
+        console.log('Datos de inventario cargados:', inventoryData.length, 'productos');
+        
+        renderInventory(inventoryData);
+    } catch (e) {
+        console.error('Error al cargar inventario:', e);
+        const tableBody = document.getElementById('inventory-table-body');
+        if (tableBody) {
+            tableBody.innerHTML = `<tr><td colspan="8" class="text-center text-red-600 py-6 font-medium">
+                No se pudo cargar el inventario<br>
+                <span class="text-xs text-slate-500">Revisa la consola (F12) o verifica que el Sheets esté publicado como CSV</span>
+            </td></tr>`;
+        }
+    }
+}
+
+
+
+// NUEVO: Render de la tabla de inventario
+function renderInventory(data = []) {
+    const tableBody = document.getElementById('inventory-table-body');
+    tableBody.innerHTML = '';
+    
+    if (data.length === 0) {
+        tableBody.innerHTML = '<tr><td colspan="8" class="text-center text-slate-400 py-4">No hay datos de inventario</td></tr>';
+        return;
+    }
+    
+    data.forEach(item => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td class="px-3 py-2 text-xs font-medium text-slate-700">${item.codigo}</td>
+            <td class="px-3 py-2 text-xs text-slate-600">${item.bin}</td>
+            <td class="px-3 py-2 text-xs text-emerald-600">${item.entradas}</td>
+            <td class="px-3 py-2 text-xs text-red-600">${item.salidas}</td>
+            <td class="px-3 py-2 text-xs font-bold text-slate-800">${item.stock}</td>
+            <td class="px-3 py-2 text-xs text-blue-600">${item.enRuta}</td>
+            <td class="px-3 py-2 text-xs font-bold text-emerald-700">${item.disponibles}</td>
+            <td class="px-3 py-2 text-xs ">${item.foto}</td>
+        `;
+        tableBody.appendChild(row);
+    });
+}
+
+
+
+// Filtrar tabla en tiempo real (búsqueda por código o BIN)
+function filtrarInventario(texto) {
+    texto = texto.toLowerCase().trim();
+    const filas = document.querySelectorAll('#inventory-table-body tr');
+    
+    filas.forEach(fila => {
+        if (fila.cells.length < 2) return; // Saltar fila de "cargando"
+        
+        const codigo = fila.cells[0]?.textContent.toLowerCase() || '';
+        const bin    = fila.cells[1]?.textContent.toLowerCase() || '';
+        
+        if (codigo.includes(texto) || bin.includes(texto)) {
+            fila.style.display = '';
+        } else {
+            fila.style.display = 'none';
+        }
+    });
+}
+
+// Actualizar fecha de última carga (opcional)
+function actualizarFechaInventario() {
+    const el = document.getElementById('inventory-last-update');
+    if (el) el.textContent = new Date().toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' });
+}
+
+// Llamar después de renderizar
+// Dentro de renderInventory(data), al final agrega:
+actualizarFechaInventario();
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -845,15 +1149,15 @@ function agregarFilaProducto(codigo='', precio='', bin='') {
     
     div.innerHTML = `
         <input type="text" placeholder="Código" 
-            class="f-codigo form-input !bg-white !p-1.5 uppercase col-span-5 text-[9px] border-slate-100" 
+            class="f-codigo form-input !bg-white !p-1.5 uppercase col-span-5 text-[10px] border-slate-100" 
             value="${codigo}">
         
         <input type="number" placeholder="Precio" 
-            class="f-precio form-input !bg-white !p-1.5 col-span-3 text-[9px] border-slate-100" 
+            class="f-precio form-input !bg-white !p-1.5 col-span-3 text-[10px] border-slate-100" 
             value="${precio}">
         
         <input type="text" placeholder="BIN" 
-            class="f-bin form-input !bg-white !p-1.5 uppercase col-span-3 text-[9px] border-slate-100" 
+            class="f-bin form-input !bg-white !p-1.5 uppercase col-span-3 text-[10px] border-slate-100" 
             value="${bin}">
         
         <button type="button" onclick="this.parentElement.remove()" 
@@ -1202,16 +1506,21 @@ function renderStep3() {
                 <h2 class="text-3xl font-black leading-tight mb-2 tracking-tighter text-slate-900">${p.cliente}</h2>
                 
                 <div class="w-full space-y-3">
-                    <p class="text-[15px] font-bold text-slate-500 flex items-center justify-center gap-1">
-                        <span class="text-blue-500 scale-110">${ICONOS.mapa}</span> ${p.direccion}
-                    </p>
+    <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.direccion)}" 
+       target="_blank" 
+       rel="noopener noreferrer"
+       class="text-[15px] font-bold text-slate-500 flex items-center justify-center gap-1 hover:text-blue-600 transition-colors cursor-pointer active:scale-95">
+        <span class="text-blue-500 scale-110">${ICONOS.mapa}</span> 
+        ${p.direccion}
+    </a>
+</div>
                     
                     <a href="tel:${p.telefono}" onclick="registrarLlamada(${p.id})" 
                        class="flex items-center justify-center gap-3 w-full py-4 rounded-2xl border-2 transition-all active:scale-95 ${p.llamado ? 'bg-green-50 border-green-200 text-green-700' : 'bg-slate-50 border-slate-100 text-slate-600'}">
                         <span class="${p.llamado ? 'text-green-600' : 'text-green-500'} animate-pulse">${iconPhone}</span>
                         <div class="text-left">
                             <span class="block font-black text-lg leading-none">${p.telefono || 'SIN TELÉFONO'}</span>
-                            ${p.llamado ? '<span class="text-[10px] font-bold uppercase opacity-70">Llamada Registrada</span>' : '<span class="text-[10px] font-bold uppercase opacity-50">Toca para llamar</span>'}
+                            ${p.llamado ? '<span class="text-[10px] font-bold uppercase opacity-70">Llamada Registrada</span>' : '<span class="text-[9px] font-bold uppercase opacity-50">Toca para llamar</span>'}
                         </div>
                     </a>
                 </div>
@@ -1233,8 +1542,8 @@ function renderStep3() {
             </div>
             
             ${p.detalles ? `
-                <div class="mt-4 p-3 bg-amber-50 rounded-2xl border border-amber-100 text-[11px] text-amber-800 font-bold flex gap-2 italic">
-                    <span class="not-italic">⚠️</span> ${p.detalles}
+                <div class="mt-4 p-3 bg-slate-100 rounded-2xl border border-slate-100 text-[10px] text-slate-500  flex gap-2 italic">
+                    <span class="not-italic font-bold">Nota:</span> ${p.detalles}
                 </div>
             ` : ''}
         </div>`;
@@ -1247,9 +1556,9 @@ function renderStep3() {
         : `<button onclick="nextStep(4)" class="w-full bg-emerald-500 text-white font-black py-6 rounded-3xl shadow-xl uppercase text-xl animate-bounce">Entregar Pedido</button>`;
 
     ctrl.innerHTML = `
-        <div class="flex flex-col gap-4">
+        <div class="flex flex-col gap-2">
             ${btnPrincipal}
-            <button onclick="nextStep(2)" class="text-slate-400 font-bold text-sm uppercase tracking-widest">Volver a la ruta</button>
+            <button onclick="nextStep(2)" class="text-slate-400 font-bold text-xs uppercase tracking-widest">Volver a la ruta</button>
         </div>
     `;
 }
@@ -1697,6 +2006,11 @@ lista.innerHTML = devolucionesGlobales.map((dev, idx) => {
 
     // 4. Validar botón
     validarChecklistDevolucionesGlobales();
+
+
+    // Al final de renderVerificacionFinalRuta()
+calcularEfectivoContado();  // Inicializa la comparación
+
 }
 
 
@@ -2318,6 +2632,73 @@ function mostrarFondoInicialSiEsNecesario() {
         nextStep(1);
     }
 }
+
+
+
+//NUEVO 26-02-26
+
+
+function calcularEfectivoContado() {
+    const billetes = {
+        20000: parseInt(document.getElementById('billete-20000')?.value) || 0,
+        10000: parseInt(document.getElementById('billete-10000')?.value) || 0,
+        5000:  parseInt(document.getElementById('billete-5000')?.value)  || 0,
+        2000:  parseInt(document.getElementById('billete-2000')?.value)  || 0,
+        1000:  parseInt(document.getElementById('billete-1000')?.value)  || 0
+    };
+
+    const monedas = {
+        500: parseInt(document.getElementById('moneda-500')?.value) || 0
+    };
+
+    // Calcular total
+    let total = 0;
+    Object.entries(billetes).forEach(([denom, cant]) => {
+        total += cant * parseInt(denom);
+    });
+    Object.entries(monedas).forEach(([denom, cant]) => {
+        total += cant * parseInt(denom);
+    });
+
+    // Mostrar total
+    const totalEl = document.getElementById('total-contado-efectivo');
+    totalEl.textContent = `$${total.toLocaleString('es-CL')}`;
+
+    // Comparar con esperado (debe estar calculado antes en renderVerificacionFinalRuta)
+    const esperado = (fondoInicial.efectivo || 0) + (cobradoEfectivo || 0); // variables que ya calculas
+
+    const diferencia = total - esperado;
+    const diffEl = document.getElementById('diferencia-arqueo');
+
+    if (diferencia === 0) {
+        diffEl.innerHTML = `<span class="text-emerald-600 font-bold">✓ Cuadra perfecto</span>`;
+        diffEl.className = "mt-4 text-center text-sm font-medium text-emerald-600";
+    } else if (diferencia > 0) {
+        diffEl.innerHTML = `<span class="text-amber-600 font-bold">Sobra +$${Math.abs(diferencia).toLocaleString('es-CL')}</span>`;
+        diffEl.className = "mt-4 text-center text-sm font-medium text-amber-600";
+    } else {
+        diffEl.innerHTML = `<span class="text-red-600 font-bold">Falta $${Math.abs(diferencia).toLocaleString('es-CL')}</span>`;
+        diffEl.className = "mt-4 text-center text-sm font-medium text-red-600";
+    }
+
+    // Opcional: cambiar color del total según diferencia
+    if (diferencia === 0) {
+        totalEl.className = "text-3xl font-black text-emerald-800";
+    } else if (diferencia > 0) {
+        totalEl.className = "text-3xl font-black text-amber-700";
+    } else {
+        totalEl.className = "text-3xl font-black text-red-700";
+    }
+}
+
+
+
+
+
+
+
+
+
 
 
 
