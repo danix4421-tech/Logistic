@@ -513,53 +513,65 @@
 
 
 
-<!-- SECCIÓN INVENTARIO - Estilo Google Sheets -->
+
+
 <section id="step_inventory" class="step">
     <div class="flex items-center justify-between mb-4">
-        <h2 class="text-[18px] font-black text-indigo-600">Inventario Actual</h2>
-        <button onclick="fetchInventory()" class="text-sm text-indigo-600 hover:text-indigo-800 font-medium flex items-center gap-1">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
-            Actualizar
-        </button>
+        <h2 class="text-base font-black text-indigo-700">Inventario</h2>
+        
+        <!-- Toggle entre vistas -->
+        <div class="flex bg-slate-100 rounded-xl p-1 text-xs font-medium">
+            <button onclick="switchInventoryView('table')" id="btn-view-table"
+                    class="px-5 py-1.5 rounded-xl transition-all active-view">Tabla</button>
+            <button onclick="switchInventoryView('gallery')" id="btn-view-gallery"
+                    class="px-5 py-1.5 rounded-xl transition-all">Galería Fotos</button>
+        </div>
     </div>
 
-    <!-- Búsqueda rápida -->
-    <div class="mb-3">
-        <input type="text" id="search-inventory" placeholder="Buscar por código o BIN..." 
-               class="w-full form-input text-sm py-2.5 px-3 border-slate-300 focus:border-indigo-500 focus:ring-indigo-200"
-               oninput="filtrarInventario(this.value)">
-    </div>
+    <!-- Búsqueda -->
+    <input type="text" id="search-inventory" placeholder="Buscar código..." 
+           class="w-full mb-4 px-4 py-3 text-sm border border-slate-300 rounded-2xl focus:border-indigo-500 outline-none"
+           oninput="filtrarInventario()">
 
-    <div class="bg-white rounded-xl shadow-sm border border-slate-300 overflow-hidden max-h-[60vh] overflow-y-auto">
-        <table class="min-w-full divide-y divide-slate-300  table-fixed">
-            <thead class="bg-slate-50 sticky top-0 z-5">
+
+
+    <!-- VISTA TABLA (la que ya tenías) -->
+    <div id="view-table" class="block">
+        <!-- Tu tabla actual aquí (mantén la que ya tienes) -->
+        <div class="overflow-x-auto ..."> ..
+            
+            <table class="min-w-full divide-y divide-slate-200 table-fixed">
+            <thead class="bg-slate-50 sticky top-0 z-10">
                 <tr class="text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
-                    <th class="w-24 px-10 py-3">Código</th>
-                    <th class="w-16 px-2 py-3">Bin</th>
-                    <th class="w-16 px-2 py-3 text-center hidden">E</th>
-                    <th class="w-16 px-2 py-3 text-center hidden">S</th>
-                    <th class="w-16 px-2 py-3 text-center font-bold hidden">St</th>
-                    <th class="w-16 px-2 py-3 text-center text-purple-700">ruta</th>
-                    <th class="w-16 px-2 py-3 text-center font-bold text-emerald-700">Disp</th>
-                    <th class="w-16 px-2 py-3 text-center hidden">Ft</th>
+                    <th class="w-24 px-3 py-3">Código</th>
+                    <th class="w-20 px-3 py-3">Bin</th>
+                    <th class="w-16 px-2 py-3 text-center">Entradas</th>
+                    <th class="w-16 px-2 py-3 text-center">Salidas</th>
+                    <th class="w-16 px-2 py-3 text-center font-bold">Stock</th>
+                    <th class="w-16 px-2 py-3 text-center text-blue-700">En ruta</th>
+                    <th class="w-20 px-2 py-3 text-center font-bold text-emerald-700">Disponible</th>
+                    <th class="w-16 px-3 py-3 text-center">Foto</th>
                 </tr>
             </thead>
             <tbody id="inventory-table-body" class="bg-white divide-y divide-slate-100 text-sm">
                 <tr><td colspan="8" class="text-center py-10 text-slate-400">Cargando inventario...</td></tr>
             </tbody>
         </table>
+            
+            . </div>
     </div>
 
-    <p class="text-xs text-slate-500 mt-3 text-center italic">
-        Datos desde Google Sheets • <span id="inventory-last-update">actualizado ahora</span>
-    </p>
+
+
+
+    <!-- NUEVA VISTA GALERÍA -->
+    <div id="view-gallery" class="hidden">
+        <div id="gallery-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+            <!-- Las tarjetas se generan con JS -->
+             
+        </div>
+    </div>
 </section>
-
-
-
-
-
-
 
 
 
@@ -827,14 +839,6 @@ function nextStep(n) {
 
 
 
-
-
-
-
-
-
-
-
 // Función auxiliar para el botón Home
 function irAlInicio() {
     if(confirm("¿Volver a la pantalla principal?")) {
@@ -844,9 +848,158 @@ function irAlInicio() {
 
 
 
-
-
 function toggleMasivo() { document.getElementById('area-masiva').classList.toggle('hidden'); }
+
+
+
+
+
+
+let currentInventoryView = 'table';
+let inventoryDataGlobal = []; // Guardamos los datos para no volver a fetch
+
+function switchInventoryView(view) {
+    currentInventoryView = view;
+    
+    // Cambiar botones activos
+    document.getElementById('btn-view-table').classList.toggle('active-view', view === 'table');
+    document.getElementById('btn-view-gallery').classList.toggle('active-view', view === 'gallery');
+    
+    // Mostrar/ocultar vistas
+    document.getElementById('view-table').classList.toggle('block', view === 'table');
+    document.getElementById('view-table').classList.toggle('hidden', view !== 'table');
+    
+    document.getElementById('view-gallery').classList.toggle('hidden', view !== 'gallery');
+    
+    if (view === 'gallery' && inventoryDataGlobal.length > 0) {
+        renderGalleryView(inventoryDataGlobal);
+    }
+}
+
+
+function renderGalleryView(data) {
+    const container = document.getElementById('gallery-grid');
+    container.innerHTML = '';
+
+    // 1. Agrupar por modelo + género + color
+    const grupos = {};
+
+    data.forEach(item => {
+        const partes = (item.codigo || '').split(' ').filter(p => p);
+        if (partes.length < 3) return;
+
+        const modelo = partes[0];
+        const genero = partes[1].toLowerCase();
+        const color  = partes[2];
+        const talla  = partes[3] || item.talla || '—';
+
+        const clave = `${modelo} ${genero} ${color}`.toLowerCase().trim();
+
+        if (!grupos[clave]) {
+            grupos[clave] = {
+                modelo,
+                genero: genero.toUpperCase(),
+                color,
+                foto: item.foto || '',
+                precio: item.precio || 0,
+                tallas: {}
+            };
+        }
+
+        const tallaKey = talla.trim();
+        grupos[clave].tallas[tallaKey] = (grupos[clave].tallas[tallaKey] || 0) + (item.stock || 0);
+    });
+
+    // 2. Renderizar tarjetas
+    Object.values(grupos).forEach(grupo => {
+        // Tallas ordenadas compactas
+        const tallasOrdenadas = Object.entries(grupo.tallas)
+            .filter(([_, qty]) => qty > 0)
+            .sort((a, b) => Number(a[0]) - Number(b[0]));
+
+        let tallasHTML = tallasOrdenadas.length > 0 
+            ? tallasOrdenadas.map(([talla, qty]) => `
+                <div class="flex flex-col items-center min-w-[20px] px-1.5 py-1 bg-indigo-50/80 border border-indigo-200 rounded-md text-center text-[9px]">
+                    <span class="font-bold text-indigo-800">${talla}</span>
+                    <span class="font-semibold ${qty > 0 ? 'text-emerald-700' : 'text-red-600'}">${qty}</span>
+                </div>
+            `).join('')
+            : '<div class="text-xs text-slate-400 italic px-2">Sin stock</div>';
+
+        const card = document.createElement('div');
+        card.className = "bg-white rounded-2xl shadow border border-slate-200 overflow-hidden flex flex-col h-full hover:shadow-lg transition-shadow";
+        card.innerHTML = `
+            <!-- Foto grande - AJUSTE FINAL PARA CARGAR DESDE SHEETS (Drive o cualquier hosting) -->
+            <div class="aspect-square bg-slate-50 relative">
+                ${grupo.foto 
+                    ? `
+                        <img 
+                            src="${grupo.foto}" 
+                            class="w-full h- object-cover" 
+                            alt="${grupo.modelo} ${grupo.color}" 
+                            loading="lazy" 
+                            referrerpolicy="no-referrer" 
+                            crossorigin="anonymous"
+                            onerror="
+                                // Intento automático de conversión si es enlace Drive /view
+                                let idMatch = this.src.match(/\/d\/([a-zA-Z0-9_-]+)/) || 
+                                             this.src.match(/id=([a-zA-Z0-9_-]+)/);
+                                if (idMatch && idMatch[1]) {
+                                    this.src = 'https://drive.google.com/uc?export=view&id=' + idMatch[1];
+                                } else {
+                                    // Fallback final si falla todo
+                                    this.src = 'https://placehold.co/400x400/EEE/666?text=Imagen+no+cargó\\n' + 
+                                               encodeURIComponent('${grupo.modelo} ${grupo.color}');
+                                    this.alt = 'Error al cargar - verifica que sea público';
+                                }
+                            "
+                        >
+                    `
+                    : `<div class="w-full h-full flex items-center justify-center text-slate-300 text-6xl">📦</div>`
+                }
+                <!-- Badge stock total -->
+                <div class="absolute top-2 right-2 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold shadow-sm">
+                    Total: <span class="${Object.values(grupo.tallas).reduce((a,b)=>a+b,0) > 0 ? 'text-emerald-600' : 'text-red-600'}">
+                        ${Object.values(grupo.tallas).reduce((a,b)=>a+b,0)}
+                    </span>
+                </div>
+            </div>
+
+            <!-- Info -->
+            <div class="p-4 flex flex-col flex-grow">
+                <!-- Modelo + género + color juntos -->
+                <div class="font-bold text-lg text-slate-900 mb-1">
+                    ${grupo.modelo} ${grupo.genero} ${grupo.color}
+                </div>
+
+                <!-- Precio -->
+                <div class="text-sm font-semibold text-emerald-700 mb-3">
+                    $${(grupo.precio || 0).toLocaleString('es-CL')}
+                </div>
+
+                <!-- Tallas en fila horizontal compacta -->
+                <div class="flex flex-nowrap items-center gap-1.5 overflow-x-auto pb-1 scrollbar-thin scrollbar-thumb-slate-300 justify-start mb-3">
+                    ${tallasHTML}
+                </div>
+
+                <!-- Rango típico (opcional) -->
+                <div class="text-[9px] text-slate-400 italic mt-auto text-center hidden">
+                    Rango típico ${grupo.genero === 'H' ? 'hombres' : 'mujeres'}: 
+                    ${grupo.genero === 'H' ? '39–44 / 40–45' : '35–41 / 36–41'}
+                </div>
+            </div>
+        `;
+        container.appendChild(card);
+    });
+
+    if (Object.keys(grupos).length === 0) {
+        container.innerHTML = '<p class="text-center text-slate-400 py-10">No hay productos con foto o datos válidos</p>';
+    }
+}
+
+
+
+
 
 
 
@@ -863,24 +1016,28 @@ async function fetchInventory() {
         const rows = text.split('\n').map(row => row.split(','));
         
         // Saltamos la fila de encabezados (fila 0)
-        const inventoryData = rows.slice(1).map(cols => {
-            // Aseguramos que haya suficientes columnas
-            if (cols.length < 11) return null;
-            
-            return {
-                codigo:     (cols[2] || '').trim(),     // C
-                bin:        (cols[3] || '').trim(),     // D
-                entradas:   parseInt(cols[5]) || 0,     // F
-                salidas:    parseInt(cols[6]) || 0,     // G
-                stock:      parseInt(cols[7]) || 0,     // H
-                enRuta:     parseInt(cols[8]) || 0,     // I
-                disponibles:parseInt(cols[9]) || 0,     // J
-                foto:       parseInt(cols[10])|| 0,     // K
-            };
-        }).filter(item => item && item.codigo); // Filtrar filas vacías o sin código
+      const inventoryData = rows.slice(1).map(cols => {
+    if (cols.length < 11) return null;
+    return {
+        codigo:     (cols[2] || '').trim(),     // C → Código completo
+        bin:        (cols[3] || '').trim(),     // D → Bin
+        entradas:   parseInt(cols[5]) || 0,     // F
+        salidas:    parseInt(cols[6]) || 0,     // G
+        stock:      parseInt(cols[7]) || 0,     // H
+        enRuta:     parseInt(cols[8]) || 0,     // I
+        disponibles:parseInt(cols[9]) || 0,     // J
+        foto:       (cols[10] || '').trim(),    // K → Foto
+        precio:     parseInt(cols[11]) || 0,    // L → Precio (si existe)
+        talla:      (cols[4] || '').trim()      // E → Talla (la que coincide con el código)
+    };
+}).filter(item => item.codigo);
+
+    inventoryDataGlobal = inventoryData; // Guardamos para la galería
         
         console.log('Datos de inventario cargados:', inventoryData.length, 'productos');
-        
+
+
+
         renderInventory(inventoryData);
     } catch (e) {
         console.error('Error al cargar inventario:', e);
@@ -952,6 +1109,12 @@ function actualizarFechaInventario() {
 // Llamar después de renderizar
 // Dentro de renderInventory(data), al final agrega:
 actualizarFechaInventario();
+
+
+
+
+
+
 
 
 
@@ -2741,6 +2904,16 @@ function calcularEfectivoContado() {
         totalEl.className = "text-3xl font-black text-red-700";
     }
 }
+
+
+
+
+
+
+
+
+
+
 
 
 
