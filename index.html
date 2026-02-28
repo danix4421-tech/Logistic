@@ -15,6 +15,11 @@
         .form-input { width: 100%; background-color: #f8fafc; border: 2px solid #f1f5f9; border-radius: 0.8rem; padding: 0.7rem 0.8rem; font-size: 0.85rem; outline: none; transition: all 0.2s; font-weight: 600; }
         .form-input:focus { border-color: #3b82f6; background-color: #fff; }
         .btn-back-ui { background: #fff; color: #64748b; font-weight: 800; padding: 6px 12px; border-radius: 10px; font-size: 9px; border: 1px solid #e2e8f0; display: inline-block; margin-top: 20px; }
+
+ .btn-genero { @apply px-3 py-1 text-xs font-semibold rounded-md border border-slate-300 bg-white text-slate-600 hover:bg-slate-100 transition-colors; }
+    .active-filter { @apply bg-indigo-600 border-indigo-600 text-white hover:bg-indigo-700; }
+
+        
     </style>
 </head>
 <body class="pb-10">
@@ -516,65 +521,95 @@
 
 
 <section id="step_inventory" class="step">
-    <div class="flex items-center justify-between mb-4">
-        <h2 class="text-base font-black text-indigo-700">Inventario</h2>
-        
-        <!-- Toggle entre vistas -->
+  <div class="flex items-center justify-between mb-4">
+    <h2 class="text-base font-black text-indigo-700">Inventario</h2>
+    
+    <!-- Toggle vistas + botón rápido -->
+    <div class="flex items-center gap-3">
         <div class="flex bg-slate-100 rounded-xl p-1 text-xs font-medium">
             <button onclick="switchInventoryView('table')" id="btn-view-table"
                     class="px-5 py-1.5 rounded-xl transition-all active-view">Tabla</button>
             <button onclick="switchInventoryView('gallery')" id="btn-view-gallery"
                     class="px-5 py-1.5 rounded-xl transition-all">Galería Fotos</button>
         </div>
+
+        
+    </div>
+</div>
+
+
+
+
+
+
+
+
+<div class="flex flex-wrap gap-4 mb-4 p-4 bg-slate-50 rounded-xl border border-slate-200">
+    <div class="flex flex-col gap-4">
+        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Género</span>
+        <div id="filter-gender-group" class="flex gap-3 text-[10px]">
+            <button onclick="setFiltroGenero('')"  class="btn-genero active-filter font-bold text-slate-500" data-gen="">Todos</button>
+            <button onclick="setFiltroGenero('H')" class="btn-genero" data-gen="H">Hombre</button>
+            <button onclick="setFiltroGenero('M')" class="btn-genero" data-gen="M">Mujer</button>
+            <button onclick="setFiltroGenero('O')" class="btn-genero" data-gen="O">Niño</button>
+            <button onclick="setFiltroGenero('A')" class="btn-genero" data-gen="A">Niña</button>
+        </div>
     </div>
 
-    <!-- Búsqueda -->
-    <input type="text" id="search-inventory" placeholder="Buscar código..." 
-           class="w-full mb-4 px-4 py-3 text-sm border border-slate-300 rounded-2xl focus:border-indigo-500 outline-none"
-           oninput="filtrarInventario()">
+    <div class="flex flex-col gap-4">
+        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Color</span>
+        <select id="filter-color" onchange="ejecutarFiltros()" class="font-bold text-slate-500 text-[10px] border-slate-200 rounded-lg focus:ring-indigo-500">
+            <option value="">Todos</option>
+            <option value="NEGRO">Neg</option>
+            <option value="AZUL">Azu</option>
+            <option value="GRIS">Gri</option>
+            <option value="BURDEO">Bur</option>
+             <option value="BLANCO">Bla</option>
+
+        </select>
+    </div>
+</div>
 
 
 
-    <!-- VISTA TABLA (la que ya tenías) -->
+
+
+
+    <!-- Input de búsqueda ÚNICO (sirve para ambas vistas) -->
+    <input type="text" id="search-inventory" placeholder="Buscar código, modelo, color..." 
+           class="w-full px-4 py-2 text-sm border border-slate-300 rounded-lg focus:border-indigo-500 outline-none mb-4"
+           oninput="filtrarVistaActual(this.value)">
+
+    <!-- VISTA TABLA -->
     <div id="view-table" class="block">
-        <!-- Tu tabla actual aquí (mantén la que ya tienes) -->
-        <div class="overflow-x-auto ..."> ..
-            
+        <div class="overflow-x-auto border border-slate-200 rounded-lg shadow-sm max-h-[65vh] overflow-y-auto bg-white">
             <table class="min-w-full divide-y divide-slate-200 table-fixed">
-            <thead class="bg-slate-50 sticky top-0 z-10">
-                <tr class="text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
-                    <th class="w-24 px-12 py-3">Cód</th>
-                    <th class="w-20 px-3 py-3">Bin</th>
-                    <th class="w-16 px-2 py-3 text-center">Ent</th>
-                    <th class="w-16 px-2 py-3 text-center">Sal</th>
-                    <th class="w-16 px-2 py-3 text-center font-bold">Sto</th>
-                    <th class="w-16 px-2 py-3 text-center text-blue-700">rut</th>
-                    <th class="w-20 px-2 py-3 text-center font-bold text-emerald-700">Disp</th>
-                    <th class="w-16 px-3 py-3 text-center">Fot</th>
-                </tr>
-            </thead>
-            <tbody id="inventory-table-body" class="bg-white divide-y divide-slate-100 text-sm">
-                <tr><td colspan="8" class="text-center py-10 text-slate-400">Cargando inventario...</td></tr>
-            </tbody>
-        </table>
-            
-            . </div>
+                <thead class="bg-slate-50 sticky top-0 z-10">
+                    <tr class="text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                        <th class="w-24 px-12 py-3">Cód</th>
+                        <th class="w-20 px-3 py-3">Bin</th>
+                        <th class="w-16 px-2 py-3 text-center">Ent</th>
+                        <th class="w-16 px-2 py-3 text-center">Sal</th>
+                        <th class="w-16 px-2 py-3 text-center font-bold">Sto</th>
+                        <th class="w-16 px-2 py-3 text-center text-blue-700">rut</th>
+                        <th class="w-20 px-2 py-3 text-center font-bold text-emerald-700">Dis</th>
+                        <th class="w-16 px-3 py-3 text-center">Fot</th>
+                    </tr>
+                </thead>
+                <tbody id="inventory-table-body" class="bg-white divide-y divide-slate-100 text-sm">
+                    <tr><td colspan="8" class="text-center py-10 text-slate-400">Cargando inventario...</td></tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 
-
-
-
-    <!-- NUEVA VISTA GALERÍA -->
+    <!-- VISTA GALERÍA -->
     <div id="view-gallery" class="hidden">
         <div id="gallery-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
             <!-- Las tarjetas se generan con JS -->
-             
         </div>
     </div>
 </section>
-
-
-
 
 
 
@@ -625,6 +660,9 @@ let currentStep = parseFloat(localStorage.getItem('z_step')) || 0;
 let pActualID = localStorage.getItem('z_pActualID') || null;
 let baseDeDatosProductos = [];
 const ABC = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+
+let showMasSalidas = false;  // false = orden normal, true = más vendidos primero
 
 // Biblioteca de iconos centralizada
 const ICONOS = {
@@ -853,10 +891,60 @@ function toggleMasivo() { document.getElementById('area-masiva').classList.toggl
 
 
 
-
-
 let currentInventoryView = 'table';
 let inventoryDataGlobal = []; // Guardamos los datos para no volver a fetch
+
+
+
+// Filtro para la VISTA TABLA (la que ya funcionaba)
+function filtrarInventario(texto = '') {
+    texto = (texto || '').toLowerCase().trim();
+    
+    const filas = document.querySelectorAll('#inventory-table-body tr');
+    let visibles = 0;
+    
+    filas.forEach(fila => {
+    const codigo = fila.cells[0]?.textContent.toUpperCase() || '';
+    const partes = codigo.split(' ').filter(p => p); // [MODELO, GENERO, COLOR, ...]
+    
+    const generoCelda = partes[1] || '';
+    const colorCelda = partes[2] || '';
+    const textoBusqueda = document.getElementById('search-inventory')?.value.toLowerCase() || '';
+    const colorSeleccionado = document.getElementById('filter-color').value.toUpperCase();
+
+    // Lógica de coincidencia
+    const coincideTexto = codigo.toLowerCase().includes(textoBusqueda);
+    const coincideGenero = filtroGeneroSeleccionado === '' || generoCelda === filtroGeneroSeleccionado;
+    const coincideColor = colorSeleccionado === '' || colorCelda.includes(colorSeleccionado);
+
+    if (coincideTexto && coincideGenero && coincideColor) {
+        fila.style.display = '';
+        visibles++;
+    } else {
+        fila.style.display = 'none';
+    }
+});
+    
+    console.log('Tabla filtrada - visibles:', visibles);
+}
+
+
+function filtrarVistaActual(texto = '') {
+    if (currentInventoryView === 'table') {
+        filtrarInventario(texto);
+        
+        if (showMasSalidas) {
+            ordenarTablaPorSalidas();  // Debe existir esta función
+        }
+    } else if (currentInventoryView === 'gallery') {
+        filtrarGaleria(texto);
+        
+        if (showMasSalidas) {
+            ordenarGaleriaPorSalidas();  // Debe existir esta función
+        }
+    }
+}
+
 
 function switchInventoryView(view) {
     currentInventoryView = view;
@@ -874,6 +962,10 @@ function switchInventoryView(view) {
     if (view === 'gallery' && inventoryDataGlobal.length > 0) {
         renderGalleryView(inventoryDataGlobal);
     }
+
+const texto = document.getElementById('search-inventory')?.value || '';
+    filtrarVistaActual(texto);
+
 }
 
 
@@ -881,38 +973,35 @@ function renderGalleryView(data) {
     const container = document.getElementById('gallery-grid');
     container.innerHTML = '';
 
-    // 1. Agrupar por modelo + género + color
     const grupos = {};
 
     data.forEach(item => {
         const partes = (item.codigo || '').split(' ').filter(p => p);
-        if (partes.length < 3) return;
-
+        if (partes.length < 3 || item.codigo.trim().startsWith('000')) return;
+        
         const modelo = partes[0];
-        const genero = partes[1].toLowerCase();
-        const color  = partes[2];
+        const genero = partes[1].toUpperCase();
+        const color  = partes[2].toUpperCase();
         const talla  = partes[3] || item.talla || '—';
 
         const clave = `${modelo} ${genero} ${color}`.toLowerCase().trim();
 
         if (!grupos[clave]) {
             grupos[clave] = {
-                modelo,
-                genero: genero.toUpperCase(),
-                color,
+                modelo, genero, color,
                 foto: item.foto || '',
                 precio: item.precio || 0,
-                tallas: {}
+                tallas: {},
+                salidas: 0 // Para el ordenamiento de "Más vendidos"
             };
         }
 
         const tallaKey = talla.trim();
         grupos[clave].tallas[tallaKey] = (grupos[clave].tallas[tallaKey] || 0) + (item.stock || 0);
+        grupos[clave].salidas += (item.salidas || 0);
     });
 
-    // 2. Renderizar tarjetas
     Object.values(grupos).forEach(grupo => {
-        // Tallas ordenadas compactas
         const tallasOrdenadas = Object.entries(grupo.tallas)
             .filter(([_, qty]) => qty > 0)
             .sort((a, b) => Number(a[0]) - Number(b[0]));
@@ -927,75 +1016,79 @@ function renderGalleryView(data) {
             : '<div class="text-xs text-slate-400 italic px-2">Sin stock</div>';
 
         const card = document.createElement('div');
-        card.className = "bg-white rounded-2xl shadow border border-slate-200 overflow-hidden flex flex-col h-full hover:shadow-lg transition-shadow";
+        // AÑADIMOS CLASES Y DATOS PARA EL FILTRO
+        card.className = "inventory-card bg-white rounded-2xl shadow border border-slate-200 overflow-hidden flex flex-col h-full hover:shadow-lg transition-shadow";
+        card.setAttribute('data-modelo', grupo.modelo.toLowerCase());
+        card.setAttribute('data-genero', grupo.genero);
+        card.setAttribute('data-color', grupo.color);
+        card.setAttribute('data-salidas', grupo.salidas);
+
         card.innerHTML = `
-            <!-- Foto grande - AJUSTE FINAL PARA CARGAR DESDE SHEETS (Drive o cualquier hosting) -->
             <div class="aspect-square bg-slate-50 relative">
                 ${grupo.foto 
-                    ? `
-                        <img 
-                            src="${grupo.foto}" 
-                            class="w-full h- object-cover" 
-                            alt="${grupo.modelo} ${grupo.color}" 
-                            loading="lazy" 
-                            referrerpolicy="no-referrer" 
-                            crossorigin="anonymous"
-                            onerror="
-                                // Intento automático de conversión si es enlace Drive /view
-                                let idMatch = this.src.match(/\/d\/([a-zA-Z0-9_-]+)/) || 
-                                             this.src.match(/id=([a-zA-Z0-9_-]+)/);
-                                if (idMatch && idMatch[1]) {
-                                    this.src = 'https://drive.google.com/uc?export=view&id=' + idMatch[1];
-                                } else {
-                                    // Fallback final si falla todo
-                                    this.src = 'https://placehold.co/400x400/EEE/666?text=Imagen+no+cargó\\n' + 
-                                               encodeURIComponent('${grupo.modelo} ${grupo.color}');
-                                    this.alt = 'Error al cargar - verifica que sea público';
-                                }
-                            "
-                        >
-                    `
+                    ? `<img src="${grupo.foto}" class="w- h- object-cover" loading="lazy" onerror="this.src='https://placehold.co/400x400?text=Sin+Foto'">`
                     : `<div class="w-full h-full flex items-center justify-center text-slate-300 text-6xl">📦</div>`
                 }
-                <!-- Badge stock total -->
                 <div class="absolute top-2 right-2 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold shadow-sm">
                     Total: <span class="${Object.values(grupo.tallas).reduce((a,b)=>a+b,0) > 0 ? 'text-emerald-600' : 'text-red-600'}">
                         ${Object.values(grupo.tallas).reduce((a,b)=>a+b,0)}
                     </span>
                 </div>
             </div>
-
-            <!-- Info -->
             <div class="p-4 flex flex-col flex-grow">
-                <!-- Modelo + género + color juntos -->
-                <div class="font-bold text-[12px] text-slate-900 mb-1">
+                <div class="font-bold text-[10px] text-slate-700 mb-1">
                     ${grupo.modelo} ${grupo.genero} ${grupo.color}
                 </div>
-
-                <!-- Precio -->
-                <div class="text-[11px] font-semibold text-emerald-700 mb-3">
+                <div class="text-[10px] font-semibold text-emerald-700 mb-3">
                     $${(grupo.precio || 0).toLocaleString('es-CL')}
                 </div>
-
-                <!-- Tallas en fila horizontal compacta -->
-                <div class="flex flex-nowrap items-center gap-1.5 overflow-x-auto pb-1 scrollbar-thin scrollbar-thumb-slate-300 justify-start mb-3">
+                <div class="flex flex-nowrap items-center gap-1.5 overflow-x-auto pb-1 justify-start mb-3">
                     ${tallasHTML}
-                </div>
-
-                <!-- Rango típico (opcional) -->
-                <div class="text-[9px] text-slate-400 italic mt-auto text-center hidden">
-                    Rango típico ${grupo.genero === 'H' ? 'hombres' : 'mujeres'}: 
-                    ${grupo.genero === 'H' ? '39–44 / 40–45' : '35–41 / 36–41'}
                 </div>
             </div>
         `;
         container.appendChild(card);
     });
 
-    if (Object.keys(grupos).length === 0) {
-        container.innerHTML = '<p class="text-center text-slate-400 py-10">No hay productos con foto o datos válidos</p>';
-    }
+    // Ejecutar filtro inmediatamente después de renderizar por si había algo escrito
+    ejecutarFiltros();
 }
+
+
+function filtrarGaleria(textoBusqueda = '') {
+    textoBusqueda = textoBusqueda.toLowerCase().trim();
+    const colorSeleccionado = document.getElementById('filter-color')?.value.toUpperCase() || '';
+    const cards = document.querySelectorAll('.inventory-card');
+    
+    let visibles = 0;
+
+    cards.forEach(card => {
+        const modelo = card.getAttribute('data-modelo') || '';
+        const genero = card.getAttribute('data-genero') || '';
+        const color  = card.getAttribute('data-color') || '';
+
+        // Lógica de coincidencia
+        const coincideTexto = modelo.includes(textoBusqueda) || color.toLowerCase().includes(textoBusqueda);
+        const coincideGenero = filtroGeneroSeleccionado === '' || genero === filtroGeneroSeleccionado;
+        const coincideColor = colorSeleccionado === '' || color.includes(colorSeleccionado);
+
+        if (coincideTexto && coincideGenero && coincideColor) {
+            card.style.display = 'flex';
+            visibles++;
+        } else {
+            card.style.display = 'none';
+        }
+    });
+
+    console.log('Galería filtrada - visibles:', visibles);
+}
+
+
+
+
+
+
+
 
 
 
@@ -1006,7 +1099,7 @@ function renderGalleryView(data) {
 
 // NUEVO: Función para fetch de inventario desde Sheets (similar a sincronizarPedidos)
 async function fetchInventory() {
-    const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQxmMtrLlKEH1uQUNmUvQxXUmFJQNQc46rwfOpKMNzJytrGDRxyMjo_S2DhQIDJmXTv1o6G2fvZQZgi/pub?gid=441262518&single=true&output=csv";
+    const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQxmMtrLlKEH1uQUNmUvQxXUmFJQNQc46rwfOpKMNzJytrGDRxyMjo_S2DhQIDJmXTv1o6G2fvZQZgi/pub?gid=148348685&single=true&output=csv";
     
     try {
         const response = await fetch(url);
@@ -1077,28 +1170,14 @@ function renderInventory(data = []) {
         `;
         tableBody.appendChild(row);
     });
+
+    actualizarFechaInventario();
 }
 
 
 
-// Filtrar tabla en tiempo real (búsqueda por código o BIN)
-function filtrarInventario(texto) {
-    texto = texto.toLowerCase().trim();
-    const filas = document.querySelectorAll('#inventory-table-body tr');
-    
-    filas.forEach(fila => {
-        if (fila.cells.length < 2) return; // Saltar fila de "cargando"
-        
-        const codigo = fila.cells[0]?.textContent.toLowerCase() || '';
-        const bin    = fila.cells[1]?.textContent.toLowerCase() || '';
-        
-        if (codigo.includes(texto) || bin.includes(texto)) {
-            fila.style.display = '';
-        } else {
-            fila.style.display = 'none';
-        }
-    });
-}
+
+
 
 // Actualizar fecha de última carga (opcional)
 function actualizarFechaInventario() {
@@ -1106,9 +1185,75 @@ function actualizarFechaInventario() {
     if (el) el.textContent = new Date().toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' });
 }
 
-// Llamar después de renderizar
-// Dentro de renderInventory(data), al final agrega:
-actualizarFechaInventario();
+
+
+// Variable global para el filtro "Más Vendidos"
+let mostrarMasVendidos = false;
+
+
+
+
+
+
+function filtrarVistaActual(texto = '') {
+    console.log('Filtrando vista actual:', currentInventoryView, 'texto:', texto);
+    
+    if (currentInventoryView === 'table') {
+        filtrarInventario(texto);
+        
+        if (showMasSalidas) {
+            console.log('Ordenando tabla por más salidas...');
+            ordenarTablaPorSalidas();
+        }
+    } else if (currentInventoryView === 'gallery') {
+        filtrarGaleria(texto);
+        
+        if (showMasSalidas) {
+            console.log('Ordenando galería por más salidas...');
+            ordenarGaleriaPorSalidas();
+        }
+    }
+}
+
+
+
+//nuevo gemini
+
+let filtroGeneroSeleccionado = ''; // '' significa todos
+
+function setFiltroGenero(gen) {
+    filtroGeneroSeleccionado = gen;
+    
+    // Actualizar UI de botones
+    document.querySelectorAll('#filter-gender-group button').forEach(btn => {
+        btn.classList.toggle('active-filter', btn.getAttribute('data-gen') === gen);
+    });
+    
+    ejecutarFiltros();
+}
+
+// Esta función centraliza la búsqueda y los botones
+function ejecutarFiltros() {
+    const texto = document.getElementById('search-inventory')?.value || '';
+    filtrarVistaActual(texto);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -2910,20 +3055,7 @@ function calcularEfectivoContado() {
 
 
 
-
-
-
-
-
-
-
-
 </script>
 
 </body>
 </html>
-
-
-
-
-
