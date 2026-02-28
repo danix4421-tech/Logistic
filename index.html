@@ -968,12 +968,12 @@ function renderGalleryView(data) {
             <!-- Info -->
             <div class="p-4 flex flex-col flex-grow">
                 <!-- Modelo + género + color juntos -->
-                <div class="font-bold text-lg text-slate-900 mb-1">
+                <div class="font-bold text-[9px] text-slate-900 mb-1">
                     ${grupo.modelo} ${grupo.genero} ${grupo.color}
                 </div>
 
                 <!-- Precio -->
-                <div class="text-sm font-semibold text-emerald-700 mb-3">
+                <div class="text-[9px] font-semibold text-emerald-700 mb-3">
                     $${(grupo.precio || 0).toLocaleString('es-CL')}
                 </div>
 
@@ -1069,11 +1069,11 @@ function renderInventory(data = []) {
             <td class="px-3 py-2 text-xs font-medium text-slate-700">${item.codigo}</td>
             <td class="px-3 py-2 text-xs text-slate-600">${item.bin}</td>
             <td class="px-3 py-2 text-xs text-emerald-600 hidden">${item.entradas}</td>
-            <td class="px-3 py-3 text-xs text-red-600 hidden">${item.salidas}</td>
-            <td class="px-3 py-3 text-xs font-bold text-slate-800 hidden">${item.stock}</td>
+            <td class="px-3 py-3 text-xs text-red-600 ">${item.salidas}</td>
+            <td class="px-3 py-3 text-xs font-bold text-slate-800">${item.stock}</td>
             <td class="px-3 py-2 text-xs text-blue-600">${item.enRuta}</td>
             <td class="px-3 py-2 text-xs font-bold text-emerald-700">${item.disponibles}</td>
-            <td class="px-3 py-2 text-xs hidden ">${item.foto}</td>
+            <td class="px-3 py-2 text-xs ">${item.foto}</td>
         `;
         tableBody.appendChild(row);
     });
@@ -2922,4 +2922,5 @@ function calcularEfectivoContado() {
 
 </body>
 </html>
+
 
