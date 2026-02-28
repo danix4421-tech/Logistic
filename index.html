@@ -1068,7 +1068,7 @@ function renderInventory(data = []) {
         row.innerHTML = `
             <td class="px-3 py-2 text-xs font-medium text-slate-700">${item.codigo}</td>
             <td class="px-3 py-2 text-xs text-slate-600">${item.bin}</td>
-            <td class="px-3 py-2 text-xs text-emerald-600 hidden">${item.entradas}</td>
+            <td class="px-3 py-2 text-xs text-emerald-600">${item.entradas}</td>
             <td class="px-3 py-3 text-xs text-red-600 ">${item.salidas}</td>
             <td class="px-3 py-3 text-xs font-bold text-slate-800">${item.stock}</td>
             <td class="px-3 py-2 text-xs text-blue-600">${item.enRuta}</td>
@@ -2922,6 +2922,7 @@ function calcularEfectivoContado() {
 
 </body>
 </html>
+
 
 
 
