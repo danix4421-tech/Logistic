@@ -115,7 +115,7 @@
 <main class="p-4 max-w-xl mx-auto">
 
     
-<div class="h-6"></div>
+<div class="h-4"></div>
 
 
     
@@ -521,16 +521,16 @@
 
 
 <section id="step_inventory" class="step">
-  <div class="flex items-center justify-between mb-4">
-    <h2 class="text-base font-black text-indigo-700">Inventario</h2>
+  <div class="flex items-center justify-between mb-1">
+    <h2 class="text-[18px] font-black text-indigo-700">Inventario</h2>
     
     <!-- Toggle vistas + botón rápido -->
-    <div class="flex items-center gap-3">
-        <div class="flex bg-slate-100 rounded-xl p-1 text-xs font-medium">
+    <div class="flex items-center gap-1">
+        <div class="flex bg-slate-100 rounded-xl p-2 text-xs font-medium">
             <button onclick="switchInventoryView('table')" id="btn-view-table"
                     class="px-5 py-1.5 rounded-xl transition-all active-view">Tabla</button>
             <button onclick="switchInventoryView('gallery')" id="btn-view-gallery"
-                    class="px-5 py-1.5 rounded-xl transition-all">Galería Fotos</button>
+                    class="px-5 py-1.5 rounded-xl transition-all">Galería</button>
         </div>
 
         
@@ -542,22 +542,22 @@
 
 
 <div class="flex flex-col gap-2 mb-4">
-    <span class="text-[8px] font-bold text-slate-400 uppercase tracking-wider">Tipo de Calzado</span>
+
     <div id="filter-model-group" class="flex flex-wrap gap-2">
         <button onclick="setFiltroModelo('')" data-mod="" 
-                class="px-3 py-1 text-[9px] font-bold border rounded-md bg-white border-slate-300 active">
+                class="px-3 py-1 text-[9px] b border-slate-300 active font-bold text-slate-500  border rounded-md">
             TODOS
         </button>
         <button onclick="setFiltroModelo('Z')" data-mod="Z" 
-                class="px-3 py-1 text-[9px] font-bold border rounded-md bg-amber-100 text-amber-800 border-amber-200">
+                class="px-3 py-1 text-[10px] font-bold border rounded-md bg-violet-100 text-violet-800 border-violet-200">
             (Z) Zapatos
         </button>
         <button onclick="setFiltroModelo('D')" data-mod="D" 
-                class="px-3 py-1 text-[9px] font-bold border rounded-md bg-blue-100 text-blue-800 border-blue-200">
+                class="px-3 py-1 text-[10px] font-bold border rounded-md bg-blue-100 text-blue-500 border-blue-200">
             (D) Deportivas
         </button>
         <button onclick="setFiltroModelo('P')" data-mod="P" 
-                class="px-3 py-1 text-[9px] font-bold border rounded-md bg-emerald-100 text-emerald-800 border-emerald-200">
+                class="px-3 py-1 text-[10px] font-bold border rounded-md bg-emerald-100 text-emerald-800 border-emerald-200">
             (P) Panchitas
         </button>
     </div>
@@ -573,10 +573,10 @@
         
         <div id="filter-gender-group" class="flex gap-3 text-[10px]">
             <button onclick="setFiltroGenero('')"  class="btn-genero active-filter font-bold text-slate-500" data-gen="">Todos</button>
-            <button onclick="setFiltroGenero('H')" class="btn-genero" data-gen="H">Hombre</button>
-            <button onclick="setFiltroGenero('M')" class="btn-genero" data-gen="M">Mujer</button>
-            <button onclick="setFiltroGenero('O')" class="btn-genero" data-gen="O">Niño</button>
-            <button onclick="setFiltroGenero('A')" class="btn-genero" data-gen="A">Niña</button>
+            <button onclick="setFiltroGenero('H')" class="btn-genero px-3 py-1 text-[10px] font-bold border rounded-md bg-amber-100 text-amber-800 border-amber-200" data-gen="H">Hombre</button>
+            <button onclick="setFiltroGenero('M')" class="btn-genero px-3 py-1 text-[10px] font-bold border rounded-md bg-amber-100 text-amber-800 border-amber-200" data-gen="M">Mujer</button>
+            <button onclick="setFiltroGenero('O')" class="btn-genero px-3 py-1 text-[10px] font-bold border rounded-md bg-amber-100 text-amber-800 border-amber-200 hidden" data-gen="O">Niño</button>
+            <button onclick="setFiltroGenero('A')" class="btn-genero px-3 py-1 text-[10px] font-bold border rounded-md bg-amber-100 text-amber-800 border-amber-200 hidden" data-gen="A">Niña</button>
         </div>
     </div>
 
@@ -1145,21 +1145,18 @@ function filtrarGaleria(textoBusqueda = '') {
         const modelo = card.getAttribute('data-modelo') || '';
         const genero = card.getAttribute('data-genero') || '';
         const color  = card.getAttribute('data-color') || '';
-        
-        
-
+        const tipoModelo = card.getAttribute('data-tipo-modelo') || ''; // La 'Z', 'D', 'P', etc.
 
         // Lógica de coincidencia
         const coincideTexto = modelo.includes(textoBusqueda) || color.toLowerCase().includes(textoBusqueda);
         const coincideGenero = filtroGeneroSeleccionado === '' || genero === filtroGeneroSeleccionado;
         const coincideColor = colorSeleccionado === '' || color.includes(colorSeleccionado);
-        // Luego en filtrarGaleria:
-        const tipoModelo = card.getAttribute('data-tipo-modelo') || '';
+        
+        // CORRECCIÓN: Usamos la variable filtroModeloSeleccionado global
         const coincideModelo = filtroModeloSeleccionado === '' || tipoModelo === filtroModeloSeleccionado;
 
-
-
-        if (coincideTexto && coincideGenero && coincideColor) {
+        // EL ERROR ESTABA AQUÍ: Faltaba agregar "&& coincideModelo"
+        if (coincideTexto && coincideGenero && coincideColor && coincideModelo) {
             card.style.display = 'flex';
             visibles++;
         } else {
@@ -1169,19 +1166,6 @@ function filtrarGaleria(textoBusqueda = '') {
 
     console.log('Galería filtrada - visibles:', visibles);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 // NUEVO: Función para fetch de inventario desde Sheets (similar a sincronizarPedidos)
