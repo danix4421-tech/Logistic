@@ -541,12 +541,36 @@
 
 
 
+<div class="flex flex-col gap-2 mb-4">
+    <span class="text-[8px] font-bold text-slate-400 uppercase tracking-wider">Tipo de Calzado</span>
+    <div id="filter-model-group" class="flex flex-wrap gap-2">
+        <button onclick="setFiltroModelo('')" data-mod="" 
+                class="px-3 py-1 text-[9px] font-bold border rounded-md bg-white border-slate-300 active">
+            TODOS
+        </button>
+        <button onclick="setFiltroModelo('Z')" data-mod="Z" 
+                class="px-3 py-1 text-[9px] font-bold border rounded-md bg-amber-100 text-amber-800 border-amber-200">
+            (Z) Zapatos
+        </button>
+        <button onclick="setFiltroModelo('D')" data-mod="D" 
+                class="px-3 py-1 text-[9px] font-bold border rounded-md bg-blue-100 text-blue-800 border-blue-200">
+            (D) Deportivas
+        </button>
+        <button onclick="setFiltroModelo('P')" data-mod="P" 
+                class="px-3 py-1 text-[9px] font-bold border rounded-md bg-emerald-100 text-emerald-800 border-emerald-200">
+            (P) Panchitas
+        </button>
+    </div>
+</div>
+
+
+
 
 
 
 <div class="flex flex-wrap gap-4 mb-4 p-4 bg-slate-50 rounded-xl border border-slate-200">
     <div class="flex flex-col gap-4">
-        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Género</span>
+        
         <div id="filter-gender-group" class="flex gap-3 text-[10px]">
             <button onclick="setFiltroGenero('')"  class="btn-genero active-filter font-bold text-slate-500" data-gen="">Todos</button>
             <button onclick="setFiltroGenero('H')" class="btn-genero" data-gen="H">Hombre</button>
@@ -556,15 +580,18 @@
         </div>
     </div>
 
-    <div class="flex flex-col gap-4">
-        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Color</span>
-        <select id="filter-color" onchange="ejecutarFiltros()" class="font-bold text-slate-500 text-[10px] border-slate-200 rounded-lg focus:ring-indigo-500">
+    <div class="  gap-2">
+        <span class="text-[8px] font-bold text-slate-400 uppercase tracking-wider border-none">Color</span>
+        <select id="filter-color" onchange="ejecutarFiltros()" class="font-bold text-slate-500 text-[10px] border-slate-100 rounded-lg focus:ring-indigo-500">
             <option value="">Todos</option>
-            <option value="NEGRO">Neg</option>
-            <option value="AZUL">Azu</option>
-            <option value="GRIS">Gri</option>
-            <option value="BURDEO">Bur</option>
-             <option value="BLANCO">Bla</option>
+            <option value="NEGRO">Negro</option>
+            <option value="AZUL">Azul</option>
+            <option value="GRIS">Gris</option>
+            <option value="BURDEO">Burdeo</option>
+             <option value="BLANCO">Blanco</option>
+            <option value="CAFE">Cafe</option>
+            <option value="VERDE">Verde</option>
+
 
         </select>
     </div>
@@ -585,7 +612,7 @@
         <div class="overflow-x-auto border border-slate-200 rounded-lg shadow-sm max-h-[65vh] overflow-y-auto bg-white">
             <table class="min-w-full divide-y divide-slate-200 table-fixed">
                 <thead class="bg-slate-50 sticky top-0 z-10">
-                    <tr class="text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                    <tr class="text-left text-[8px] font-semibold text-slate-700 uppercase tracking-wider">
                         <th class="w-24 px-12 py-3">Cód</th>
                         <th class="w-20 px-3 py-3">Bin</th>
                         <th class="w-16 px-2 py-3 text-center">Ent</th>
@@ -896,6 +923,44 @@ let inventoryDataGlobal = []; // Guardamos los datos para no volver a fetch
 
 
 
+
+let filtroModeloSeleccionado = ''; // Variable global nueva
+
+
+
+//nueva gemini filtro por modelos
+function setFiltroModelo(mod) {
+    filtroModeloSeleccionado = mod;
+    
+    // UI: Resaltar botón seleccionado
+    document.querySelectorAll('#filter-model-group button').forEach(btn => {
+        if (btn.getAttribute('data-mod') === mod) {
+            btn.classList.add('ring-2', 'ring-indigo-500', 'opacity-100');
+            btn.classList.remove('opacity-60');
+        } else {
+            btn.classList.remove('ring-2', 'ring-indigo-500', 'opacity-100');
+            btn.classList.add('opacity-60');
+        }
+    });
+
+    ejecutarFiltros();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // Filtro para la VISTA TABLA (la que ya funcionaba)
 function filtrarInventario(texto = '') {
     texto = (texto || '').toLowerCase().trim();
@@ -906,23 +971,27 @@ function filtrarInventario(texto = '') {
     filas.forEach(fila => {
     const codigo = fila.cells[0]?.textContent.toUpperCase() || '';
     const partes = codigo.split(' ').filter(p => p); // [MODELO, GENERO, COLOR, ...]
+    const modeloCelda = partes[0] || ''; // Ejemplo: "Z1"
     
     const generoCelda = partes[1] || '';
     const colorCelda = partes[2] || '';
     const textoBusqueda = document.getElementById('search-inventory')?.value.toLowerCase() || '';
     const colorSeleccionado = document.getElementById('filter-color').value.toUpperCase();
 
+const coincideModelo = filtroModeloSeleccionado === '' || modeloCelda.startsWith(filtroModeloSeleccionado);
+
+
     // Lógica de coincidencia
     const coincideTexto = codigo.toLowerCase().includes(textoBusqueda);
     const coincideGenero = filtroGeneroSeleccionado === '' || generoCelda === filtroGeneroSeleccionado;
     const coincideColor = colorSeleccionado === '' || colorCelda.includes(colorSeleccionado);
 
-    if (coincideTexto && coincideGenero && coincideColor) {
-        fila.style.display = '';
-        visibles++;
-    } else {
-        fila.style.display = 'none';
-    }
+
+    if (coincideTexto && coincideGenero && coincideColor && coincideModelo) {
+    fila.style.display = '';
+} else {
+    fila.style.display = 'none';
+}
 });
     
     console.log('Tabla filtrada - visibles:', visibles);
@@ -967,6 +1036,10 @@ const texto = document.getElementById('search-inventory')?.value || '';
     filtrarVistaActual(texto);
 
 }
+
+
+
+
 
 
 function renderGalleryView(data) {
@@ -1022,6 +1095,8 @@ function renderGalleryView(data) {
         card.setAttribute('data-genero', grupo.genero);
         card.setAttribute('data-color', grupo.color);
         card.setAttribute('data-salidas', grupo.salidas);
+        // En renderGalleryView, añade a la card:
+        card.setAttribute('data-tipo-modelo', grupo.modelo.charAt(0).toUpperCase()); // Guarda la 'Z', 'D' o 'P'
 
         card.innerHTML = `
             <div class="aspect-square bg-slate-50 relative">
@@ -1055,6 +1130,10 @@ function renderGalleryView(data) {
 }
 
 
+
+
+
+
 function filtrarGaleria(textoBusqueda = '') {
     textoBusqueda = textoBusqueda.toLowerCase().trim();
     const colorSeleccionado = document.getElementById('filter-color')?.value.toUpperCase() || '';
@@ -1066,11 +1145,19 @@ function filtrarGaleria(textoBusqueda = '') {
         const modelo = card.getAttribute('data-modelo') || '';
         const genero = card.getAttribute('data-genero') || '';
         const color  = card.getAttribute('data-color') || '';
+        
+        
+
 
         // Lógica de coincidencia
         const coincideTexto = modelo.includes(textoBusqueda) || color.toLowerCase().includes(textoBusqueda);
         const coincideGenero = filtroGeneroSeleccionado === '' || genero === filtroGeneroSeleccionado;
         const coincideColor = colorSeleccionado === '' || color.includes(colorSeleccionado);
+        // Luego en filtrarGaleria:
+        const tipoModelo = card.getAttribute('data-tipo-modelo') || '';
+        const coincideModelo = filtroModeloSeleccionado === '' || tipoModelo === filtroModeloSeleccionado;
+
+
 
         if (coincideTexto && coincideGenero && coincideColor) {
             card.style.display = 'flex';
