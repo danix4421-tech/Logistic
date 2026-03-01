@@ -53,12 +53,11 @@
         
         <div class="flex items-center gap-2">
             <h1 class="font-black text-blue-400 text-[18px] tracking-tighter">Pedidos</h1>
-            <button onclick="sincronizarPedidosDesdeSheets(event)" 
-                class="flex items-center p-1  text-slate-500    borde-none hover:text-emerald-500 p-1.5 rounded transition-colors" title="Sincronizar">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 group-active:animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                </svg>
-            </button>
+            <div id="status-badge" class="flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-600 transition-all">
+    <span id="status-dot" class="w-2 h-2 rounded-full bg-slate-400"></span>
+    <span id="status-text">Iniciando...</span>
+</div>
+           
         </div>
 
         <div class="flex items-center gap-1">
@@ -80,7 +79,12 @@
     </button>
 
     
-
+     <button onclick="sincronizarPedidosDesdeSheets(event)" 
+                class="flex items-center p-1  text-slate-500    borde-none hover:text-emerald-500 p-1.5 rounded transition-colors" title="Sincronizar">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 group-active:animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+            </button>
 
             <div class="flex items-center gap-2 border-l pl-2 border-slate-100    ">
                 <button onclick="abrirModalVentaRapida()" class=" " title="Venta Rápida">
@@ -550,20 +554,35 @@
         </button>
         <button onclick="setFiltroModelo('Z')" data-mod="Z" 
                 class="px-3 py-1 text-[10px] font-bold border rounded-md bg-violet-100 text-violet-800 border-violet-200">
-            (Z) Zapatos
+            Zap
         </button>
         <button onclick="setFiltroModelo('D')" data-mod="D" 
-                class="px-3 py-1 text-[10px] font-bold border rounded-md bg-blue-100 text-blue-500 border-blue-200">
-            (D) Deportivas
+                class="px-3 py-1 text-[10px] font-bold border rounded-md bg-orange-100 text-orange-500 border-orange-200">
+            Dep
         </button>
         <button onclick="setFiltroModelo('P')" data-mod="P" 
                 class="px-3 py-1 text-[10px] font-bold border rounded-md bg-emerald-100 text-emerald-800 border-emerald-200">
-            (P) Panchitas
+            Pan
         </button>
+        <button onclick="setFiltroModelo('PF')" data-mod="PF" 
+                class="px-3 py-1 text-[10px] font-bold border rounded-md bg-yellow-100 text-yellow-800 border-yellow-00">
+            Ptf
+        </button>
+
+        <button onclick="setFiltroModelo('BN')" data-mod="BN" 
+                class="px-3 py-1 text-[10px] font-bold border rounded-md bg-red-100 text-red-500 border-red-100">
+            Btn
+        </button>
+
+        <button onclick="setFiltroModelo('BT')" data-mod="BT" 
+                class="px-3 py-1 text-[10px] font-bold border rounded-md bg-sky-100 text-sky-800 border-sky-200">
+            Bta
+        </button>
+
+
+
     </div>
 </div>
-
-
 
 
 
@@ -572,7 +591,7 @@
     <div class="flex flex-col gap-4">
         
         <div id="filter-gender-group" class="flex gap-3 text-[10px]">
-            <button onclick="setFiltroGenero('')"  class="btn-genero active-filter font-bold text-slate-500" data-gen="">Todos</button>
+            <button onclick="setFiltroGenero('')"  class="btn-genero px-3 py-1 text-[9px] b border-slate-300 active font-bold text-slate-500  border rounded-md" data-gen="">Todos</button>
             <button onclick="setFiltroGenero('H')" class="btn-genero px-3 py-1 text-[10px] font-bold border rounded-md bg-amber-100 text-amber-800 border-amber-200" data-gen="H">Hombre</button>
             <button onclick="setFiltroGenero('M')" class="btn-genero px-3 py-1 text-[10px] font-bold border rounded-md bg-amber-100 text-amber-800 border-amber-200" data-gen="M">Mujer</button>
             <button onclick="setFiltroGenero('O')" class="btn-genero px-3 py-1 text-[10px] font-bold border rounded-md bg-amber-100 text-amber-800 border-amber-200 hidden" data-gen="O">Niño</button>
@@ -795,8 +814,6 @@ function getColorRuta(letra) {
 
 
 
-
-
 // --- LOGICA CORE ---
 function save() {
     localStorage.setItem('z_pedidos', JSON.stringify(pedidos));
@@ -918,15 +935,14 @@ function toggleMasivo() { document.getElementById('area-masiva').classList.toggl
 
 
 
+
+
+
+
 let currentInventoryView = 'table';
 let inventoryDataGlobal = []; // Guardamos los datos para no volver a fetch
 
-
-
-
 let filtroModeloSeleccionado = ''; // Variable global nueva
-
-
 
 //nueva gemini filtro por modelos
 function setFiltroModelo(mod) {
@@ -945,19 +961,6 @@ function setFiltroModelo(mod) {
 
     ejecutarFiltros();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -1036,8 +1039,6 @@ const texto = document.getElementById('search-inventory')?.value || '';
     filtrarVistaActual(texto);
 
 }
-
-
 
 
 
@@ -1131,9 +1132,6 @@ function renderGalleryView(data) {
 
 
 
-
-
-
 function filtrarGaleria(textoBusqueda = '') {
     textoBusqueda = textoBusqueda.toLowerCase().trim();
     const colorSeleccionado = document.getElementById('filter-color')?.value.toUpperCase() || '';
@@ -1201,8 +1199,32 @@ async function fetchInventory() {
         console.log('Datos de inventario cargados:', inventoryData.length, 'productos');
 
 
+//AQUÍ GUARDAMOS ---
+        guardarInventarioLocal(inventoryDataGlobal);
+        // ----------------------
+
+        renderInventory(inventoryDataGlobal);
+        if (currentInventoryView === 'gallery') renderGalleryView(inventoryDataGlobal);
 
         renderInventory(inventoryData);
+
+        try {
+        const response = await fetch(url);
+        // ... (procesamiento de datos) ...
+        
+        actualizarEstadoVisual('online'); // <--- INDICADOR VERDE
+        guardarInventarioLocal(inventoryDataGlobal);
+    } catch (e) {
+        console.error(e);
+        actualizarEstadoVisual('offline'); // <--- INDICADOR NARANJA
+        cargarInventarioLocal();
+    }
+
+
+
+
+
+
     } catch (e) {
         console.error('Error al cargar inventario:', e);
         const tableBody = document.getElementById('inventory-table-body');
@@ -1214,6 +1236,8 @@ async function fetchInventory() {
         }
     }
 }
+
+
 
 
 
@@ -1244,6 +1268,7 @@ function renderInventory(data = []) {
 
     actualizarFechaInventario();
 }
+
 
 
 
@@ -1311,7 +1336,40 @@ function ejecutarFiltros() {
 
 
 
+// Guarda el array global en la memoria del navegador
+function guardarInventarioLocal(data) {
+    try {
+        localStorage.setItem('inventoryDataOffline', JSON.stringify(data));
+        localStorage.setItem('inventoryLastUpdate', new Date().toISOString());
+    } catch (e) {
+        console.error("Error guardando en localStorage (posiblemente lleno):", e);
+    }
+}
 
+// Recupera los datos guardados al iniciar
+function cargarInventarioLocal() {
+    const cachedData = localStorage.getItem('inventoryDataOffline');
+    if (cachedData) {
+        inventoryDataGlobal = JSON.parse(cachedData);
+        console.log('Datos cargados desde memoria local (Offline mode)');
+        
+        // Renderizamos lo que tengamos guardado de inmediato
+        renderInventory(inventoryDataGlobal);
+        if (currentInventoryView === 'gallery') {
+            renderGalleryView(inventoryDataGlobal);
+        }
+        
+        // Actualizar el texto de la última vez
+        const lastDate = localStorage.getItem('inventoryLastUpdate');
+        if (lastDate) {
+            const fecha = new Date(lastDate);
+            const el = document.getElementById('inventory-last-update');
+            if (el) el.textContent = 'Cache: ' + fecha.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' });
+        }
+        return true;
+    }
+    return false;
+}
 
 
 
@@ -3120,6 +3178,54 @@ function calcularEfectivoContado() {
         totalEl.className = "text-3xl font-black text-red-700";
     }
 }
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. Intentamos cargar lo que hay en memoria de inmediato
+    const teniaDatos = cargarInventarioLocal();
+    
+    // 2. Intentamos refrescar con datos nuevos de internet
+    fetchInventory(); 
+});
+
+
+function actualizarEstadoVisual(estado) {
+    const badge = document.getElementById('status-badge');
+    const dot = document.getElementById('status-dot');
+    const text = document.getElementById('status-text');
+
+    if (!badge || !dot || !text) return;
+
+    switch (estado) {
+        case 'online':
+            badge.className = "flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200";
+            dot.className = "w-2 h-2 rounded-full bg-emerald-500 animate-pulse";
+            text.textContent = "En línea (Actualizado)";
+            break;
+        case 'offline':
+            badge.className = "flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200";
+            dot.className = "w-2 h-2 rounded-full bg-amber-500";
+            text.textContent = "Modo Offline (Caché)";
+            break;
+        case 'error':
+            badge.className = "flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-red-50 text-red-700 border border-red-200";
+            dot.className = "w-2 h-2 rounded-full bg-red-500";
+            text.textContent = "Error de conexión";
+            break;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
