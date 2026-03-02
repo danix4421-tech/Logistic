@@ -548,32 +548,50 @@
         
         <div>
             <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block">Categoría / Modelo</span>
-            <div id="filter-model-group" class="flex flex-wrap gap-2">
-                <button onclick="setFiltroModelo('')" data-mod="" 
-                    class="px-4 py-2 text-xs font-bold rounded-full border transition-all bg-slate-900 text-white border-slate-900 shadow-sm">
-                    All
-                </button>
-                <button onclick="setFiltroModelo('Z')" data-mod="Z" 
-                    class="px-4 py-2 text-xs font-bold rounded-full border border-slate-200 bg-white text-slate-600 hover:border-slate-400 hover:bg-slate-50">
-                    Zap
-                </button>
-                <button onclick="setFiltroModelo('D')" data-mod="D" 
-                    class="px-4 py-2 text-xs font-bold rounded-full border border-slate-200 bg-white text-slate-600 hover:border-slate-400 hover:bg-slate-50">
-                    Dep
-                </button>
-                <button onclick="setFiltroModelo('P')" data-mod="P" 
-                    class="px-4 py-2 text-xs font-bold rounded-full border border-slate-200 bg-white text-slate-600 hover:border-slate-400 hover:bg-slate-50">
-                    Pan
-                </button>
-                <button onclick="setFiltroModelo('BN')" data-mod="BN" 
-                    class="px-4 py-2 text-xs font-bold rounded-full border border-slate-200 bg-white text-slate-600 hover:border-slate-400 hover:bg-slate-50">
-                    Btn
-                </button>
-                <button onclick="setFiltroModelo('BT')" data-mod="BT" 
-                    class="px-4 py-2 text-xs font-bold rounded-full border border-slate-200 bg-white text-slate-600 hover:border-slate-400 hover:bg-slate-50">
-                    Bta
-                </button>
-            </div>
+            <div id="filter-model-group" class="flex flex-nowrap gap-2 overflow-x-auto pb-3 -mx-4 px-4 scrollbar-hide">
+    
+    <button onclick="setFiltroModelo('')" data-mod="" 
+        class="flex-shrink-0 px-5 py-2 text-xs font-bold rounded-full border transition-all bg-slate-900 text-white border-slate-900 shadow-sm">
+        All
+    </button>
+
+    <button onclick="setFiltroModelo('Z')" data-mod="Z" 
+        class="flex-shrink-0 px-5 py-2 text-xs font-bold rounded-full border border-slate-200 bg-white text-slate-600 hover:border-slate-400">
+        Zap
+    </button>
+
+    <button onclick="setFiltroModelo('D')" data-mod="D" 
+        class="flex-shrink-0 px-5 py-2 text-xs font-bold rounded-full border border-slate-200 bg-white text-slate-600 hover:border-slate-400">
+        Dep
+    </button>
+
+    <button onclick="setFiltroModelo('P')" data-mod="P" 
+        class="flex-shrink-0 px-5 py-2 text-xs font-bold rounded-full border border-slate-200 bg-white text-slate-600 hover:border-slate-400">
+        Pan
+    </button>
+
+    <button onclick="setFiltroModelo('BN')" data-mod="BN" 
+        class="flex-shrink-0 px-5 py-2 text-xs font-bold rounded-full border border-slate-200 bg-white text-slate-600 hover:border-slate-400">
+        Btn
+    </button>
+
+    <button onclick="setFiltroModelo('BT')" data-mod="BT" 
+        class="flex-shrink-0 px-5 py-2 text-xs font-bold rounded-full border border-slate-200 bg-white text-slate-600 hover:border-slate-400">
+        Bta
+    </button>
+    
+</div>
+
+<style>
+/* Estética: Oculta la barra de scroll pero mantiene la funcionalidad */
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+.scrollbar-hide {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+</style>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -608,7 +626,7 @@
         </div>
 
         <div class="pt-2">
-            <div class="relative">
+            <div class="relative mb-2">
                 <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                 </span>
@@ -617,9 +635,11 @@
                     class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all shadow-inner"
                     oninput="filtrarVistaActual(this.value)">
             </div>
+            
         </div>
-    </div>
+    
 
+    </div>
 <style>
     /* Estilo para el botón activo en el toggle de vista */
     .active-view {
@@ -629,30 +649,64 @@
     }
 </style>
 
-           
+        
 
     <!-- VISTA TABLA -->
-    <div id="view-table" class="block sticky">
-        <div class="overflow-x-auto border border-slate-200 rounded-lg shadow-sm max-h-[65vh] overflow-y-auto bg-white">
-            <table class="min-w-full divide-y divide-slate-200 table-fixed">
-                <thead class="bg-slate-50 sticky top-0 z-10">
-                    <tr class="text-left text-[8px] font-semibold text-slate-700 uppercase tracking-wider">
-                        <th class="w-24 px-12 py-3">Cód</th>
-                        <th class="w-20 px-3 py-3">Bin</th>
-                        <th class="w-16 px-2 py-3 text-center">Ent</th>
-                        <th class="w-16 px-2 py-3 text-center">Sal</th>
-                        <th class="w-16 px-2 py-3 text-center font-bold">Sto</th>
-                        <th class="w-16 px-2 py-3 text-center text-blue-700">rut</th>
-                        <th class="w-20 px-2 py-3 text-center font-bold text-emerald-700">Dis</th>
-                        <th class="w-16 px-3 py-3 text-center">Fot</th>
-                    </tr>
-                </thead>
-                <tbody id="inventory-table-body" class="bg-white divide-y divide-slate-100 text-sm">
-                    <tr><td colspan="8" class="text-center py-10 text-slate-400">Cargando inventario...</td></tr>
-                </tbody>
-            </table>
+   <div id="view-table" class="block">
+
+    <div class="flex justify-end mb-2">
+    <div class="relative group">
+        <button class="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-[11px] font-bold text-slate-600 hover:bg-slate-50 transition-all shadow-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 12h9.75M10.5 18h9.75M3 6h.008v.008H3V6zm0 6h.008v.008H3V12zm0 6h.008v.008H3V18z" />
+            </svg>
+            Columnas
+        </button>
+        
+        <div class="absolute right-0 mt-2 w-48 bg-white border border-slate-200 rounded-xl shadow-xl py-3 px-4 hidden group-hover:block z-[60]">
+            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-3">Mostrar/Ocultar</span>
+            <div class="space-y-2">
+                <label class="flex items-center gap-3 cursor-pointer group/item">
+                    <input type="checkbox" checked onchange="toggleColumn('col-bin')" class="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
+                    <span class="text-xs font-semibold text-slate-600 group-hover/item:text-indigo-600">Ubicación (Bin)</span>
+                </label>
+                <label class="flex items-center gap-3 cursor-pointer group/item">
+                    <input type="checkbox" checked onchange="toggleColumn('col-ent-sal')" class="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
+                    <span class="text-xs font-semibold text-slate-600 group-hover/item:text-indigo-600">Entradas / Salidas</span>
+                </label>
+                <label class="flex items-center gap-3 cursor-pointer group/item">
+                    <input type="checkbox" checked onchange="toggleColumn('col-ruta')" class="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
+                    <span class="text-xs font-semibold text-slate-600 group-hover/item:text-indigo-600">En Ruta</span>
+                </label>
+            </div>
         </div>
     </div>
+</div>
+
+    <div class="overflow-x-auto border border-slate-200 rounded-xl shadow-sm max-h-[70vh] overflow-y-auto bg-white">
+        <table class="min-w-full divide-y divide-slate-200 table-fixed border-separate border-spacing-0">
+            <thead class="bg-slate-50 sticky top-0 z-10">
+                <tr class="text-left text-[9px] font-black text-slate-500 uppercase tracking-tighter">
+                    <th class="w-28 px-9 py-1 border-b">Código</th>
+                    <th class="col-bin w-16 px-1 py-1 border-b text-center">Bin</th>
+                    <th class="con-ent-sal w-12 px-1 py-2 border-b text-center text-slate-400 ">Ent</th>
+                    <th class="col-ent-sal w-12 px-1 py-2 border-b text-center text-slate-400 ">Sal</th>
+                    <th class="col-sto w-12 px-1 py-2 border-b text-center font-bold bg-slate-100/50">Sto</th>
+                    <th class="col-ruta w-12 px-1 py-2 border-b text-center text-blue-600 ">Rut</th>
+                    <th class="w-14 px-1 py-2 border-b text-center font-black text-emerald-700 bg-emerald-50/50">Dis</th>
+                    <th class="col-fot w-12 px-2 py-2 border-b text-center hidden">Fot</th>
+                </tr>
+            </thead>
+            <tbody id="inventory-table-body" class="bg-white divide-y divide-slate-100">
+                <tr>
+                    <td colspan="8" class="text-center py-8 text-xs text-slate-400 italic">
+                        Cargando inventario...
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
 
     <!-- VISTA GALERÍA -->
     <div id="view-gallery" class="hidden">
@@ -1131,11 +1185,10 @@ function renderGalleryView(data) {
     </div>
     
     <div class="p-2 flex flex-col justify-between">
-        <div class="font-medium text-[9px] text-slate-500 uppercase tracking-tighter truncate">
-            ${grupo.modelo} ${grupo.genero} ${grupo.color}
-        </div>
-        
-        <div class="text-lg font-black text-emerald-700 leading-tight mb-1">
+     <div class="font-light tracking-[0.2em] text-[9px] text-slate-700 uppercase leading-relaxed truncate">
+    ${grupo.modelo}  ${grupo.genero}  ${grupo.color}
+</div>
+        <div class="text-lg font-black text-slate-700 leading-tight mb-1">
             $${(grupo.precio || 0).toLocaleString('es-CL')}
         </div>
         
@@ -1286,7 +1339,7 @@ function renderInventory(data = []) {
             <td class="px-3 py-3 text-xs font-bold text-slate-800">${item.stock}</td>
             <td class="px-3 py-2 text-xs text-blue-600">${item.enRuta}</td>
             <td class="px-3 py-2 text-xs font-bold text-emerald-700">${item.disponibles}</td>
-            <td class="px-3 py-2 text-xs ">${item.foto}</td>
+            <td class="px-3 py-2 text-xs hidden ">${item.foto}</td>
         `;
         tableBody.appendChild(row);
     });
@@ -2343,10 +2396,13 @@ function validarChecklistRetorno() {
 }
 
 
-function confirmarFinalTotal() {
+// Reemplaza con la URL que copiaste en el paso anterior
+const URL_SHEETS = "https://script.google.com/macros/s/AKfycbzLCnQZ0Ir0Hp4xQ-Jlvb9y_CSE60zwkTrR9ixJnYY0ot4_50FQ5jLkeua0MuDWAm8c/exec";
+
+async function confirmarFinalTotal() {
     let p = pedidos.find(x => x.id == pActualID);
     
-    // Ahora sí, pasamos los datos temporales al historial final
+    // Preparar datos existentes
     p.vendidos = p.temp_vendidos || p.items;
     p.devoluciones = p.temp_devoluciones || [];
     p.metodoPago = document.getElementById('metodo-pago').value;
@@ -2354,6 +2410,11 @@ function confirmarFinalTotal() {
     p.fechaFinal = new Date().toLocaleDateString();
     p.hora = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
+    // ENVIAR A GOOGLE SHEETS con los nuevos campos
+    // Nota: Asegúrate de que p.cliente, p.direccion, p.contacto, p.envio y p.total existan en tu objeto pedido
+    enviarVentaASheets(p);
+
+    // Proceso normal de guardado
     historial.unshift({...p}); 
     pedidos = pedidos.filter(x => x.id != pActualID);
     
@@ -2361,15 +2422,37 @@ function confirmarFinalTotal() {
     pActualID = null;
     save();
 
-    
-    // Volvemos a la ruta o al inicio
-    // NUEVO: Si no quedan pedidos, ir a step6 (verificación final de ruta)
     nextStep(pedidos.length === 0 ? 6 : 2);
 }
 
+function enviarVentaASheets(datos) {
+    // Mapeamos los productos para asegurar que tengan las propiedades correctas
+    // Ajusta 'item.nombre' o 'item.codigo' si tus variables se llaman distinto
+    const productosFormateados = datos.vendidos.map(item => ({
+        codigo: item.codigo || item.desc || "Sin desc", 
+        precio: item.precio || 0,
+        bin: item.bin || "N/A"
+    }));
 
-
-
+    fetch(URL_SHEETS, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            fecha: datos.fechaFinal,
+            hora: datos.hora,
+            id: datos.id,
+            cliente: datos.cliente || "Consumidor Final",
+            direccion: datos.direccion || "No definida",
+            telefono: datos.telefono || "N/A",
+            vendidos: productosFormateados, // Enviamos el array de productos
+            envio: datos.envio || 0,
+            total: datos.total || 0,
+            metodoPago: datos.metodoPago,
+            estado: datos.estado
+        })
+    }).catch(err => console.error("Error al enviar a Sheets:", err));
+}
 
 // NUEVO: Render para Verificación Final de Ruta (step6) - con letra del pedido
 function renderVerificacionFinalRuta() {
@@ -3249,7 +3332,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-
+function toggleColumn(columnClass) {
+    const elements = document.querySelectorAll(`.${columnClass}`);
+    elements.forEach(el => {
+        if (el.classList.contains('hidden')) {
+            el.classList.remove('hidden');
+            // Si es un TH o TD, Tailwind necesita que sea table-cell para no romperse
+            if (el.tagName === 'TH' || el.tagName === 'TD') {
+                el.classList.add('table-cell');
+            }
+        } else {
+            el.classList.add('hidden');
+            el.classList.remove('table-cell');
+        }
+    });
+}
 
 
 
