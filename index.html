@@ -610,13 +610,13 @@
                     <select id="filter-color" onchange="ejecutarFiltros()" 
                         class="w-full appearance-none bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold py-2 px-4 pr-8 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
                         <option value="">Todos los colores</option>
-                        <option value="NEGRO">⚫ Negro</option>
-                        <option value="AZUL">🔵 Azul</option>
-                        <option value="GRIS">⚪ Gris</option>
-                        <option value="BURDEO">🍷 Burdeo</option>
-                        <option value="BLANCO">⬜ Blanco</option>
-                        <option value="CAFE">🟤 Café</option>
-                        <option value="VERDE">🟢 Verde</option>
+                        <option value="NEG">⚫ Negro</option>
+                        <option value="AZU">🔵 Azul</option>
+                        <option value="GRI">⚪ Gris</option>
+                        <option value="BUR">🍷 Burdeo</option>
+                        <option value="BLA">⬜ Blanco</option>
+                        <option value="CAF">🟤 Café</option>
+                        <option value="VER">🟢 Verde</option>
                     </select>
                     <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-400">
                         <svg class="h-4 w-4 fill-current" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg>
@@ -2089,47 +2089,79 @@ function confirmarCancelacion() {
 
 
 
+
+
+
+
+
+
+
+
+
+
 function renderVistaUnificada() {
     let p = pedidos.find(x => x.id == pActualID); 
     if(!p) return;
     
-    // Controles rápidos
-    let htmlPre = `
-        <div class="flex gap-2 mb-3">
-          
-        </div>
-    `;
+    let htmlItems = p.items.map((it, idx) => {
+        // Inicializamos estados si no existen
+        if(!it.estado) it.estado = 'pendiente'; 
 
-    // Lista de productos: Quitamos el atributo 'checked' y usamos el estilo de Devolución
-    let htmlItems = p.items.map((it, idx) => `
-    <div id="item-row-${idx}" 
-         class="flex justify-between items-center bg-slate-50 p-2 rounded-2xl border-2 border-slate-200 opacity-90 mb-2 transition-all">
-        
-        <div class="flex items-center gap-3 cursor-pointer" onclick="toggleItemRow(${idx})">
-            <input type="checkbox" 
-                   class="w-6 h-6 venta-check-consolidado check-${idx} appearance-none border-2 border-slate-300 checked:bg-blue-500 rounded-lg transition-all" 
-                   data-idx="${idx}" 
-                   onclick="event.stopPropagation();" 
-                   onchange="toggleItemVisual(${idx})">
+        return `
+        <div id="item-row-${idx}" 
+             class="flex flex-col bg-slate-50 p-3 rounded-2xl border-2 border-slate-200 mb-2 transition-all">
             
-            <div class="leading-tight">
-                <span id="label-${idx}" class="font-black uppercase text-[10px] text-slate-900">${ICONOS.caja} ${it.desc || it.nombre}</span>
-                <p id="status-${idx}" class="text-[10px] font- text-slate-500 tracking-widest">Pendiente</p>
+            <div class="flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <div class="leading-tight">
+                        <span id="label-${idx}" class="font-black uppercase text-[10px] text-slate-900">
+                            ${ICONOS.caja} ${it.desc || it.nombre}
+                        </span>
+                        <p id="status-${idx}" class="text-[9px] font-bold text-slate-500 tracking-widest uppercase">Pendiente</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-2">
+                    <button onclick="cambiarEstadoItem(${idx}, 'prueba')" 
+                            id="btn-prueba-${idx}"
+                            class="px-3 py-1 bg-amber-100 text-amber-600 rounded-lg text-[9px] font-black uppercase border border-amber-200">
+                        Probar
+                    </button>
+
+                    <input type="checkbox" 
+                           class="w-8 h-8 venta-check-consolidado check-${idx} appearance-none border-2 border-slate-300 checked:bg-emerald-500 rounded-xl transition-all" 
+                           data-idx="${idx}" 
+                           onchange="confirmarVentaItem(${idx})">
+                </div>
             </div>
-        </div>
-        
-        <div class="flex items-center gap-1 bg-white/50 px-2 py-1 rounded-lg border border-slate-300">
-            <span class="font-bold text-slate-900 text-[10px]">$</span>
-            <input type="number" 
-                   class="precio-item-input font-black text-slate-900 text-xs bg-transparent w-16 outline-none text-right" 
-                   data-idx="${idx}" 
-                   value="${it.precio}" 
-                   onclick="event.stopPropagation();"
-                   oninput="recalcularTotalConsolidado()">
-        </div>
-    </div>`).join('');
+
+            <div class="flex justify-between items-center mt-2 pt-2 border-t border-slate-100">
+                 <span class="text-[9px] text-slate-400 font-bold uppercase">Precio Sugerido</span>
+                 <div class="flex items-center gap-1 bg-white px-2 py-1 rounded-lg border border-slate-200">
+                    <span class="font-bold text-slate-400 text-[10px]">$</span>
+                    <input type="number" 
+                           class="precio-item-input font-black text-slate-900 text-xs bg-transparent w-16 outline-none text-right" 
+                           data-idx="${idx}" 
+                           value="${it.precio}" 
+                           oninput="recalcularTotalConsolidado()">
+                </div>
+            </div>
+        </div>`;
+    }).join('');
     
-    document.getElementById('multi-venta-selector').innerHTML = htmlPre + htmlItems;
+    document.getElementById('multi-venta-selector').innerHTML = htmlItems;
+
+
+
+
+
+
+
+
+
+
+
+    
     
     // Envío editable
     document.getElementById('envio-detalle-pequeno').innerHTML = `
@@ -2148,6 +2180,73 @@ function renderVistaUnificada() {
 
     recalcularTotalConsolidado(); 
 }
+
+
+
+//funcion nueva
+
+function cambiarEstadoItem(idx, estado) {
+    const row = document.getElementById(`item-row-${idx}`);
+    const statusLabel = document.getElementById(`status-${idx}`);
+    const btnPrueba = document.getElementById(`btn-prueba-${idx}`);
+    const check = document.querySelector(`.check-${idx}`);
+
+    if (estado === 'prueba') {
+        row.className = "flex flex-col bg-amber-50 p-3 rounded-2xl border-2 border-amber-400 mb-2 transition-all shadow-sm";
+        statusLabel.innerText = "En Probador / Verificando";
+        statusLabel.className = "text-[9px] font-black text-amber-600 tracking-widest uppercase";
+        btnPrueba.classList.add('hidden'); // Ocultamos el botón porque ya está en prueba
+        check.checked = false; // Aseguramos que no se sume al total todavía
+    }
+    recalcularTotalConsolidado();
+}
+
+
+
+//funcion nueva
+function confirmarVentaItem(idx) {
+    const check = document.querySelector(`.check-${idx}`);
+    const row = document.getElementById(`item-row-${idx}`);
+    const statusLabel = document.getElementById(`status-${idx}`);
+    const btnPrueba = document.getElementById(`btn-prueba-${idx}`);
+
+    if(check.checked) {
+        // ESTADO VENTA CONFIRMADA
+        row.className = "flex flex-col bg-emerald-50 p-3 rounded-2xl border-2 border-emerald-500 mb-2 transition-all shadow-md";
+        statusLabel.innerText = "¡Confirmado para Compra!";
+        statusLabel.className = "text-[9px] font-black text-emerald-600 tracking-widest uppercase";
+        btnPrueba.classList.add('hidden');
+        playSound('success'); // Opcional: sonido de confirmación
+    } else {
+        // VOLVER A PENDIENTE
+        row.className = "flex flex-col bg-slate-50 p-3 rounded-2xl border-2 border-slate-200 mb-2 transition-all";
+        statusLabel.innerText = "Pendiente";
+        statusLabel.className = "text-[9px] font-black text-slate-400 tracking-widest uppercase";
+        btnPrueba.classList.remove('hidden');
+    }
+    recalcularTotalConsolidado();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -2172,29 +2271,63 @@ function actualizarEstadoSimple(idx) {
     recalcularTotalConsolidado();
 }
 
+
+
+
+//actualizada
+
 function recalcularTotalConsolidado() {
     let p = pedidos.find(x => x.id == pActualID); 
     if(!p) return;
     
     const checks = document.querySelectorAll('.venta-check-consolidado');
+    const envioInput = document.getElementById('envio-input');
+    
+    if(envioInput) p.envio = parseFloat(envioInput.value) || 0;
+
     let subtotal = 0;
+    let cantVendidos = 0;
+    let cantEnPrueba = 0;
     
     checks.forEach(c => { 
+        const idx = c.dataset.idx;
+        const inputPrecio = document.querySelector(`.precio-item-input[data-idx="${idx}"]`);
+        if(inputPrecio) p.items[idx].precio = parseFloat(inputPrecio.value) || 0;
+
         if(c.checked) {
-            subtotal += p.items[c.dataset.idx].precio; 
+            subtotal += p.items[idx].precio; 
+            cantVendidos++;
+        } else {
+            // Verificamos visualmente si está en color naranja para el contador del tablero
+            const row = document.getElementById(`item-row-${idx}`);
+            if(row.classList.contains('border-amber-400')) cantEnPrueba++;
         }
     });
 
-    const totalFinal = subtotal + p.envio;
-    document.getElementById('total-cobro-consolidado').innerText = `$${totalFinal.toLocaleString()}`;
+    p.totalFinal = subtotal + p.envio;
+    document.getElementById('total-cobro-consolidado').innerText = `$${p.totalFinal.toLocaleString()}`;
+    
+    // Actualizamos el Tablero de Control con el nuevo estado
+    actualizarTableroUI(cantVendidos, cantEnPrueba);
 }
 
-function marcarTodo(check) {
-    const checks = document.querySelectorAll('.venta-check-consolidado');
-    checks.forEach((c, idx) => {
-        c.checked = check;
-        toggleItemVisual(idx);
-    });
+function actualizarTableroUI(vendidos, enPrueba) {
+    let tableroContainer = document.getElementById('tablero-resumen');
+    if(!tableroContainer) return;
+
+    tableroContainer.innerHTML = `
+        <div class="flex justify-around bg-white rounded-2xl p-3 mb-4 border border-slate-200 shadow-sm">
+            <div class="text-center">
+                <p class="text-[8px] font-black text-slate-400 uppercase">Confirmados</p>
+                <p class="text-xl font-black text-emerald-600">${vendidos}</p>
+            </div>
+            <div class="border-l border-slate-200"></div>
+            <div class="text-center">
+                <p class="text-[8px] font-black text-amber-500 uppercase">En Probador</p>
+                <p class="text-xl font-black text-amber-500">${enPrueba}</p>
+            </div>
+        </div>
+    `;
 }
 
 
@@ -2454,6 +2587,26 @@ function enviarVentaASheets(datos) {
     }).catch(err => console.error("Error al enviar a Sheets:", err));
 }
 
+
+
+
+
+
+
+
+
+
+
+//----------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
 // NUEVO: Render para Verificación Final de Ruta (step6) - con letra del pedido
 function renderVerificacionFinalRuta() {
     
@@ -2494,8 +2647,29 @@ function renderVerificacionFinalRuta() {
 
     const totalEsperadoDigital = esperadoTappDani + esperadoTappLore + esperadoRutDani + esperadoRutLore;
 
+
+
+// --- NUEVO: MENSAJE DE RECORDATORIO ---
+    const mensajeRecordatorio = `
+        <div class="bg-amber-50 border-l-4 border-amber-400 p-4 mb-6 rounded-r-2xl shadow-sm animate-pulse">
+            <div class="flex items-center">
+                <div class="flex-shrink-0 text-amber-400 text-xl">⚠️</div>
+                <div class="ml-3">
+                    <p class="text-xs text-amber-800 font-black uppercase tracking-wider">Paso Crítico</p>
+                    <p class="text-[11px] text-amber-700 font-medium">
+                        Asegúrate de haber registrado las ventas en tu planilla/Sheets para descontar stock antes de finalizar la ruta.
+                    </p>
+                </div>
+            </div>
+        </div>
+    `;
+
+
+
+    
     // 3. HTML del arqueo comparativo
     const arqueoComparativo = `
+    ${mensajeRecordatorio}
         <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-200 mb-6">
             <h3 class="text-[10px] font-black text-slate-500 uppercase mb-4 tracking-widest">Arqueo Esperado</h3>
             <div class="space-y-4">
@@ -2611,7 +2785,6 @@ calcularEfectivoContado();  // Inicializa la comparación
 
 
 
-
 // NUEVO: Validar checkboxes de devoluciones globales
 function validarChecklistDevolucionesGlobales() {
     const checks = document.querySelectorAll('.check-global-dev');
@@ -2623,14 +2796,48 @@ function validarChecklistDevolucionesGlobales() {
         : "w-full bg-slate-300 text-white font-black py-7 rounded-[2rem] shadow-xl text-lg uppercase";
 }
 
-// NUEVO: Confirmar fin de ruta
 function confirmarFinRuta() {
-    if (confirm("¿Confirmar que los montos y devoluciones están correctos?")) {
-        alert("Ruta finalizada exitosamente. ¡Buen trabajo!");
-        // Opcional: Limpiar temporales o resetear variables si es necesario
-        nextStep(0); // Volver al inicio
+    // Texto del mensaje de advertencia
+    const mensaje = `⚠️ ¡ALTO! ANTES DE FINALIZAR:\n\n` +
+                    `1. ¿Ya registraste las ventas en Google Sheets?\n` +
+                    `2. ¿Revisaste que el stock coincida?\n` +
+                    `3. ¿El efectivo está guardado?\n\n` +
+                    `Si finalizas ahora, el historial se borrará y no podrás ver estos datos después. ¿Confirmas que todo está registrado?`;
+
+    if (confirm(mensaje)) {
+        // Aquí va la lógica de cierre
+        alert("✅ Ruta finalizada y registro completado. ¡Buen trabajo!");
+        
+        // OPCIONAL: Aquí podrías limpiar el historial para el día siguiente
+        // historial = []; 
+        // guardarHistorial(); 
+        
+        nextStep(0); // Volver al inicio o pantalla de bienvenida
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -3362,4 +3569,3 @@ function toggleColumn(columnClass) {
 
 </body>
 </html>
-
