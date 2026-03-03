@@ -91,13 +91,18 @@
       box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
       transform: translateY(-1px);
   }
+
   
-</style>
 
-
-
-
-
+/* Puedes añadir esto a tu bloque de estilos */
+.form-select-producto {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.5rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+    padding-right: 2.5rem;
+}
 
 
 
@@ -245,71 +250,120 @@
         <!-- FORMULARIO -->
 
 
-        <div id="contenedor-formulario"
-            class=" hidden bg-white rounded-[2rem] p-5 shadow-2xl border border-slate-100 mb-1 border-b-2">
-            <div class="flex justify-between items-center mb-1">
-                <span class=" text-slate-500 text-[9px] font-black px py-1 rounded-lg uppercase">Pedido</span>
-                <button onclick="toggleMasivo()"
-                    class="text-slate-400 font-black text-[9px] uppercase hover:text-blue-600">Carga Masiva</button>
+       <div id="contenedor-formulario"
+    class="hidden fixed inset-0 z-50 bg-white overflow-y-auto p-6 md:p-10 animate-in fade-in zoom-in duration-200">
+    
+    <div class="max-w-4xl mx-auto">
+        <div class="flex justify-between items-center mb-8">
+            <div>
+                <h2 class="text-2xl font-black text-slate-800 tracking-tight">Nuevo Pedido</h2>
+                <p class="text-slate-400 text-sm">Completa la información para la ruta de entrega</p>
             </div>
-            <span class=" text-blue-500 text-[9px] font-black px-0 py-3 rounded-lg">Datos clientes</span>
-            <div id="area-masiva"
-                class="hidden mb-4 p-4 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200">
-                <textarea id="input-masivo" rows="4" class="form-input text-xs mb-2"
-                    placeholder="Pega desde Sheets..."></textarea>
-                <button onclick="procesarMasivo()"
-                    class="w-full bg-blue-100 text-blue-700 font-black py-2 rounded-xl text-[9px] uppercase tracking-widest">Importar
-                    Datos</button>
-            </div>
+            <button onclick="toggleMasivo()"
+                class="bg-slate-50 px-4 py-2 rounded-xl text-slate-500 font-bold text-xs uppercase hover:bg-blue-50 hover:text-blue-600 transition-all">
+                📦 Carga Masiva
+            </button>
+        </div>
 
-            <div class="grid grid-cols-12 gap-2 mb-3">
+        <div id="area-masiva"
+            class="hidden mb-8 p-6 bg-blue-50 rounded-3xl border-2 border-dashed border-blue-200">
+            <textarea id="input-masivo" rows="4" 
+                class="w-full bg-white border-none rounded-2xl p-4 text-sm focus:ring-2 focus:ring-blue-500 mb-3 shadow-sm"
+                placeholder="Pega aquí tus datos desde Excel o Sheets..."></textarea>
+            <button onclick="procesarMasivo()"
+                class="w-full bg-blue-600 text-white font-black py-3 rounded-xl text-xs uppercase tracking-widest shadow-lg shadow-blue-200">
+                Importar Datos
+            </button>
+        </div>
+
+        <div class="mb-10">
+            <div class="flex items-center gap-2 mb-6">
+                <span class="bg-slate-800 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase">01</span>
+                <span class="text-slate-800 font-black text-sm uppercase tracking-wider">Datos del Cliente</span>
+            </div>
+            
+            <div class="grid grid-cols-12 gap-4">
                 <input type="hidden" id="f-edit-id">
 
-                <input type="text" id="f-nombre" placeholder="Nombre"
-                    class="form-input col-span-5 border-slate-100 text-xs py-2">
-                <input type="text" id="f-direccion" placeholder="Dirección exacta"
-                    class="form-input col-span-7 border-slate-100 text-xs py-2">
-
-                <div class="col-span-6">
-                    <input type="tel" id="f-telefono" placeholder="WhatsApp"
-                        class="form-input border-slate-100 text-xs py-2">
+                <div class="col-span-12 md:col-span-5">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase ml-2 mb-1 block">Nombre Completo</label>
+                    <input type="text" id="f-nombre" placeholder="Ej. Juan Pérez"
+                        class="w-full bg-slate-50 border-transparent focus:bg-white focus:border-blue-500 rounded-2xl text-sm py-4 px-5 transition-all">
                 </div>
-                <div class="col-span-3">
+
+                <div class="col-span-12 md:col-span-7">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase ml-2 mb-1 block">Dirección de Entrega</label>
+                    <input type="text" id="f-direccion" placeholder="Calle, número, colonia..."
+                        class="w-full bg-slate-50 border-transparent focus:bg-white focus:border-blue-500 rounded-2xl text-sm py-4 px-5 transition-all">
+                </div>
+
+                <div class="col-span-12 md:col-span-6">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase ml-2 mb-1 block">Teléfono / WhatsApp</label>
+                    <input type="tel" id="f-telefono" placeholder="+56 9..."
+                        class="w-full bg-slate-50 border-transparent focus:bg-white focus:border-blue-500 rounded-2xl text-sm py-4 px-5 transition-all">
+                </div>
+
+                <div class="col-span-6 md:col-span-3">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase ml-2 mb-1 block">Costo Envío</label>
                     <div class="relative">
-                        <span
-                            class="absolute left-2 top-0.5 text-[7px] font-black text-slate-400 uppercase">Envío</span>
+                        <span class="absolute left-4 top-4 text-slate-400">$</span>
                         <input type="number" id="f-envio" placeholder="0.00"
-                            class="form-input border-slate-100 text-xs pt-3 pb-1">
+                            class="w-full bg-slate-50 border-transparent focus:bg-white focus:border-blue-500 rounded-2xl text-sm py-4 pl-8 pr-5 transition-all">
                     </div>
                 </div>
-                <div class="col-span-3">
+
+                <div class="col-span-6 md:col-span-3">
+                    <label class="text-[10px] font-bold text-blue-500 uppercase ml-2 mb-1 block">Total a Cobrar</label>
                     <div class="relative">
-                        <span class="absolute left-2 top-0.5 text-[7px] font-black text-blue-500 uppercase">Total</span>
+                        <span class="absolute left-4 top-4 text-blue-500 font-bold">$</span>
                         <input type="number" id="f-total" placeholder="0.00"
-                            class="form-input border-blue-100 bg-blue-50 font-bold text-blue-500 text-xs pt-3 pb-1">
+                            class="w-full bg-blue-50 border-blue-100 focus:bg-white focus:border-blue-500 rounded-2xl text-sm py-4 pl-8 pr-5 font-bold text-blue-600 transition-all shadow-inner">
                     </div>
                 </div>
 
-                <textarea id="f-detalles" placeholder="Detalles o notas del pedido..." rows="1"
-                    class="form-input col-span-12 border-slate-100 text-xs py-2"></textarea>
-            </div>
-
-            <span class=" text-blue-500 text-[8px] font-black px-2 py-1 rounded-lg">Productos</span>
-            <div id="contenedor-productos" class="space-y-2  pr-1"></div>
-
-            <button onclick="agregarFilaProducto()"
-                class="w-full mt-3 py-2 border-2 border-dashed border-slate-100 rounded-xl text-slate-400 font-black text-[9px] uppercase hover:bg-slate-50 transition-colors">
-                + Añadir Producto
-            </button>
-
-            <div class="flex gap-2 mt-2">
-                <button onclick="guardarPedidoFormulario()"
-                    class="flex-1 bg-blue-500 text-white font-black py-2 rounded-2xl shadow-lg uppercase text-[9px] tracking-widest">Guardar
-                    en Ruta</button>
-                <button onclick="resetFormulario();toggleForm(false)"
-                    class="px-5 bg-slate-100 text-slate-500 font-black rounded-2xl text-xs uppercase">X</button>
+                <div class="col-span-12">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase ml-2 mb-1 block">Notas del Pedido</label>
+                    <textarea id="f-detalles" placeholder="¿Algo que debamos saber?" rows="2"
+                        class="w-full bg-slate-50 border-transparent focus:bg-white focus:border-blue-500 rounded-2xl text-sm py-4 px-5 transition-all"></textarea>
+                </div>
             </div>
         </div>
+
+        <div class="mb-10">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-2">
+                    <span class="bg-slate-800 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase">02</span>
+                    <span class="text-slate-800 font-black text-sm uppercase tracking-wider">Productos</span>
+                </div>
+                <button onclick="agregarFilaProducto()"
+                    class="text-blue-600 font-black text-xs uppercase hover:underline">
+                    + Añadir Fila
+                </button>
+            </div>
+            
+            <div id="contenedor-productos" class="space-y-3 bg-slate-50 p-4 rounded-3xl min-h-[100px]">
+                </div>
+        </div>
+
+        <div class="flex flex-col md:flex-row gap-4 mt-12 pb-10">
+            <button onclick="guardarPedidoFormulario()"
+                class="flex-[2] bg-blue-600 hover:bg-blue-700 text-white font-black py-5 rounded-2xl shadow-xl shadow-blue-200 uppercase text-xs tracking-widest transition-all transform active:scale-[0.98]">
+                Guardar Pedido en Ruta
+            </button>
+            <button onclick="resetFormulario();toggleForm(false)"
+                class="flex-1 bg-slate-100 hover:bg-red-50 hover:text-red-500 text-slate-500 font-black py-5 rounded-2xl text-xs uppercase transition-all">
+                Cancelar y Salir
+            </button>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
 
 
 
@@ -706,113 +760,104 @@
 
 
 
-    <section id="step_inventory" class="step bg-white p-4 rounded-xl shadow-sm border border-slate-100">
-        <div class="flex items-center justify-between mb-6">
-            <h2 class="text-lg font-bold text-slate-800 tracking-tight">Inventario</h2>
 
-            <div class="flex bg-slate-100 p-1 rounded-xl border border-slate-200">
-                <button onclick="switchInventoryView('table')" id="btn-view-table"
-                    class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all active-view">
-                    <i class="fas fa-table mr-1"></i> Tabla
+
+<section id="step_inventory" class="step bg-white p-4 rounded-xl shadow-sm border border-slate-100">
+    <div class="flex items-center justify-between mb-6">
+        <h2 class="text-lg font-bold text-slate-800 tracking-tight">Inventario</h2>
+
+        <div class="flex bg-slate-100 p-1 rounded-xl border border-slate-200">
+            <button onclick="switchInventoryView('table')" id="btn-view-table"
+                class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all active-view">
+                <i class="fas fa-table mr-1"></i> Tabla
+            </button>
+            <button onclick="switchInventoryView('gallery')" id="btn-view-gallery"
+                class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-500 hover:text-slate-700">
+                <i class="fas fa-th-large mr-1"></i> Galería
+            </button>
+        </div>
+    </div>
+
+    <div class="space-y-3 mb-6">
+        <div class="flex gap-2">
+            <div class="relative flex-grow">
+                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </span>
+                <input type="text" id="search-inventory" placeholder="Buscar código, modelo, color..."
+                    class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all shadow-inner"
+                    oninput="filtrarVistaActual(this.value)">
+            </div>
+
+            <button onclick="toggleFilterPanel()" id="btn-toggle-filters"
+                class="flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50 transition-all shadow-sm active:scale-95">
+                <i class="fas fa-filter text-xs"></i>
+                <span class="hidden md:inline">Filtros</span>
+                <span id="filter-badge" class="hidden w-2 h-2 bg-indigo-500 rounded-full"></span>
+            </button>
+
+            <div class="relative group">
+                <button
+                    class="flex items-center justify-center w-11 h-11 bg-white border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-50 transition-all shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 12h9.75M10.5 18h9.75M3 6h.008v.008H3V6zm0 6h.008v.008H3V12zm0 6h.008v.008H3V18z" />
+                    </svg>
                 </button>
-                <button onclick="switchInventoryView('gallery')" id="btn-view-gallery"
-                    class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-500 hover:text-slate-700">
-                    <i class="fas fa-th-large mr-1"></i> Galería
-                </button>
+
+                <div class="absolute right-0 mt-2 w-48 bg-white border border-slate-200 rounded-xl shadow-xl py-3 px-4 hidden group-hover:block z-[60] animate-in fade-in slide-in-from-top-2">
+                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-3">Columnas</span>
+                    <div class="space-y-2">
+                        <label class="flex items-center gap-3 cursor-pointer group/item">
+                            <input type="checkbox" checked onchange="toggleColumn('col-bin')" class="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
+                            <span class="text-xs font-semibold text-slate-600 group-hover/item:text-indigo-600">Ubicación (Bin)</span>
+                        </label>
+                        <label class="flex items-center gap-3 cursor-pointer group/item">
+                            <input type="checkbox" checked onchange="toggleColumn('col-ent-sal')" class="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
+                            <span class="text-xs font-semibold text-slate-600 group-hover/item:text-indigo-600">E / S</span>
+                        </label>
+                        <label class="flex items-center gap-3 cursor-pointer group/item">
+                            <input type="checkbox" checked onchange="toggleColumn('col-ruta')" class="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
+                            <span class="text-xs font-semibold text-slate-600 group-hover/item:text-indigo-600">En Ruta</span>
+                        </label>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="space-y-4">
-
-            <div>
-                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block">Categoría /
-                    Modelo</span>
-                <div id="filter-model-group"
-                    class="flex flex-nowrap gap-2 overflow-x-auto pb-3 -mx-4 px-4 scrollbar-hide">
-
-                    <button onclick="setFiltroModelo('')" data-mod=""
-                        class="flex-shrink-0 px-5 py-2 text-xs font-bold rounded-full border transition-all bg-slate-900 text-white border-slate-900 shadow-sm">
-                        All
-                    </button>
-
-                    <button onclick="setFiltroModelo('Z')" data-mod="Z"
-                        class="flex-shrink-0 px-5 py-2 text-xs font-bold rounded-full border border-slate-200 bg-white text-slate-600 hover:border-slate-400">
-                        Zap
-                    </button>
-
-                    <button onclick="setFiltroModelo('D')" data-mod="D"
-                        class="flex-shrink-0 px-5 py-2 text-xs font-bold rounded-full border border-slate-200 bg-white text-slate-600 hover:border-slate-400">
-                        Dep
-                    </button>
-
-                    <button onclick="setFiltroModelo('P')" data-mod="P"
-                        class="flex-shrink-0 px-5 py-2 text-xs font-bold rounded-full border border-slate-200 bg-white text-slate-600 hover:border-slate-400">
-                        Pan
-                    </button>
-
-                    <button onclick="setFiltroModelo('PF')" data-mod="PF"
-                        class="flex-shrink-0 px-5 py-2 text-xs font-bold rounded-full border border-slate-200 bg-white text-slate-600 hover:border-slate-400">
-                        Pf
-                    </button>
-
-                    <button onclick="setFiltroModelo('S')" data-mod="S"
-                        class="flex-shrink-0 px-5 py-2 text-xs font-bold rounded-full border border-slate-200 bg-white text-slate-600 hover:border-slate-400">
-                        San
-                    </button>
-
-
-                    <button onclick="setFiltroModelo('C')" data-mod="C"
-                        class="flex-shrink-0 px-5 py-2 text-xs font-bold rounded-full border border-slate-200 bg-white text-slate-600 hover:border-slate-400">
-                        Ch
-                    </button>
-
-                    <button onclick="setFiltroModelo('B')" data-mod="B"
-                        class="flex-shrink-0 px-5 py-2 text-xs font-bold rounded-full border border-slate-200 bg-white text-slate-600 hover:border-slate-400">
-                        Bn
-                    </button>
-
-                    <button onclick="setFiltroModelo('U')" data-mod="U"
-                        class="flex-shrink-0 px-5 py-2 text-xs font-bold rounded-full border border-slate-200 bg-white text-slate-600 hover:border-slate-400">
-                        Urb
-                    </button>
-
-                </div>
-
-                <style>
-                    /* Estética: Oculta la barra de scroll pero mantiene la funcionalidad */
-                    .scrollbar-hide::-webkit-scrollbar {
-                        display: none;
-                    }
-
-                    .scrollbar-hide {
-                        -ms-overflow-style: none;
-                        /* IE and Edge */
-                        scrollbar-width: none;
-                        /* Firefox */
-                    }
-                </style>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div id="filter-panel" class="hidden overflow-hidden bg-slate-50 rounded-2xl border border-slate-200 transition-all duration-300">
+            <div class="p-4 space-y-5">
                 <div>
-                    <span
-                        class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block">Género</span>
-                    <div id="filter-gender-group" class="flex gap-2">
-                        <button onclick="setFiltroGenero('')" data-gen=""
-                            class="flex-1 py-2 text-xs font-bold border rounded-lg bg-slate-100 text-slate-900 border-transparent">All</button>
-                        <button onclick="setFiltroGenero('H')" data-gen="H"
-                            class="flex-1 py-2 text-xs font-bold border rounded-lg bg-white border-slate-200 text-slate-600 hover:bg-slate-50">Hombres</button>
-                        <button onclick="setFiltroGenero('M')" data-gen="M"
-                            class="flex-1 py-2 text-xs font-bold border rounded-lg bg-white border-slate-200 text-slate-600 hover:bg-slate-50">Mujeres</button>
+                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block">Categoría / Modelo</span>
+                    <div id="filter-model-group" class="flex flex-nowrap gap-2 overflow-x-auto pb-2 scrollbar-hide">
+                        <button onclick="setFiltroModelo('')" data-mod="" class="flex-shrink-0 px-5 py-2 text-xs font-bold rounded-full border transition-all bg-slate-900 text-white border-slate-900 shadow-sm">All</button>
+                        <button onclick="setFiltroModelo('Z')" data-mod="Z" class="flex-shrink-0 px-5 py-2 text-xs font-bold rounded-full border border-slate-200 bg-white text-slate-600 hover:border-slate-400">Zap</button>
+                        <button onclick="setFiltroModelo('D')" data-mod="D" class="flex-shrink-0 px-5 py-2 text-xs font-bold rounded-full border border-slate-200 bg-white text-slate-600 hover:border-slate-400">Dep</button>
+                        <button onclick="setFiltroModelo('P')" data-mod="P" class="flex-shrink-0 px-5 py-2 text-xs font-bold rounded-full border border-slate-200 bg-white text-slate-600 hover:border-slate-400">Pan</button>
+                        <button onclick="setFiltroModelo('PF')" data-mod="PF" class="flex-shrink-0 px-5 py-2 text-xs font-bold rounded-full border border-slate-200 bg-white text-slate-600 hover:border-slate-400">Pf</button>
+                        <button onclick="setFiltroModelo('S')" data-mod="S" class="flex-shrink-0 px-5 py-2 text-xs font-bold rounded-full border border-slate-200 bg-white text-slate-600 hover:border-slate-400">San</button>
+                        <button onclick="setFiltroModelo('C')" data-mod="C" class="flex-shrink-0 px-5 py-2 text-xs font-bold rounded-full border border-slate-200 bg-white text-slate-600 hover:border-slate-400">Ch</button>
+                        <button onclick="setFiltroModelo('B')" data-mod="B" class="flex-shrink-0 px-5 py-2 text-xs font-bold rounded-full border border-slate-200 bg-white text-slate-600 hover:border-slate-400">Bn</button>
+                        <button onclick="setFiltroModelo('U')" data-mod="U" class="flex-shrink-0 px-5 py-2 text-xs font-bold rounded-full border border-slate-200 bg-white text-slate-600 hover:border-slate-400">Urb</button>
                     </div>
                 </div>
 
-                <div>
-                    <span
-                        class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block">Color</span>
-                    <div class="relative">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block">Género</span>
+                        <div id="filter-gender-group" class="flex gap-2">
+                            <button onclick="setFiltroGenero('')" data-gen="" class="flex-1 py-2 text-xs font-bold border rounded-lg bg-slate-200 text-slate-900 border-transparent">All</button>
+                            <button onclick="setFiltroGenero('H')" data-gen="H" class="flex-1 py-2 text-xs font-bold border rounded-lg bg-white border-slate-200 text-slate-600 hover:bg-slate-50">Hombres</button>
+                            <button onclick="setFiltroGenero('M')" data-gen="M" class="flex-1 py-2 text-xs font-bold border rounded-lg bg-white border-slate-200 text-slate-600 hover:bg-slate-50">Mujeres</button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block">Color</span>
                         <select id="filter-color" onchange="ejecutarFiltros()"
-                            class="w-full appearance-none bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold py-2 px-4 pr-8 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
+                            class="w-full appearance-none bg-white border border-slate-200 text-slate-700 text-xs font-bold py-2.5 px-4 rounded-lg focus:ring-2 focus:ring-indigo-500/20 outline-none">
                             <option value="">Todos los colores</option>
                             <option value="NEG">⚫ Negro</option>
                             <option value="AZU">🔵 Azul</option>
@@ -822,132 +867,158 @@
                             <option value="CAF">🟤 Café</option>
                             <option value="VER">🟢 Verde</option>
                         </select>
-                        <div
-                            class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-400">
-                            <svg class="h-4 w-4 fill-current" viewBox="0 0 20 20">
-                                <path
-                                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
-                            </svg>
-                        </div>
                     </div>
                 </div>
             </div>
-
-            <div class="pt-2">
-                <div class="relative mb-2">
-                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
-                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                        </svg>
-                    </span>
-                    <input type="text" id="search-inventory" placeholder="Buscar código, modelo, color..."
-                        class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all shadow-inner"
-                        oninput="filtrarVistaActual(this.value)">
-                </div>
-
-            </div>
-
-
         </div>
-        <style>
-            /* Estilo para el botón activo en el toggle de vista */
-            .active-view {
-                background-color: white !important;
-                color: #0f172a !important;
-                /* slate-900 */
-                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    </div>
+
+    <div id="view-gallery" class="hidden">
+        <div id="gallery-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+            </div>
+    </div>
+
+    <div id="view-table" class="block">
+        <div class="overflow-x-auto border border-slate-200 rounded-xl shadow-sm max-h-[70vh] overflow-y-auto bg-white">
+            <table class="min-w-full divide-y divide-slate-200 table-fixed border-separate border-spacing-0">
+                <thead class="bg-slate-50 sticky top-0 z-10">
+                    <tr class="text-left text-[9px] font-black text-slate-500 uppercase tracking-tighter">
+                        <th class="w-28 px-4 py-3 border-b">Código</th>
+                        <th class="col-bin w-16 px-1 py-3 border-b text-center">Bin</th>
+                        <th class="col-ent-sal w-12 px-1 py-3 border-b text-center text-slate-400">Ent</th>
+                        <th class="col-ent-sal w-12 px-1 py-3 border-b text-center text-slate-400">Sal</th>
+                        <th class="col-sto w-12 px-1 py-3 border-b text-center font-bold bg-slate-100/50">Sto</th>
+                        <th class="col-ruta w-12 px-1 py-3 border-b text-center text-blue-600">Rut</th>
+                        <th class="w-14 px-1 py-3 border-b text-center font-black text-emerald-700 bg-emerald-50/50">Dis</th>
+                        <th class="col-hor w-12 px-2 py-3 border-b text-center">Hor</th>
+                    </tr>
+                </thead>
+                <tbody id="inventory-table-body" class="bg-white divide-y divide-slate-100">
+                    <tr>
+                        <td colspan="8" class="text-center py-12 text-xs text-slate-400 italic">
+                            Cargando inventario...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <style>
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .active-view {
+            background-color: white !important;
+            color: #0f172a !important;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        #filter-panel.show {
+            display: block;
+            animation: slideDown 0.3s ease-out forwards;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+
+    <script>
+        function toggleFilterPanel() {
+            const panel = document.getElementById('filter-panel');
+            const btn = document.getElementById('btn-toggle-filters');
+            
+            if (panel.classList.contains('hidden')) {
+                panel.classList.remove('hidden');
+                panel.classList.add('show');
+                btn.classList.add('bg-slate-100', 'border-indigo-200');
+            } else {
+                panel.classList.add('hidden');
+                panel.classList.remove('show');
+                btn.classList.remove('bg-slate-100', 'border-indigo-200');
             }
-        </style>
+        }
 
-
-
-        <!-- VISTA TABLA -->
-        <div id="view-table" class="block">
-
-            <div class="flex justify-end mb-2">
-                <div class="relative group">
-                    <button
-                        class="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-[11px] font-bold text-slate-600 hover:bg-slate-50 transition-all shadow-sm">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24"
-                            stroke="currentColor" stroke-width="2.5">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M10.5 6h9.75M10.5 12h9.75M10.5 18h9.75M3 6h.008v.008H3V6zm0 6h.008v.008H3V12zm0 6h.008v.008H3V18z" />
-                        </svg>
-                        Columnas
-                    </button>
-
-                    <div
-                        class="absolute right-0 mt-2 w-48 bg-white border border-slate-200 rounded-xl shadow-xl py-3 px-4 hidden group-hover:block z-[60]">
-                        <span
-                            class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-3">Mostrar/Ocultar</span>
-                        <div class="space-y-2">
-                            <label class="flex items-center gap-3 cursor-pointer group/item">
-                                <input type="checkbox" checked onchange="toggleColumn('col-bin')"
-                                    class="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
-                                <span
-                                    class="text-xs font-semibold text-slate-600 group-hover/item:text-indigo-600">Ubicación
-                                    (Bin)</span>
-                            </label>
-                            <label class="flex items-center gap-3 cursor-pointer group/item">
-                                <input type="checkbox" checked onchange="toggleColumn('col-ent-sal')"
-                                    class="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
-                                <span
-                                    class="text-xs font-semibold text-slate-600 group-hover/item:text-indigo-600">Entradas
-                                    / Salidas</span>
-                            </label>
-                            <label class="flex items-center gap-3 cursor-pointer group/item">
-                                <input type="checkbox" checked onchange="toggleColumn('col-ruta')"
-                                    class="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
-                                <span class="text-xs font-semibold text-slate-600 group-hover/item:text-indigo-600">En
-                                    Ruta</span>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div
-                class="overflow-x-auto border border-slate-200 rounded-xl shadow-sm max-h-[70vh] overflow-y-auto bg-white">
-                <table class="min-w-full divide-y divide-slate-200 table-fixed border-separate border-spacing-0">
-                    <thead class="bg-slate-50 sticky top-0 z-10">
-                        <tr class="text-left text-[9px] font-black text-slate-500 uppercase tracking-tighter">
-                            <th class="w-28 px-9 py-1 border-b">Código</th>
-                            <th class="col-bin w-16 px-1 py-1 border-b text-center">Bin</th>
-                            <th class="con-ent-sal w-12 px-1 py-2 border-b text-center text-slate-400 ">Ent</th>
-                            <th class="col-ent-sal w-12 px-1 py-2 border-b text-center text-slate-400 ">Sal</th>
-                            <th class="col-sto w-12 px-1 py-2 border-b text-center font-bold bg-slate-100/50">Sto</th>
-                            <th class="col-ruta w-12 px-1 py-2 border-b text-center text-blue-600 ">Rut</th>
-                            <th
-                                class="w-14 px-1 py-2 border-b text-center font-black text-emerald-700 bg-emerald-50/50">
-                                Dis</th>
-                            <th class="col-fot w-12 px-2 py-2 border-b text-center hidden">Fot</th>
-                            <th class="col-hor w-12 px-2 py-2 border-b text-center">Hor</th>
-                        </tr>
-                    </thead>
-                    <tbody id="inventory-table-body" class="bg-white divide-y divide-slate-100">
-                        <tr>
-                            <td colspan="8" class="text-center py-8 text-xs text-slate-400 italic">
-                                Cargando inventario...
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- VISTA GALERÍA -->
-        <div id="view-gallery" class="hidden">
-            <div id="gallery-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                <!-- Las tarjetas se generan con JS -->
-            </div>
-        </div>
-    </section>
+        // Esta función debe existir en tu lógica para cambiar columnas
+        function toggleColumn(columnClass) {
+            const cols = document.querySelectorAll('.' + columnClass);
+            cols.forEach(col => {
+                col.classList.toggle('hidden');
+            });
+        }
+    </script>
+</section>
 
 
 
 
     </main>
+
+
+
+    <div id="product-detail-overlay" class="fixed inset-0 bg-white z-[200] hidden overflow-y-auto">
+    <div class="sticky top-0 bg-white/80 backdrop-blur-md p-4 flex items-center border-b border-slate-100 z-10">
+        <button onclick="closeProductDetail()" class="flex items-center gap-2 text-slate-800 font-bold">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+            Volver al inventario
+        </button>
+    </div>
+
+    <div class="max-w-2xl mx-auto p-4 md:p-8">
+        <div id="detail-image-container" class="aspect-square rounded-3xl bg-slate-100 overflow-hidden shadow-2xl mb-8">
+            </div>
+
+        <div class="space-y-6">
+            <div class="flex justify-between items-start">
+                <div>
+                    <div id="detail-tags" class="flex gap-2 mb-2"></div>
+                    <h1 id="detail-title" class="text-3xl font-black text-slate-800 tracking-tight uppercase"></h1>
+                    <p id="detail-subtitle" class="text-slate-500 font-medium"></p>
+                </div>
+                <div id="detail-price" class="text-3xl font-black text-indigo-600"></div>
+            </div>
+
+            <hr class="border-slate-100">
+
+            <div>
+                <h3 class="text-sm font-black text-slate-400 uppercase tracking-widest mb-4">Disponibilidad por Talla</h3>
+                <div id="detail-sizes-grid" class="grid grid-cols-4 sm:grid-cols-6 gap-3">
+                    </div>
+            </div>
+            
+            <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100 mt-8">
+                <div class="flex items-center gap-4 text-slate-600">
+                    <div class="text-center flex-1">
+                        <span class="block text-[10px] font-bold uppercase text-slate-400">Salidas</span>
+                        <span id="detail-salidas" class="text-lg font-bold"></span>
+                    </div>
+                    <div class="w-px h-8 bg-slate-200"></div>
+                    <div class="text-center flex-1">
+                        <span class="block text-[10px] font-bold uppercase text-slate-400">Estado</span>
+                        <span id="detail-status" class="text-lg font-bold text-emerald-600">Disponible</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1360,7 +1431,10 @@
 
 
 
-
+        document.addEventListener('DOMContentLoaded', () => {
+    // Esto asegura que al abrir la página, la galería sea lo primero en activarse
+    switchInventoryView('gallery');
+});
 
 
 
@@ -1441,8 +1515,12 @@ function renderGalleryView(data) {
         // Clases dinámicas para la etiqueta de horma
         const estiloHorma = hormaEstilos[grupo.horma] || 'bg-slate-100 text-slate-600 border-slate-200';
 
+
+                // Convertimos el objeto a string base64 para pasarlo de forma segura por el onclick
+        const dataParam = btoa(JSON.stringify(grupo));
+
         card.innerHTML = `
-            <div class="aspect-square bg-slate-50 relative overflow-hidden">
+            <div class="aspect-square bg-slate-50 relative overflow-hidden cursor-zoom-in" onclick="openProductDetail('${dataParam}')">
                 ${grupo.foto
                     ? `<img src="${grupo.foto}" class="w-full h-full object-cover" loading="lazy" onerror="this.src='https://placehold.co/400x400?text=Sin+Foto'">`
                     : `<div class="w-full h-full flex items-center justify-center text-slate-300 text-5xl">📦</div>`
@@ -1479,6 +1557,19 @@ function renderGalleryView(data) {
 
     ejecutarFiltros();
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1944,6 +2035,8 @@ function renderGalleryView(data) {
             document.getElementById('contenedor-formulario').scrollIntoView({ behavior: 'smooth' });
         }
 
+
+
         // 3. AGREGAR FILA (Mantiene tu diseño)
         function agregarFilaProducto(codigo = '', precio = '', bin = '') {
             const div = document.createElement('div');
@@ -1974,6 +2067,12 @@ function renderGalleryView(data) {
             document.getElementById('contenedor-productos').appendChild(div);
         }
 
+
+
+
+
+
+        
         // 4. GUARDAR CAMBIOS (Corregido para leer las clases correctas)
         function guardarPedidoFormulario() {
             const idExistente = document.getElementById('f-edit-id').value;
@@ -3847,10 +3946,74 @@ function renderGalleryView(data) {
 
 
 
+        function toggleFilterPanel() {
+    const panel = document.getElementById('filter-panel');
+    if (panel.classList.contains('hidden')) {
+        panel.classList.remove('hidden');
+        // Opcional: animar entrada
+    } else {
+        panel.classList.add('hidden');
+    }
+}
 
 
+function openProductDetail(encodedData) {
+    // Decodificar los datos recibidos
+    const grupo = JSON.parse(atob(encodedData));
+    const overlay = document.getElementById('product-detail-overlay');
+    
+    // 1. Llenar Imagen
+    document.getElementById('detail-image-container').innerHTML = grupo.foto 
+        ? `<img src="${grupo.foto}" class="w-full h-full object-cover animate-in zoom-in duration-300">`
+        : `<div class="w-full h-full flex items-center justify-center text-8xl">📦</div>`;
 
+    // 2. Llenar Textos
+    document.getElementById('detail-title').innerText = `${grupo.modelo} ${grupo.color}`;
+    document.getElementById('detail-subtitle').innerText = `Género: ${grupo.genero === 'H' ? 'Hombre' : 'Mujer'}`;
+    document.getElementById('detail-price').innerText = `$${(grupo.precio || 0).toLocaleString('es-CL')}`;
+    document.getElementById('detail-salidas').innerText = grupo.salidas;
 
+    // 3. Llenar Horma Tag
+    const hormaEstilos = {
+        'P': 'bg-orange-100 text-orange-700 border-orange-200',
+        'N': 'bg-emerald-100 text-emerald-700 border-emerald-200',
+        'G': 'bg-blue-100 text-blue-700 border-blue-200'
+    };
+    const estiloHorma = hormaEstilos[grupo.horma] || 'bg-slate-100 text-slate-600 border-slate-200';
+    document.getElementById('detail-tags').innerHTML = `
+        <span class="px-3 py-1 rounded-full border text-[10px] font-black uppercase ${estiloHorma}">
+            Horma ${grupo.horma}
+        </span>
+    `;
+
+    // 4. Llenar Tallas
+    const tallasGrid = document.getElementById('detail-sizes-grid');
+    tallasGrid.innerHTML = '';
+    
+    // Ordenar tallas numéricamente
+    const tallasOrdenadas = Object.entries(grupo.tallas).sort((a, b) => Number(a[0]) - Number(b[0]));
+    
+    tallasOrdenadas.forEach(([talla, qty]) => {
+        const item = document.createElement('div');
+        item.className = `flex flex-col items-center justify-center p-3 rounded-2xl border ${qty > 0 ? 'bg-white border-slate-200 shadow-sm' : 'bg-slate-50 border-transparent opacity-40'}`;
+        item.innerHTML = `
+            <span class="text-sm font-black text-slate-800">${talla}</span>
+            <span class="text-xs font-bold ${qty > 5 ? 'text-emerald-600' : 'text-orange-500'}">${qty} un.</span>
+        `;
+        tallasGrid.appendChild(item);
+    });
+
+    // Mostrar Overlay y bloquear scroll del body
+    overlay.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeProductDetail() {
+    const overlay = document.getElementById('product-detail-overlay');
+    overlay.classList.add('hidden');
+    // Restaurar scroll del body
+    document.body.style.overflow = 'auto';
+}
 
 
 
