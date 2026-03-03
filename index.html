@@ -72,6 +72,35 @@
         .active-filter {
             @apply bg-indigo-600 border-indigo-600 text-white hover:bg-indigo-700;
         }
+
+
+       
+  /* Estilo para el botón cuando NO está seleccionado */
+  .filter-btn {
+      transition: all 0.2s;
+      background-color: white;
+      color: #475569; /* slate-600 */
+      border-color: #e2e8f0; /* slate-200 */
+  }
+
+  /* Estilo cuando el filtro está ACTIVO */
+  .active-filter {
+      background-color: #0f172a !important; /* slate-900 o el color que prefieras */
+      color: white !important;
+      border-color: transparent !important;
+      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+      transform: translateY(-1px);
+  }
+  
+</style>
+
+
+
+
+
+
+
+
     </style>
 </head>
 
@@ -893,6 +922,7 @@
                                 class="w-14 px-1 py-2 border-b text-center font-black text-emerald-700 bg-emerald-50/50">
                                 Dis</th>
                             <th class="col-fot w-12 px-2 py-2 border-b text-center hidden">Fot</th>
+                            <th class="col-hor w-12 px-2 py-2 border-b text-center">Hor</th>
                         </tr>
                     </thead>
                     <tbody id="inventory-table-body" class="bg-white divide-y divide-slate-100">
@@ -1193,44 +1223,59 @@
         let currentInventoryView = 'table';
         let inventoryDataGlobal = []; // Guardamos los datos para no volver a fetch
 
+
+
+        
+
         let filtroModeloSeleccionado = ''; // Variable global nueva
 
-        //nueva gemini filtro por modelos
-        function setFiltroModelo(mod) {
-            filtroModeloSeleccionado = mod;
+       function setFiltroModelo(mod) {
+    filtroModeloSeleccionado = mod;
 
-            // UI: Resaltar botón seleccionado
-            document.querySelectorAll('#filter-model-group button').forEach(btn => {
-                if (btn.getAttribute('data-mod') === mod) {
-                    btn.classList.add('ring-1', 'ring-emerald-400', 'opacity-100');
-                    btn.classList.remove('opacity-60');
-                } else {
-                    btn.classList.remove('ring-1', 'ring-indigo-500', 'opacity-100');
-                    btn.classList.add('opacity-60');
-                }
-            });
+    // UI: Resaltar botón seleccionado
+    document.querySelectorAll('#filter-model-group button').forEach(btn => {
+        const esActivo = btn.getAttribute('data-mod') === mod;
 
-            ejecutarFiltros();
+        if (esActivo) {
+            // ESTADO ACTIVO: Negro con letras blancas
+            btn.classList.add('bg-slate-900', 'text-white', 'opacity-100', 'shadow-md');
+            // Quitamos estados inactivos
+            btn.classList.remove('bg-white', 'text-slate-600', 'opacity-60', 'ring-1', 'ring-indigo-500');
+        } else {
+            // ESTADO INACTIVO: Fondo blanco o gris tenue con letras grises
+            btn.classList.add('bg-white', 'text-slate-600', 'opacity-60');
+            // Quitamos estados activos
+            btn.classList.remove('bg-slate-900', 'text-white', 'opacity-100', 'shadow-md');
         }
+    });
+
+    ejecutarFiltros();
+}
 
 
-        //nueva gemini filtro por modelos
         function setFiltroGenero(mod) {
-            filtroModeloSeleccionado = mod;
+    // 1. Guardar el valor globalmente
+    filtroModeloSeleccionado = mod;
 
-            // UI: Resaltar botón seleccionado
-            document.querySelectorAll('#filter-model-group button').forEach(btn => {
-                if (btn.getAttribute('data-mod') === mod) {
-                    btn.classList.add('ring-1', 'ring-emerald-400', 'opacity-100');
-                    btn.classList.remove('opacity-60');
-                } else {
-                    btn.classList.remove('ring-1', 'ring-indigo-500', 'opacity-100');
-                    btn.classList.add('opacity-60');
-                }
-            });
+    // 2. UI: Resaltar botón seleccionado
+    document.querySelectorAll('#filter-model-group button').forEach(btn => {
+        // Obtenemos el valor del atributo data del botón
+        const btnMod = btn.getAttribute('data-mod');
 
-            ejecutarFiltros();
+        if (btnMod === mod) {
+            // ESTADO ACTIVO: Marcamos con un anillo esmeralda y opacidad total
+            btn.classList.add('ring-2', 'ring-emerald-500', 'opacity-100', 'shadow-md');
+            btn.classList.remove('opacity-60', 'ring-transparent');
+        } else {
+            // ESTADO INACTIVO: Bajamos opacidad y quitamos el anillo
+            btn.classList.remove('ring-2', 'ring-emerald-500', 'opacity-100', 'shadow-md');
+            btn.classList.add('opacity-60', 'ring-transparent');
         }
+    });
+
+    // 3. Aplicar los filtros a la vista
+    ejecutarFiltros();
+}
 
 
 
@@ -1316,94 +1361,125 @@
 
 
 
-        function renderGalleryView(data) {
-            const container = document.getElementById('gallery-grid');
-            container.innerHTML = '';
 
-            const grupos = {};
 
-            data.forEach(item => {
-                const partes = (item.codigo || '').split(' ').filter(p => p);
-                if (partes.length < 3 || item.codigo.trim().startsWith('000')) return;
 
-                const modelo = partes[0];
-                const genero = partes[1].toUpperCase();
-                const color = partes[2].toUpperCase();
-                const talla = partes[3] || item.talla || '—';
 
-                const clave = `${modelo} ${genero} ${color}`.toLowerCase().trim();
 
-                if (!grupos[clave]) {
-                    grupos[clave] = {
-                        modelo, genero, color,
-                        foto: item.foto || '',
-                        precio: item.precio || 0,
-                        tallas: {},
-                        salidas: 0 // Para el ordenamiento de "Más vendidos"
-                    };
-                }
 
-                const tallaKey = talla.trim();
-                grupos[clave].tallas[tallaKey] = (grupos[clave].tallas[tallaKey] || 0) + (item.stock || 0);
-                grupos[clave].salidas += (item.salidas || 0);
-            });
 
-            Object.values(grupos).forEach(grupo => {
-                const tallasOrdenadas = Object.entries(grupo.tallas)
-                    .filter(([_, qty]) => qty > 0)
-                    .sort((a, b) => Number(a[0]) - Number(b[0]));
 
-                let tallasHTML = tallasOrdenadas.length > 0
-                    ? tallasOrdenadas.map(([talla, qty]) => `
+
+function renderGalleryView(data) {
+    const container = document.getElementById('gallery-grid');
+    container.innerHTML = '';
+
+    const grupos = {};
+
+    // Mapeo de estilos para las etiquetas de horma
+    const hormaEstilos = {
+        'P': 'bg-orange-100 text-orange-700 border-orange-200',
+        'N': 'bg-emerald-100 text-emerald-700 border-emerald-200',
+        'G': 'bg-blue-100 text-blue-700 border-blue-200',
+        'XP': 'bg-red-100 text-red-700 border-red-200',
+        'XG': 'bg-purple-100 text-purple-700 border-purple-200'
+    };
+
+    data.forEach(item => {
+        const partes = (item.codigo || '').split(' ').filter(p => p);
+        if (partes.length < 3 || item.codigo.trim().startsWith('000')) return;
+
+        const modelo = partes[0];
+        const genero = partes[1].toUpperCase();
+        const color = partes[2].toUpperCase();
+        const talla = partes[3] || item.talla || '—';
+        
+        // EXTRAER HORMA: Asumimos que viene en una propiedad 'horma' o se puede inferir
+        const horma = (item.horma || 'N').toUpperCase(); 
+
+        const clave = `${modelo} ${genero} ${color}`.toLowerCase().trim();
+
+        if (!grupos[clave]) {
+            grupos[clave] = {
+                modelo, genero, color, horma, // Guardamos la horma aquí
+                foto: item.foto || '',
+                precio: item.precio || 0,
+                tallas: {},
+                salidas: 0
+            };
+        }
+
+        const tallaKey = talla.trim();
+        grupos[clave].tallas[tallaKey] = (grupos[clave].tallas[tallaKey] || 0) + (item.stock || 0);
+        grupos[clave].salidas += (item.salidas || 0);
+    });
+
+    Object.values(grupos).forEach(grupo => {
+        const tallasOrdenadas = Object.entries(grupo.tallas)
+            .filter(([_, qty]) => qty > 0)
+            .sort((a, b) => Number(a[0]) - Number(b[0]));
+
+        let tallasHTML = tallasOrdenadas.length > 0
+            ? tallasOrdenadas.map(([talla, qty]) => `
                 <div class="flex flex-col items-center min-w-[20px] px-1.5 py-1 bg-indigo-50/80 border border-indigo-200 rounded-md text-center text-[9px]">
                     <span class="font-bold text-indigo-800">${talla}</span>
                     <span class="font-semibold ${qty > 0 ? 'text-emerald-700' : 'text-red-600'}">${qty}</span>
                 </div>
             `).join('')
-                    : '<div class="text-xs text-slate-400 italic px-2">Sin stock</div>';
+            : '<div class="text-xs text-slate-400 italic px-2">Sin stock</div>';
 
-                const card = document.createElement('div');
-                // AÑADIMOS CLASES Y DATOS PARA EL FILTRO
-                card.className = "inventory-card bg-white rounded-2xl shadow border border-slate-200 overflow-hidden flex flex-col h-full hover:shadow-lg transition-shadow";
-                card.setAttribute('data-modelo', grupo.modelo.toLowerCase());
-                card.setAttribute('data-genero', grupo.genero);
-                card.setAttribute('data-color', grupo.color);
-                card.setAttribute('data-salidas', grupo.salidas);
-                // En renderGalleryView, añade a la card:
-                card.setAttribute('data-tipo-modelo', grupo.modelo.charAt(0).toUpperCase()); // Guarda la 'Z', 'D' o 'P'
-
-                card.innerHTML = `
-    <div class="aspect-square bg-slate-50 relative overflow-hidden">
-        ${grupo.foto
-                        ? `<img src="${grupo.foto}" class="w-full h- object-cover" loading="lazy" onerror="this.src='https://placehold.co/400x400?text=Sin+Foto'">`
-                        : `<div class="w-full h-full flex items-center justify-center text-slate-300 text-5xl">📦</div>`
-                    }
-        <div class="absolute top-1.5 right-1.5 bg-white/90 backdrop-blur-sm px-2 py-0.5 rounded-full text-[10px] font-bold shadow-sm">
-            Total: <span class="${Object.values(grupo.tallas).reduce((a, b) => a + b, 0) > 0 ? 'text-emerald-600' : 'text-red-600'}">
-                ${Object.values(grupo.tallas).reduce((a, b) => a + b, 0)}
-            </span>
-        </div>
-    </div>
-    
-    <div class="p-2 flex flex-col justify-between">
-     <div class="font-light tracking-[0.2em] text-[9px] text-slate-700 uppercase leading-relaxed truncate">
-    ${grupo.modelo}  ${grupo.genero}  ${grupo.color}
-</div>
-        <div class="text-lg font-black text-slate-700 leading-tight mb-1">
-            $${(grupo.precio || 0).toLocaleString('es-CL')}
-        </div>
+        const card = document.createElement('div');
+        card.className = "inventory-card bg-white rounded-2xl shadow border border-slate-200 overflow-hidden flex flex-col h-full hover:shadow-lg transition-shadow";
         
-        <div class="flex flex-nowrap items-center gap-1 overflow-x-auto pb-0.5 mt-auto">
-            ${tallasHTML}
-        </div>
-    </div>
-`;
-                container.appendChild(card);
-            });
+        // Atributos de datos
+        card.setAttribute('data-modelo', grupo.modelo.toLowerCase());
+        card.setAttribute('data-genero', grupo.genero);
+        card.setAttribute('data-color', grupo.color);
+        card.setAttribute('data-salidas', grupo.salidas);
+        card.setAttribute('data-tipo-modelo', grupo.modelo.charAt(0).toUpperCase());
 
-            // Ejecutar filtro inmediatamente después de renderizar por si había algo escrito
-            ejecutarFiltros();
-        }
+        // Clases dinámicas para la etiqueta de horma
+        const estiloHorma = hormaEstilos[grupo.horma] || 'bg-slate-100 text-slate-600 border-slate-200';
+
+        card.innerHTML = `
+            <div class="aspect-square bg-slate-50 relative overflow-hidden">
+                ${grupo.foto
+                    ? `<img src="${grupo.foto}" class="w-full h-full object-cover" loading="lazy" onerror="this.src='https://placehold.co/400x400?text=Sin+Foto'">`
+                    : `<div class="w-full h-full flex items-center justify-center text-slate-300 text-5xl">📦</div>`
+                }
+                <div class="absolute top-1.5 right-1.5 bg-white/90 backdrop-blur-sm px-2 py-0.5 rounded-full text-[10px] font-bold shadow-sm">
+                    Total: <span class="${Object.values(grupo.tallas).reduce((a, b) => a + b, 0) > 0 ? 'text-emerald-600' : 'text-red-600'}">
+                        ${Object.values(grupo.tallas).reduce((a, b) => a + b, 0)}
+                    </span>
+                </div>
+            </div>
+            
+            <div class="p-2 flex flex-col justify-between flex-grow">
+                <div>
+                    <div class="flex items-center gap-2 mb-1">
+                        <div class="font-light tracking-[0.1em] text-[9px] text-slate-700 uppercase leading-relaxed truncate">
+                            ${grupo.modelo} ${grupo.genero} ${grupo.color}
+                        </div>
+                        <span class="px-1.5 py-0.5 rounded border text-[8px] font-black uppercase ${estiloHorma}">
+                            ${grupo.horma}
+                        </span>
+                    </div>
+                    <div class="text-lg font-black text-slate-700 leading-tight mb-2">
+                        $${(grupo.precio || 0).toLocaleString('es-CL')}
+                    </div>
+                </div>
+                
+                <div class="flex flex-nowrap items-center gap-1 overflow-x-auto pb-0.5 mt-auto">
+                    ${tallasHTML}
+                </div>
+            </div>
+        `;
+        container.appendChild(card);
+    });
+
+    ejecutarFiltros();
+}
+
 
 
 
@@ -1468,7 +1544,8 @@
                         disponibles: parseInt(cols[9]) || 0,     // J
                         foto: (cols[10] || '').trim(),    // K → Foto
                         precio: parseInt(cols[11]) || 0,    // L → Precio (si existe)
-                        talla: (cols[4] || '').trim()      // E → Talla (la que coincide con el código)
+                        talla: (cols[4] || '').trim(),      // E → Talla (la que coincide con el código)
+                        horma: (cols[12] || 'N').trim() .toUpperCase() // M → Horma (la que coincide con el código)
                     };
                 }).filter(item => item.codigo);
 
@@ -1544,6 +1621,7 @@
             <td class="px-3 py-2 text-xs text-blue-600">${item.enRuta}</td>
             <td class="px-3 py-2 text-xs font-bold text-emerald-700">${item.disponibles}</td>
             <td class="px-3 py-2 text-xs hidden ">${item.foto}</td>
+             <td class="px-3 py-2 text-xs">${item.horma}</td>
         `;
                 tableBody.appendChild(row);
             });
@@ -1609,6 +1687,12 @@
 
             ejecutarFiltros();
         }
+
+        
+
+
+
+
 
         // Esta función centraliza la búsqueda y los botones
         function ejecutarFiltros() {
@@ -2785,7 +2869,6 @@
                     cliente: datos.cliente || "Consumidor Final",
                     direccion: datos.direccion || "No definida",
                     telefono: datos.telefono || "N/A",
-
                     metodoPago: datos.metodoPago,
                     estado: datos.estado
                 })
