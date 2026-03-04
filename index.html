@@ -288,19 +288,19 @@
                 <div class="col-span-12 md:col-span-5">
                     <label class="text-[12px]  text-slate-900  ml-2 mb-1 block ">Nombre</label>
                     <input type="text" id="f-nombre" placeholder=""
-                        class="w-full bg-slate-50 border focus:bg-white  focus:border-blue-500 rounded-2xl text-sm py-4 px-5 transition-all">
+                        class="w-full bg-slate-50 border focus:bg-white  focus:border-blue-500 rounded-2xl text-sm py-3 px-5 transition-all">
                 </div>
 
                 <div class="col-span-12 md:col-span-7">
                     <label class="text-[12px]  text-slate-900  ml-2 mb-1 block">Dirección</label>
                     <input type="text" id="f-direccion" placeholder=""
-                        class="w-full bg-slate-50 border focus:bg-white focus:border-blue-500 rounded-2xl text-sm py-4 px-5 transition-all">
+                        class="w-full bg-slate-50 border focus:bg-white focus:border-blue-500 rounded-2xl text-sm py-3 px-5 transition-all">
                 </div>
 
                 <div class="col-span-12 md:col-span-6">
                     <label class="text-[12px]  text-slate-900 ml-2 mb-1 block">Teléfono</label>
                     <input type="tel" id="f-telefono" placeholder=""
-                        class="w-full bg-slate-50 border focus:bg-white focus:border-blue-500 rounded-2xl text-sm py-4 px-5 transition-all">
+                        class="w-full bg-slate-50 border focus:bg-white focus:border-blue-500 rounded-2xl text-sm py-3 px-5 transition-all">
                 </div>
 
                 <div class="col-span-6 md:col-span-3">
@@ -308,7 +308,7 @@
                     <div class="relative">
                         <span class="absolute left-4 top-4 text-slate-900">$</span>
                         <input type="number" id="f-envio" placeholder="0.00"
-                            class="w-full bg-slate-50 border focus:bg-white focus:border-blue-500 rounded-2xl text-sm py-4 pl-8 pr-5 transition-all">
+                            class="w-full bg-slate-50 border focus:bg-white focus:border-blue-500 rounded-2xl text-sm py-3 pl-8 pr-5 transition-all">
                     </div>
                 </div>
 
@@ -317,14 +317,14 @@
                     <div class="relative">
                         <span class="absolute left-4 top-4 text-blue-900 font-bold">$</span>
                         <input type="number" id="f-total" placeholder="0.00"
-                            class="w-full bg-blue-50 border-blue-400 focus:bg-white focus:border-blue-500 rounded-2xl text-sm py-4 pl-8 pr-5 font-bold text-blue-600 transition-all shadow-inner">
+                            class="w-full bg-blue-50 border-blue-400 focus:bg-white focus:border-blue-500 rounded-2xl text-sm py-3 pl-8 pr-5 font-bold text-blue-600 transition-all shadow-inner">
                     </div>
                 </div>
 
                 <div class="col-span-12">
-                    <label class="text-[12px]  text-slate-900 ml-2 mb-1 block">Notas del Pedido</label>
+                    <label class="text-[10px]  text-slate-900 ml-2 mb-1 block">Notas del Pedido</label>
                     <textarea id="f-detalles" placeholder="¿Algo que debamos saber?" rows="2"
-                        class="w-full bg-slate-50 border focus:bg-white focus:border-blue-500 rounded-2xl text-sm py-4 px-5 transition-all"></textarea>
+                        class="w-full bg-slate-50 border focus:bg-white focus:border-blue-500 rounded-2xl text-sm py-3 px-5 transition-all"></textarea>
                 </div>
             </div>
         </div>
@@ -2117,45 +2117,52 @@ function agregarFilaProducto(codigo = '', precio = '', bin = '', fotoUrl = '') {
     const contenedor = document.getElementById('contenedor-productos');
     const div = document.createElement('div');
     
-    // Contenedor: Más delgado, bordes más finos y mejores estados de hover
-    div.className = "fila-producto group flex items-center gap-3 p-2 mb-2 rounded-lg bg-white border border-slate-200 hover:border-blue-400 hover:shadow-sm transition-all duration-200 animate-in fade-in zoom-in-95";
+    // Contenedor optimizado para 340px: Padding equilibrado y ancho total
+    div.className = "fila-producto group w-full bg-white border border-slate-200 rounded-2xl p-4 mb-3 hover:border-blue-300 shadow-sm transition-all duration-300 animate-in fade-in slide-in-from-top-1";
 
     div.innerHTML = `
-      
-        <div class="flex-grow grid grid-cols-12 gap-2 items-center">
-            
-            <div class="col-span-5">
-                <label class="block text-[9px] uppercase font-bold text-slate-400 ml-1 mb-0.5">Código</label>
-                <input type="text" placeholder="EJ: PROD-01" 
-                    class="f-codigo w-full bg-slate-50 text-[9px] border-b border-transparent focus:border-blue-500 focus:bg-blue-50/30 rounded px-2 py-1 text-sm font-bold text-slate-700 outline-none transition-all uppercase" 
+        <div class="flex items-center gap-3 mb-1">
+            <div class="flex-shrink-0">
+                <div class="h-16 w-16 rounded-xl bg-slate-50 border border-slate-200 overflow-hidden flex items-center justify-center shadow-inner">
+                    <img src="${fotoUrl}" class="f-foto object-cover h-full w-full ${fotoUrl ? '' : 'hidden'}">
+                    <div class="f-placeholder ${fotoUrl ? 'hidden' : ''}">
+                        <svg class="w-6 h-6 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex-grow">
+                <span class="block text-[9px] uppercase tracking-wider font-bold text-slate-400 mb-0.5 ml-1">Referencia</span>
+                <input type="text" placeholder="CÓDIGO..." 
+                    class="f-codigo w-full bg-slate-50 font-bold border border-slate-100 rounded-lg px-3 py-2 text-sm font-bold text-slate-700 focus:bg-white focus:border-blue-400 focus:outline-none uppercase" 
                     value="${codigo}">
             </div>
 
-            <div class="col-span-4">
-                <label class="block text-[9px] uppercase font-bold text-slate-400 ml-1 mb-0.5">Precio</label>
-                <div class="relative">
-                    <span class="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] font-bold text-blue-500">$</span>
+            <button type="button" onclick="this.closest('.fila-producto').remove()" 
+                class="self-start p-1.5 text-slate-300 hover:text-red-500 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 border-t border-slate-50 pt-3">
+            <div>
+                <span class="block text-[8px] uppercase tracking-wider font-bold text-slate-400 mb-0.5 ml-1">Precio</span>
+                <div class="relative flex items-center">
+                    <span class="absolute left-3 text-sm font-bold text-blue-500">$</span>
                     <input type="number" step="any" placeholder="0.00" 
-                        class="f-precio w-full text-[9px] bg-slate-50 border-b border-transparent focus:border-blue-500 focus:bg-blue-50/30 rounded pl-5 pr-1 py-1 text-sm font-semibold text-slate-600 outline-none transition-all" 
+                        class="f-precio w-full bg-slate-50 border border-slate-100 rounded-lg pl-7 pr-2 py-2 text-sm font-semibold text-slate-600 focus:bg-white focus:border-blue-400 focus:outline-none" 
                         value="${precio}">
                 </div>
             </div>
 
-            <div class="col-span-3">
-                <label class="block text-[9px] uppercase font-bold text-slate-400 ml-1 mb-0.5">Bin</label>
-                <input type="text" placeholder="!X" 
-                    class="f-bin w-full bg-slate-50 text-[9px] border-b border-transparent focus:border-blue-500 focus:bg-blue-50/30 rounded px-2 py-1 text-sm font-mono text-slate-500 outline-none uppercase transition-all" 
+            <div>
+                <span class="block text-[8px] uppercase tracking-wider font-bold text-slate-400 mb-0.5 ml-1">Ubicación</span>
+                <input type="text" placeholder="BIN" 
+                    class="f-bin w-full bg-slate-50 border border-slate-100 rounded-lg px-3 py-2 text-xs font-mono font-bold text-slate-500 uppercase focus:bg-white focus:border-blue-400 focus:outline-none text-center" 
                     value="${bin}">
             </div>
-        </div>
-
-        <div class="flex-shrink-0 ml-1">
-            <button type="button" onclick="this.closest('.fila-producto').remove()" 
-                class="p-2 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                </svg>
-            </button>
         </div>
     `;
 
@@ -2170,25 +2177,20 @@ function agregarFilaProducto(codigo = '', precio = '', bin = '', fotoUrl = '') {
         const cod = inCod.value.trim().toUpperCase();
         if (cod.length >= 2) {
             const prod = typeof buscarEnInventario === 'function' ? buscarEnInventario(cod) : null;
-            
             if (prod) {
                 inBin.value = prod.bin || '';
-                if (prod.precio !== undefined) {
-                    inPre.value = String(prod.precio).replace(/[^0-9.]/g, '');
-                }
-
+                if (prod.precio !== undefined) inPre.value = String(prod.precio).replace(/[^0-9.]/g, '');
+                
                 if (prod.foto && prod.foto.length > 5) {
                     img.src = prod.foto;
                     img.classList.remove('hidden');
                     ph.classList.add('hidden');
                 }
-                
-                // Efecto visual de "Encontrado"
-                div.classList.add('border-blue-300', 'bg-blue-50/20');
-                inCod.classList.add('text-blue-700');
+                div.classList.add('border-blue-200', 'bg-blue-50/5');
+                inCod.classList.add('text-blue-600');
             } else {
-                div.classList.remove('border-blue-300', 'bg-blue-50/20');
-                inCod.classList.remove('text-blue-700');
+                div.classList.remove('border-blue-200', 'bg-blue-50/5');
+                inCod.classList.remove('text-blue-600');
                 img.classList.add('hidden');
                 ph.classList.remove('hidden');
             }
@@ -2197,6 +2199,9 @@ function agregarFilaProducto(codigo = '', precio = '', bin = '', fotoUrl = '') {
 
     contenedor.appendChild(div);
 }
+
+
+
 
 
 
@@ -4153,7 +4158,21 @@ function closeProductDetail() {
 
 
 
+// --- CARGA AUTOMÁTICA DE DATOS AL ABRIR LA APP ---
+(function() {
+    console.log("🛠️ Preparando base de datos en segundo plano...");
+    
+    // Ejecutamos la descarga inmediatamente
+    fetchInventory();
 
+    // Verificación de seguridad después de 3 segundos
+    setTimeout(() => {
+        if (!inventoryDataGlobal || inventoryDataGlobal.length === 0) {
+            console.warn("⚠️ El inventario aún no carga. Reintentando...");
+            fetchInventory();
+        }
+    }, 3000);
+})();
 
 
 
@@ -4165,6 +4184,3 @@ function closeProductDetail() {
 </body>
 
 </html>
-
-
-
