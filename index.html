@@ -1574,6 +1574,8 @@ if (n === 'inventory') {
 
 
 
+
+
 function renderGalleryView(data) {
     const container = document.getElementById('gallery-grid');
     container.innerHTML = '';
@@ -1623,14 +1625,27 @@ function renderGalleryView(data) {
             .filter(([_, qty]) => qty > 0)
             .sort((a, b) => Number(a[0]) - Number(b[0]));
 
-        let tallasHTML = tallasOrdenadas.length > 0
-            ? tallasOrdenadas.map(([talla, qty]) => `
-                <div class="flex flex-col items-center min-w-[20px] px-1.5 py-1 bg-indigo-50/80 border border-indigo-200 rounded-md text-center text-[9px]">
-                    <span class="font-bold text-indigo-800">${talla}</span>
-                    <span class="font-semibold ${qty > 0 ? 'text-emerald-700' : 'text-red-600'}">${qty}</span>
-                </div>
-            `).join('')
-            : '<div class="text-xs text-slate-400 italic px-2">Sin stock</div>';
+       let tallasHTML = tallasOrdenadas.length > 0
+    ? tallasOrdenadas.map(([talla, qty]) => {
+        // Creamos el código completo para este botón
+        const codigoCompleto = `${grupo.modelo} ${grupo.genero} ${grupo.color} ${talla}`.toUpperCase();
+        
+        return `
+            <button type="button" 
+                onclick="agregarDesdeGaleria('${codigoCompleto}')"
+                class="flex flex-col items-center min-w-[35px] px-1.5 py-1 bg-white border-2 border-indigo-100 rounded-lg text-center transition-all active:scale-95 hover:border-indigo-500 hover:bg-indigo-50 group/talla">
+                <span class="text-[10px] font-bold text-indigo-800 group-hover/talla:text-indigo-600">${talla}</span>
+                <span class="text-[9px] font-semibold ${qty > 0 ? 'text-emerald-600' : 'text-red-400'}">
+                    ${qty > 0 ? qty : '0'}
+                </span>
+            </button>
+        `;
+    }).join('')
+    : '<div class="text-xs text-slate-400 italic px-2">Sin stock</div>';
+
+// ... resto del código de la tarjeta ...
+
+
 
         const card = document.createElement('div');
         card.className = "inventory-card bg-white rounded-2xl shadow border border-slate-200 overflow-hidden flex flex-col h-full hover:shadow-lg transition-shadow";
@@ -1677,7 +1692,7 @@ function renderGalleryView(data) {
                     </div>
                 </div>
                 
-                <div class="flex flex-nowrap items-center gap-1 overflow-x-auto pb-0.5 mt-auto">
+                <div class="flex flex-nowrap items-center gap-2 overflow-x-auto pb-2 mt-auto scrollbar-hide">
                     ${tallasHTML}
                 </div>
             </div>
@@ -1686,20 +1701,9 @@ function renderGalleryView(data) {
     });
 
     ejecutarFiltros();
+
+    
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -2207,29 +2211,47 @@ function agregarFilaProducto(codigo = '', precio = '', bin = '', fotoUrl = '') {
     const img   = div.querySelector('.f-foto');
     const ph    = div.querySelector('.f-placeholder');
 
-    // --- FUNCIÓN DE ACTUALIZACIÓN (REUTILIZABLE) ---
+
+
+ // ... dentro de agregarFilaProducto, en la parte de actualizarDesdeInventario ...
     const actualizarDesdeInventario = () => {
         const cod = inCod.value.trim().toUpperCase();
         if (cod.length >= 2) {
             const prod = typeof buscarEnInventario === 'function' ? buscarEnInventario(cod) : null;
             if (prod) {
-                // Solo sobreescribir si los campos están vacíos o si vienen del inventario
-                if (prod.bin) inBin.value = prod.bin;
+                inBin.value = prod.bin || '';
                 if (prod.precio !== undefined) inPre.value = String(prod.precio).replace(/[^0-9.]/g, '');
                 
+                // --- LÓGICA DE FOTO ---
                 if (prod.foto && prod.foto.length > 5) {
                     img.src = prod.foto;
                     img.classList.remove('hidden');
                     ph.classList.add('hidden');
                 }
+
                 div.classList.add('border-blue-200', 'bg-blue-50/5');
                 inCod.classList.add('text-blue-600');
+
+                // --- NUEVA LÓGICA: SUGERIR TALLAS ---
+                // Agregamos un pequeño delay para que no interrumpa mientras escribe
+                // y verificamos que sea una acción manual (no carga inicial)
+                if (window.event && window.event.type === 'input') {
+                    clearTimeout(div.timerSugerencia);
+                    div.timerSugerencia = setTimeout(() => {
+                        sugerirTallasExtras(cod);
+                    }, 800); 
+                }
+
             } else {
-                div.classList.remove('border-blue-200', 'bg-blue-50/5');
-                inCod.classList.remove('text-blue-600');
+                // ... resto de la lógica cuando no hay producto ...
             }
         }
     };
+
+
+
+
+
 
     // Escuchar cambios manuales
     inCod.addEventListener('input', actualizarDesdeInventario);
@@ -4209,6 +4231,126 @@ document.addEventListener('DOMContentLoaded', () => {
     // 2. Descargar datos actualizados de Google Sheets de inmediato
     fetchInventory();
 });
+
+
+
+
+
+
+//nueva funcion agragas mas tallas
+
+function sugerirTallasExtras(codigoActual) {
+    // 1. Descomponer el código: "z1 h neg 41" -> ["z1", "h", "neg", "41"]
+    const partes = codigoActual.trim().split(/\s+/);
+    if (partes.length < 2) return;
+
+    // Extraemos la talla (el último elemento) y el modelo base (lo demás)
+    const tallaActual = parseInt(partes.pop()); 
+    const baseModelo = partes.join(" ").toUpperCase(); 
+
+    if (isNaN(tallaActual)) return;
+
+    // 2. Filtrar el inventario buscando el mismo modelo/color pero tallas +1 y +2
+    const sugerencias = inventoryDataGlobal.filter(p => {
+        const pPartes = p.codigo.trim().split(/\s+/);
+        const pTalla = parseInt(pPartes.pop());
+        const pBase = pPartes.join(" ").toUpperCase();
+
+        // Debe coincidir el modelo/color exacto y ser las 2 tallas siguientes
+        return pBase === baseModelo && 
+               (pTalla === tallaActual + 1 || pTalla === tallaActual + 2);
+    });
+
+    // 3. Si encontramos algo, preguntar al usuario
+    if (sugerencias.length > 0) {
+        // Ordenar por talla para que se agreguen en orden (ej: 42 y luego 43)
+        sugerencias.sort((a, b) => {
+            const tA = parseInt(a.codigo.split(/\s+/).pop());
+            const tB = parseInt(b.codigo.split(/\s+/).pop());
+            return tA - tB;
+        });
+
+        const listaTallas = sugerencias.map(p => p.codigo.split(/\s+/).pop()).join(", ");
+        
+        // Confirmación rápida
+        if (confirm(`¿Deseas agregar las tallas extras (${listaTallas}) de este modelo?`)) {
+            sugerencias.forEach(p => {
+                // Agregamos la fila con todos los datos automáticos
+                agregarFilaProducto(p.codigo, p.precio, p.bin, p.foto);
+            });
+        }
+    }
+}
+
+
+
+
+
+
+
+
+//NUEVO FUNCION PARA aGREGAR PEDIDO DESDE GALERIA
+
+function agregarDesdeGaleria(codigoCompleto) {
+    const producto = typeof buscarEnInventario === 'function' 
+        ? buscarEnInventario(codigoCompleto) 
+        : null;
+
+    if (!producto) {
+        alert("No se encontró la información del producto.");
+        return;
+    }
+
+    // 1. Buscamos todas las filas de productos actuales
+    const filasExistentes = document.querySelectorAll('.fila-producto');
+    let filaVacia = null;
+
+    // 2. Verificamos si la primera (o alguna) está vacía
+    for (let fila of filasExistentes) {
+        const inputCod = fila.querySelector('.f-codigo');
+        if (inputCod && inputCod.value.trim() === "") {
+            filaVacia = fila;
+            break; // Encontramos la primera vacía, nos quedamos con esa
+        }
+    }
+
+    if (filaVacia) {
+        // --- CASO A: LLENAR FILA EXISTENTE ---
+        const inCod = filaVacia.querySelector('.f-codigo');
+        inCod.value = producto.codigo;
+        
+        // Disparamos el evento 'input' manualmente para que se cargue la foto, precio y bin
+        inCod.dispatchEvent(new Event('input'));
+        
+        mostrarNotificacion(`Llenado: ${producto.codigo}`);
+    } else {
+        // --- CASO B: CREAR FILA NUEVA ---
+        // Si no hay vacías, usamos tu función original
+        agregarFilaProducto(
+            producto.codigo, 
+            producto.precio, 
+            producto.bin, 
+            producto.foto
+        );
+        mostrarNotificacion(`Añadido: ${producto.codigo}`);
+    }
+}
+
+
+
+// Función auxiliar para avisar al usuario
+function mostrarNotificacion(mensaje) {
+    const toast = document.createElement('div');
+    toast.className = "fixed bottom-5 left-1/2 -translate-x-1/2 bg-slate-800 text-white px-4 py-2 rounded-full text-xs font-bold shadow-lg z-[9999] animate-bounce";
+    toast.innerText = mensaje;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 2000);
+}
+
+
+
+
+
     </script>
 
 
