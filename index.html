@@ -1407,6 +1407,12 @@ if (n === 'inventory') {
     }
 }
 
+// ACTUALIZACIÓN DEL CARRITO:
+    // Llamamos a tu función para que cuente las filas actuales
+    actualizarContadorCarrito();
+
+
+
             actualizarBotonFlotante(n);
             window.scrollTo(0, 0);
         }
@@ -1702,8 +1708,74 @@ function renderGalleryView(data) {
 
     ejecutarFiltros();
 
-    
+
+// ... dentro de renderGalleryView, al final ...
+
+if (!document.getElementById('cart-floating-badge')) {
+    const badge = document.createElement('div');
+    badge.id = 'cart-floating-badge';
+    badge.className = "fixed bottom-6 right-6 z-50 flex items-center justify-center";
+    badge.innerHTML = `
+        <div class="relative bg-indigo-600 text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-transform cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+            <span id="cart-count-number" class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded-full border-2 border-white">
+                0
+            </span>
+        </div>
+    `;
+
+ // ... dentro de renderGalleryView, en la parte del badge.onclick ...
+
+// ... al final de la función renderGalleryView ...
+
+if (!document.getElementById('cart-floating-badge')) {
+    const badge = document.createElement('div');
+    badge.id = 'cart-floating-badge';
+    badge.className = "fixed bottom-6 right-6 z-50 flex items-center justify-center";
+    badge.innerHTML = `
+        <div class="relative bg-indigo-600 text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-transform cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+            <span id="cart-count-number" class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded-full border-2 border-white">
+                0
+            </span>
+        </div>
+    `;
+
+    badge.onclick = () => {
+        // 1. Usamos tu función nextStep para ir al paso del formulario (Paso 2)
+        // Esto activará la sección 'step2' y ocultará 'step_inventory'
+        nextStep(0);
+
+        // 2. Forzamos la apertura del formulario si tienes la función toggleForm
+        if (typeof toggleForm === 'function') {
+            toggleForm(true);
+        }
+
+        // 3. Scroll suave hacia el editor (con un pequeño delay para que el DOM se actualice)
+        setTimeout(() => {
+            const editor = document.getElementById('contenedor-formulario');
+            if (editor) {
+                editor.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    };
+
+    document.body.appendChild(badge);
 }
+
+
+}
+
+}
+
+
+
+
+
 
 
 
@@ -2177,7 +2249,7 @@ function agregarFilaProducto(codigo = '', precio = '', bin = '', fotoUrl = '') {
                     value="${codigo}">
             </div>
 
-            <button type="button" onclick="this.closest('.fila-producto').remove()" 
+            <button type="button" onclick="this.closest('.fila-producto').remove(); typeof actualizarContadorCarrito === 'function' && actualizarContadorCarrito();"
                 class="self-start p-1.5 text-slate-300 hover:text-red-500 transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -2270,46 +2342,14 @@ function agregarFilaProducto(codigo = '', precio = '', bin = '', fotoUrl = '') {
 
 
 
-        
-       // 4. GUARDAR CAMBIOS (Actualizado para persistir la foto)
-function guardarPedidoFormulario() {
+      function guardarPedidoFormulario() {
     const idExistente = document.getElementById('f-edit-id').value;
 
-    const items = [];
-    const filas = document.querySelectorAll('.fila-producto');
-    
-    filas.forEach(fila => {
-        const codigo = fila.querySelector('.f-codigo').value;
-        const precio = fila.querySelector('.f-precio').value;
-        const bin = fila.querySelector('.f-bin').value;
-        // CAPTURAMOS LA FOTO: Leemos el src de la imagen que está en la fila
-        const foto = fila.querySelector('.f-foto').src;
-
-        if (codigo) {
-            items.push({
-                desc: codigo, // O puedes usar 'codigo' según tu estructura
-                precio: parseFloat(precio) || 0,
-                bin: bin.toUpperCase(),
-                foto: foto, // <-- IMPORTANTE: Guardamos la URL para no perderla
-                cant: 1
-            });
-        }
-    });
-
-    const datosPedido = {
-        cliente: document.getElementById('f-nombre').value,
-        direccion: document.getElementById('f-direccion').value,
-        telefono: document.getElementById('f-telefono').value,
-        envio: parseFloat(document.getElementById('f-envio').value) || 0,
-        total: parseFloat(document.getElementById('f-total').value) || 0,
-        detalles: document.getElementById('f-detalles').value,
-        items: items
-    };
+    // ... (todo tu código actual de recolección de items y datosPedido) ...
 
     if (idExistente) {
         const index = pedidos.findIndex(p => p.id == idExistente);
         if (index !== -1) {
-            // Mantenemos la fecha original u otros campos no editables con el spread
             pedidos[index] = { ...pedidos[index], ...datosPedido };
         }
     } else {
@@ -2317,15 +2357,36 @@ function guardarPedidoFormulario() {
             id: Date.now(),
             ...datosPedido,
             estado: 'pendiente',
-            fecha: new Date().toISOString() // Recomendado añadir fecha
+            fecha: new Date().toISOString()
         };
         pedidos.push(nuevo);
     }
 
-    // Feedback visual y limpieza
+    // --- AQUÍ VA LA LIMPIEZA DEL CONTADOR ---
+
+    // 1. Limpiamos el HTML del contenedor de productos del formulario
+    const contenedor = document.getElementById('contenedor-productos');
+    if (contenedor) contenedor.innerHTML = '';
+
+    // 2. Ejecutamos tu función para que cuente 0 y actualice el badge
+    if (typeof actualizarContadorCarrito === 'function') {
+        actualizarContadorCarrito();
+    }
+
+    // 3. Feedback visual y limpieza de vista
     toggleForm(false);
     renderStep0();
+    
+    // Opcional: Si quieres forzar el contador a 0 manualmente por seguridad:
+    const badge = document.getElementById('cart-count-number');
+    if (badge) badge.innerText = '0';
 }
+
+
+
+
+
+
 
 
 
@@ -4334,7 +4395,47 @@ function agregarDesdeGaleria(codigoCompleto) {
         );
         mostrarNotificacion(`Añadido: ${producto.codigo}`);
     }
+
+// --- LÍNEA NUEVA: Actualizamos el contador aquí ---
+    actualizarContadorCarrito();
 }
+
+
+function actualizarContadorCarrito() {
+    const filas = document.querySelectorAll('.fila-producto');
+    let totalItems = 0;
+
+    filas.forEach(fila => {
+        const inputCod = fila.querySelector('.f-codigo');
+        // Si la fila tiene un código (no está vacía), sumamos 1
+        if (inputCod && inputCod.value.trim() !== "") {
+            totalItems++;
+        }
+    });
+
+    const contadorElemento = document.getElementById('cart-count-number');
+    if (contadorElemento) {
+        contadorElemento.innerText = totalItems;
+        
+        // Animación rápida de "pop" cuando cambia
+        contadorElemento.parentElement.classList.add('scale-125');
+        setTimeout(() => contadorElemento.parentElement.classList.remove('scale-125'), 200);
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
