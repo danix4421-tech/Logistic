@@ -414,6 +414,9 @@
     </section>
 
 
+
+    
+
     <!-- Modal Fondo Inicial (solo se muestra al iniciar ruta) -->
     <div id="modal-fondo-inicial"
         class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -1021,17 +1024,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
     <!--boton flotante -->
 
 
@@ -1057,7 +1049,7 @@
 
     <script>
         //--- CONFIGURACIÓN DE LINKS DE GOOGLE SHEETS ---
-        const URL_PRODUCTOS_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQxmMtrLlKEH1uQUNmUvQxXUmFJQNQc46rwfOpKMNzJytrGDRxyMjo_S2DhQIDJmXTv1o6G2fvZQZgi/pub?gid=441262518&single=true&output=csv";
+        const URL_PRODUCTOS_CSV = "";
         const URL_PEDIDOS_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQxmMtrLlKEH1uQUNmUvQxXUmFJQNQc46rwfOpKMNzJytrGDRxyMjo_S2DhQIDJmXTv1o6G2fvZQZgi/pub?gid=271238087&single=true&output=csv";
 
 
@@ -1174,7 +1166,7 @@ fetchInventory();
         }
 
 
-
+        //INVENTARIO
         async function fetchInventory() {
     const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQxmMtrLlKEH1uQUNmUvQxXUmFJQNQc46rwfOpKMNzJytrGDRxyMjo_S2DhQIDJmXTv1o6G2fvZQZgi/pub?gid=148348685&single=true&output=csv";
 
@@ -1258,25 +1250,6 @@ function buscarEnInventario(codigo) {
     // Buscamos el producto que coincida con el código
     return inventoryDataGlobal.find(p => p.codigo.toUpperCase() === codigo.toUpperCase());
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -1414,6 +1387,7 @@ if (n === 'inventory') {
 
 
             actualizarBotonFlotante(n);
+            actualizarVisibilidadCarrito(n); // El nuevo del carrito de la galería
             window.scrollTo(0, 0);
         }
 
@@ -1423,6 +1397,11 @@ if (n === 'inventory') {
                 nextStep(0);
             }
         }
+
+
+
+
+
 
 
 
@@ -1709,31 +1688,16 @@ function renderGalleryView(data) {
     ejecutarFiltros();
 
 
-// ... dentro de renderGalleryView, al final ...
+
+
+
+    //NUEVA FUNCION BADGE DE CARRITO FLOTANTE
+
 
 if (!document.getElementById('cart-floating-badge')) {
     const badge = document.createElement('div');
     badge.id = 'cart-floating-badge';
-    badge.className = "fixed bottom-6 right-6 z-50 flex items-center justify-center";
-    badge.innerHTML = `
-        <div class="relative bg-indigo-600 text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-transform cursor-pointer">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-            </svg>
-            <span id="cart-count-number" class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded-full border-2 border-white">
-                0
-            </span>
-        </div>
-    `;
-
- // ... dentro de renderGalleryView, en la parte del badge.onclick ...
-
-// ... al final de la función renderGalleryView ...
-
-if (!document.getElementById('cart-floating-badge')) {
-    const badge = document.createElement('div');
-    badge.id = 'cart-floating-badge';
-    badge.className = "fixed bottom-6 right-6 z-50 flex items-center justify-center";
+    badge.className = "fixed bottom-6 right-6 z-50 flex items-center justify-center hidden";
     badge.innerHTML = `
         <div class="relative bg-indigo-600 text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-transform cursor-pointer">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -1746,8 +1710,8 @@ if (!document.getElementById('cart-floating-badge')) {
     `;
 
     badge.onclick = () => {
-        // 1. Usamos tu función nextStep para ir al paso del formulario (Paso 2)
-        // Esto activará la sección 'step2' y ocultará 'step_inventory'
+        // 1. Usamos tu función nextStep para ir al paso del formulario (Paso 0)
+        // Esto activará la sección 'step0' y ocultará 'step_inventory'
         nextStep(0);
 
         // 2. Forzamos la apertura del formulario si tienes la función toggleForm
@@ -1770,7 +1734,26 @@ if (!document.getElementById('cart-floating-badge')) {
 
 }
 
+
+
+
+function actualizarVisibilidadCarrito(n) {
+    const badge = document.getElementById('cart-floating-badge');
+    if (!badge) return;
+
+    // Se muestra SOLO en la galería (inventory)
+    if (n === 'inventory') {
+        badge.classList.remove('hidden');
+    } else {
+        badge.classList.add('hidden');
+    }
 }
+
+
+
+
+
+
 
 
 
@@ -1822,10 +1805,6 @@ if (!document.getElementById('cart-floating-badge')) {
 
 
 
-
-
-
-
         // NUEVO: Render de la tabla de inventario
         function renderInventory(data = []) {
             const tableBody = document.getElementById('inventory-table-body');
@@ -1855,17 +1834,6 @@ if (!document.getElementById('cart-floating-badge')) {
 
             actualizarFechaInventario();
         }
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -1976,30 +1944,6 @@ if (!document.getElementById('cart-floating-badge')) {
             }
             return false;
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -2217,14 +2161,6 @@ function buscarEnInventario(codigo) {
 
 
 
-
-
-
-
-
-
-
-
 function agregarFilaProducto(codigo = '', precio = '', bin = '', fotoUrl = '') {
     const contenedor = document.getElementById('contenedor-productos');
     const div = document.createElement('div');
@@ -2341,12 +2277,53 @@ function agregarFilaProducto(codigo = '', precio = '', bin = '', fotoUrl = '') {
 
 
 
-
-      function guardarPedidoFormulario() {
+function guardarPedidoFormulario() {
     const idExistente = document.getElementById('f-edit-id').value;
 
-    // ... (todo tu código actual de recolección de items y datosPedido) ...
+    // --- RECOLECCIÓN DE ITEMS (Asegúrate de que se vea así) ---
+    const filas = document.querySelectorAll('.fila-producto');
+    const items = [];
 
+    filas.forEach(fila => {
+        const codigo = fila.querySelector('.f-codigo').value.trim();
+        const precio = parseFloat(fila.querySelector('.f-precio').value) || 0;
+        const bin = fila.querySelector('.f-bin').value.trim().toUpperCase();
+        
+        // CAPTURAMOS LA FOTO:
+        // Buscamos el src de la imagen y verificamos que no esté oculta (que no sea el placeholder)
+        const imgElement = fila.querySelector('.f-foto');
+
+
+        // Verificamos que tenga src y que no sea un placeholder o esté oculto
+let fotoUrl = '';
+if (imgElement && !imgElement.classList.contains('hidden') && imgElement.src.includes('data:image')) {
+    fotoUrl = imgElement.src;
+} else if (imgElement && imgElement.src.startsWith('http')) {
+    fotoUrl = imgElement.src;
+}
+
+       
+
+        if (codigo) {
+            items.push({
+                desc: codigo, // Importante: renderPicking usa 'desc'
+                precio: precio,
+                bin: bin,
+                foto: fotoUrl // <-- AQUÍ SE GUARDA PARA EL PICKING
+            });
+        }
+    });
+
+    // Armamos el objeto de datos del pedido
+    const datosPedido = {
+        cliente: document.getElementById('f-cliente').value,
+        nPedido: document.getElementById('f-numero').value,
+        letra: document.getElementById('f-letra').value, // La letra que define el color
+        items: items, // El array que acabamos de armar con fotos
+        total: items.reduce((sum, i) => sum + i.precio, 0)
+    };
+
+    // --- (Sigue tu lógica de guardado: if (idExistente) ... else ...) ---
     if (idExistente) {
         const index = pedidos.findIndex(p => p.id == idExistente);
         if (index !== -1) {
@@ -2362,24 +2339,16 @@ function agregarFilaProducto(codigo = '', precio = '', bin = '', fotoUrl = '') {
         pedidos.push(nuevo);
     }
 
-    // --- AQUÍ VA LA LIMPIEZA DEL CONTADOR ---
-
-    // 1. Limpiamos el HTML del contenedor de productos del formulario
+    // --- (Resto de tu código de limpieza y feedback) ---
     const contenedor = document.getElementById('contenedor-productos');
     if (contenedor) contenedor.innerHTML = '';
-
-    // 2. Ejecutamos tu función para que cuente 0 y actualice el badge
+    
     if (typeof actualizarContadorCarrito === 'function') {
         actualizarContadorCarrito();
     }
 
-    // 3. Feedback visual y limpieza de vista
     toggleForm(false);
     renderStep0();
-    
-    // Opcional: Si quieres forzar el contador a 0 manualmente por seguridad:
-    const badge = document.getElementById('cart-count-number');
-    if (badge) badge.innerText = '0';
 }
 
 
@@ -2391,76 +2360,83 @@ function agregarFilaProducto(codigo = '', precio = '', bin = '', fotoUrl = '') {
 
 
 
-        function renderPicking() {
-            // 1. ELIMINAMOS el array de colores interno para usar el GLOBAL
-            let todosItems = [];
 
-            // FILTRO: Solo pedidos pendientes
-            const pedidosPendientes = pedidos.filter(p => p.estado === 'pendiente');
 
-            pedidosPendientes.forEach((p) => {
-                // 2. IMPORTANTE: No sobrescribimos p.letra ni p.color aquí.
-                // Simplemente leemos lo que Step 0 ya guardó.
-                const letraRuta = p.letra || 'A';
-                const colorClase = getColorRuta(letraRuta); // Usamos la función global
 
-                p.items.forEach(it => {
-                    todosItems.push({
-                        ...it,
-                        nPedido: p.nPedido,
-                        letra: letraRuta,
-                        color: colorClase // Guardamos el color calculado
-                    });
-                });
+
+   function renderPicking() {
+    let todosItems = [];
+    const pedidosPendientes = pedidos.filter(p => p.estado === 'pendiente');
+
+    pedidosPendientes.forEach((p) => {
+        const letraRuta = p.letra || 'A';
+        p.items.forEach(it => {
+            todosItems.push({
+                ...it,
+                letra: letraRuta,
+                color: getColorRuta(letraRuta) 
             });
+        });
+    });
 
-            // 3. Agrupamos por Estante (Bin) y luego por Producto (Desc)
-            const agrupado = todosItems.reduce((acc, it) => {
-                const b = it.bin || 'S/U';
-                if (!acc[b]) acc[b] = {};
+    // Agrupamos por Bin y Producto, buscando la FOTO en la base de datos global
+    const agrupado = todosItems.reduce((acc, it) => {
+        const b = it.bin || 'S/U';
+        if (!acc[b]) acc[b] = {};
 
-                if (!acc[b][it.desc]) {
-                    acc[b][it.desc] = {
-                        desc: it.desc,
-                        cantidad: 0,
-                        pedidosRelacionados: []
-                    };
-                }
+        if (!acc[b][it.desc]) {
+            // --- BÚSQUEDA EN LA BASE DE DATOS DE INVENTARIO ---
+            // Buscamos el producto en inventoryDataGlobal que coincida con el código (it.desc)
+            const infoInventario = inventoryDataGlobal.find(p => 
+                p.codigo.trim().toLowerCase() === it.desc.trim().toLowerCase()
+            );
 
-                acc[b][it.desc].cantidad += 1;
-                // Agregamos la letra y color real del pedido
-                acc[b][it.desc].pedidosRelacionados.push({
-                    letra: it.letra,
-                    color: getColorRuta(it.letra) // Aseguramos el color oficial
-                });
+            acc[b][it.desc] = {
+                desc: it.desc,
+                // Si lo encuentra, usa p.foto, si no, usa la foto que traía el item o vacío
+                foto: infoInventario ? infoInventario.foto : (it.foto || ''), 
+                cantidad: 0,
+                pedidosRelacionados: []
+            };
+        }
 
-                return acc;
-            }, {});
+        acc[b][it.desc].cantidad += 1;
+        acc[b][it.desc].pedidosRelacionados.push({ letra: it.letra, color: it.color });
+        return acc;
+    }, {});
 
-            let html = '';
-            for (const bin in agrupado) {
-                const unidadesEnBin = Object.values(agrupado[bin]).reduce((sum, item) => sum + item.cantidad, 0);
+    let html = '';
+    for (const bin in agrupado) {
+        const unidadesEnBin = Object.values(agrupado[bin]).reduce((sum, item) => sum + item.cantidad, 0);
 
-                html += `
+        html += `
         <div class="bg-white rounded-2xl overflow-hidden border border-slate-200 mb-4 shadow-sm">
-            <div class="bg-slate-200 text-slate-800 px-3 py-2 text-[12px] font-black flex justify-between">
-                <span>ESTANTE: ${bin}</span>
-                <span>${unidadesEnBin} ${ICONOS.caja}</span>
+            <div class="bg-slate-800 text-white px-3 py-2 text-[12px] font-black flex justify-between uppercase">
+                <span>📍 ESTANTE: ${bin}</span>
+                <span>${unidadesEnBin} ITEMS</span>
             </div>
             <div class="p-2 space-y-2">
                 ${Object.values(agrupado[bin]).map(it => `
-                    <label class="flex items-center gap-3 p-3 bg-slate-50 rounded-xl has-[:checked]:opacity-30 transition-all border border-transparent has-[:checked]:border-slate-200">
-                        <input type="checkbox" onchange="validarPicking()" class="w-5 h-5 check-picking">
-                        <div class="flex-1">
-                            <div class="flex justify-between items-start">
-                                <div>
-                                    <span class="text font-black text-blue-600">${ICONOS.caja} x${it.cantidad}</span>
-                                    <span class="text-[11px] font-bold ml-1 text-slate-700 uppercase">${it.desc}</span>
+                    <label class="flex items-center gap-3 p-2 bg-slate-50 rounded-xl has-[:checked]:opacity-40 transition-all border border-transparent has-[:checked]:border-slate-200 cursor-pointer">
+                        <input type="checkbox" onchange="validarPicking()" class="w-6 h-6 check-picking rounded-full accent-blue-600">
+                        
+                        <div class="flex-shrink-0 w-16 h-16 bg-white rounded-lg border border-slate-200 overflow-hidden flex items-center justify-center shadow-sm">
+                            ${it.foto && it.foto !== ''
+                                ? `<img src="${it.foto}" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/150?text=Error'">` 
+                                : `<span class="text-2xl text-slate-300">📦</span>`
+                            }
+                        </div>
+
+                        <div class="flex-1 min-w-0">
+                            <div class="flex justify-between items-start gap-2">
+                                <div class="truncate">
+                                    <div class="text-[14px] font-black text-blue-600 leading-none mb-1">x${it.cantidad}</div>
+                                    <div class="text-[11px] font-bold text-slate-700 uppercase truncate">${it.desc}</div>
                                 </div>
                                 
-                                <div class="flex gap-1 flex-wrap justify-end max-w-[100px]">
+                                <div class="flex gap-1 flex-wrap justify-end max-w-[80px]">
                                     ${it.pedidosRelacionados.map(p => `
-                                        <span class="${p.color} text-white w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black shadow-sm">
+                                        <span class="${p.color} text-white w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-black ring-1 ring-white shadow-sm">
                                             ${p.letra}
                                         </span>
                                     `).join('')}
@@ -2470,12 +2446,12 @@ function agregarFilaProducto(codigo = '', precio = '', bin = '', fotoUrl = '') {
                     </label>`).join('')}
             </div>
         </div>`;
-            }
+    }
 
-            document.getElementById('lista-picking').innerHTML = html || '<p class="text-center py-10">Sin productos por recolectar</p>';
-            validarPicking();
-        }
-
+    document.getElementById('lista-picking').innerHTML = html || '<p class="text-center py-10">Sin productos por recolectar</p>';
+    validarPicking();
+}
+        
         function validarPicking() {
             playSound('scanner');
 
@@ -2488,6 +2464,7 @@ function agregarFilaProducto(codigo = '', precio = '', bin = '', fotoUrl = '') {
                 ? "w-full mt-10 bg-blue-600 text-white font-black py-6 rounded-3xl"
                 : "w-full mt-10 bg-slate-200 text-slate-400 font-black py-6 rounded-3xl uppercase";
         }
+
 
 
         function renderChecklistCarga() {
@@ -2641,9 +2618,6 @@ function agregarFilaProducto(codigo = '', precio = '', bin = '', fotoUrl = '') {
 
 
 
-
-
-
         //FUNCION : ESTAPA 3
 
         function renderStep3() {
@@ -2741,13 +2715,6 @@ function agregarFilaProducto(codigo = '', precio = '', bin = '', fotoUrl = '') {
 
 
 
-
-
-
-
-
-
-
         function renderVistaUnificada() {
             let p = pedidos.find(x => x.id == pActualID);
             if (!p) return;
@@ -2799,12 +2766,6 @@ function agregarFilaProducto(codigo = '', precio = '', bin = '', fotoUrl = '') {
             }).join('');
 
             document.getElementById('multi-venta-selector').innerHTML = htmlItems;
-
-
-
-
-
-
 
 
 
@@ -2875,24 +2836,6 @@ function agregarFilaProducto(codigo = '', precio = '', bin = '', fotoUrl = '') {
             }
             recalcularTotalConsolidado();
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -3178,8 +3121,13 @@ function agregarFilaProducto(codigo = '', precio = '', bin = '', fotoUrl = '') {
         }
 
 
+
+
+
+
+
         // Reemplaza con la URL que copiaste en el paso anterior
-        const URL_SHEETS = "";
+        const URL_SHEETS = "https://script.google.com/macros/s/AKfycbwMVN9i_Dzbc3LEAP4nCHdEPPW4ShGvxrCwnt0DYtVovocOzN6KMrKViGnITXdOWzNA/exec";
 
         async function confirmarFinalTotal() {
             let p = pedidos.find(x => x.id == pActualID);
@@ -3206,6 +3154,9 @@ function agregarFilaProducto(codigo = '', precio = '', bin = '', fotoUrl = '') {
 
             nextStep(pedidos.length === 0 ? 6 : 2);
         }
+
+
+
 
         function enviarVentaASheets(datos) {
             // Mapeamos los productos para asegurar que tengan las propiedades correctas
@@ -3239,15 +3190,7 @@ function agregarFilaProducto(codigo = '', precio = '', bin = '', fotoUrl = '') {
 
 
 
-
-
-
-
-
-
-
         //----------------------------------------------------------------------------------------
-
 
 
 
@@ -3713,6 +3656,9 @@ function agregarFilaProducto(codigo = '', precio = '', bin = '', fotoUrl = '') {
         }
 
 
+
+
+
         //FUNCION: SINCRONIZAR PEDIDOS SHEETS
 
         async function sincronizarPedidosDesdeSheets(event) {
@@ -3720,15 +3666,15 @@ function agregarFilaProducto(codigo = '', precio = '', bin = '', fotoUrl = '') {
 
             // --- CONFIGURACIÓN DE COLUMNAS ACTUALIZADA (A=0, B=1, C=2...) ---
             const COL = {
-                CODIGO: 2,    // Columna C
-                PRECIO: 3,    // Columna D
-                BIN: 4,       // Columna E
-                ENVIO: 5,     // Columna F
-                TOTAL: 6,     // Columna G (Nueva)
-                CLIENTE: 7,   // Columna H (Antes era 6)
-                DIRECCION: 8, // Columna I (Antes era 7)
-                TELEFONO: 9,  // Columna J (Antes era 8)
-                DETALLES: 10  // Columna K (Nueva)
+                CODIGO: 3,    // Columna C
+                PRECIO: 4,    // Columna D
+                BIN: 5,       // Columna E
+                ENVIO: 6,     // Columna F
+                TOTAL: 7,     // Columna G (Nueva)
+                CLIENTE: 8,   // Columna H (Antes era 6)
+                DIRECCION: 9, // Columna I (Antes era 7)
+                TELEFONO: 10,  // Columna J (Antes era 8)
+                DETALLES: 11  // Columna K (Nueva)
             };
             // ------------------------------------------------------------------
 
@@ -4012,6 +3958,8 @@ function agregarFilaProducto(codigo = '', precio = '', bin = '', fotoUrl = '') {
             }
         }
 
+
+
         function actualizarBotonFlotante(n) {
             const btnContainer = document.getElementById('contenedor-boton-flotante');
             if (!btnContainer) return;
@@ -4028,6 +3976,7 @@ function agregarFilaProducto(codigo = '', precio = '', bin = '', fotoUrl = '') {
         }
 
 
+        
 
 
 
@@ -4219,6 +4168,9 @@ function agregarFilaProducto(codigo = '', precio = '', bin = '', fotoUrl = '') {
 }
 
 
+
+//funcion nueva Detalle de producto en grande
+
 function openProductDetail(encodedData) {
     // Decodificar los datos recibidos
     const grupo = JSON.parse(atob(encodedData));
@@ -4401,6 +4353,9 @@ function agregarDesdeGaleria(codigoCompleto) {
 }
 
 
+
+
+
 function actualizarContadorCarrito() {
     const filas = document.querySelectorAll('.fila-producto');
     let totalItems = 0;
@@ -4426,19 +4381,6 @@ function actualizarContadorCarrito() {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 // Función auxiliar para avisar al usuario
 function mostrarNotificacion(mensaje) {
     const toast = document.createElement('div');
@@ -4450,6 +4392,17 @@ function mostrarNotificacion(mensaje) {
 
 
 
+//actualizaciones :
+
+
+//Actualizar visibillidad de carrito
+
+//Foto de producto en Picking
+
+
+//
+
+
 
 
     </script>
@@ -4458,5 +4411,7 @@ function mostrarNotificacion(mensaje) {
 
 
 </body>
+
+
 
 </html>
