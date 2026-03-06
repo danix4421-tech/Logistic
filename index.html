@@ -168,7 +168,7 @@
                     class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-100 border border-slate-200/50 shadow-inner">
                     <span id="status-dot" class="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse"></span>
                     <span id="status-text"
-                        class="text-[10px] font-bold text-slate-600 uppercase tracking-tight">Cargando...</span>
+                        class="text-[10px] font-bold  text-slate-600 uppercase tracking-tight"></span>
                 </div>
                 <div class="flex gap-2 mt-0.5">
                     <span id="h-efectivo" class="text-[10px] font-bold text-emerald-600 hidden">$0</span>
@@ -320,8 +320,23 @@
                             class="w-full bg-blue-50 border-blue-400 focus:bg-white focus:border-blue-500 rounded-2xl text-sm py-3 pl-8 pr-5 font-bold text-blue-600 transition-all shadow-inner">
                     </div>
                 </div>
+        <div class="col-span-12">
+    <label class="text-[12px] text-slate-900 ml-2 mb-1 block">Horario de Entrega</label>
+    <div class="relative">
+        <input type="text" id="f-horario" list="opciones-horarios" placeholder="Selecciona o escribe un horario..."
+            class="w-full bg-slate-50 border focus:bg-white focus:border-blue-500 rounded-2xl text-sm py-3 px-5 transition-all outline-none">
+        
+        <datalist id="opciones-horarios">
+            <option value="Cualquier horario">
+            <option value="12:00 - 13:00">
+            <option value="19:00 - 21:00">
+            <option value="Mañana (antes de las 12)">
+            <option value="Tarde (después de las 18)">
+        </datalist>
+    </div>
+</div>
 
-                <div class="col-span-12">
+            <div class="col-span-12">
                     <label class="text-[10px]  text-slate-900 ml-2 mb-1 block">Notas del Pedido</label>
                     <textarea id="f-detalles" placeholder="¿Algo que debamos saber?" rows="2"
                         class="w-full bg-slate-50 border focus:bg-white focus:border-blue-500 rounded-2xl text-sm py-3 px-5 transition-all"></textarea>
@@ -359,7 +374,7 @@
                 class="flex-[2] bg-blue-600 hover:bg-blue-700 text-white font-black py-5 rounded-2xl shadow-xl shadow-blue-200 uppercase text-xs tracking-widest transition-all transform active:scale-[0.98]">
                 Guardar Pedido en Ruta
             </button>
-            <button onclick="resetFormulario();toggleForm(false)"
+            <button onclick="resetFormulario();toggleForm(false);"
                 class="flex-1 bg-slate-100 hover:bg-red-50 hover:text-red-500 text-slate-500 font-black py-5 rounded-2xl text-xs uppercase transition-all">
                 Cancelar y Salir
             </button>
@@ -371,7 +386,31 @@
 
 
 
-
+<div class="mb-6">
+    <label class="text-[10px] font-black text-slate-400 uppercase ml-2 mb-2 block tracking-widest">Filtrar por Horario</label>
+    <div id="contenedor-filtros-horario" class="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
+        <button onclick="filtrarPorHorario('Todos')" 
+            class="chip-filtro active bg-blue-600 text-white px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all">
+            Todos
+        </button>
+        <button onclick="filtrarPorHorario('Mañana (antes de las 12)')" 
+            class="chip-filtro bg-slate-100 text-slate-500 px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all">
+            Mañana
+        </button>
+        <button onclick="filtrarPorHorario('12:00 - 13:00')" 
+            class="chip-filtro bg-slate-100 text-slate-500 px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all">
+            12:00 - 13:00
+        </button>
+        <button onclick="filtrarPorHorario('19:00 - 21:00')" 
+            class="chip-filtro bg-slate-100 text-slate-500 px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all">
+            19:00 - 21:00
+        </button>
+        <button onclick="filtrarPorHorario('Tarde (después de las 18)')" 
+            class="chip-filtro bg-slate-100 text-slate-500 px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all">
+            Tarde
+        </button>
+    </div>
+</div>
 
 
 
@@ -1063,7 +1102,8 @@
 
         let inventoryDataGlobal = []; // Guardamos los datos para no volver a fetch
 
-        
+        // Variable global para el filtro
+        let filtroHorarioActual = 'Todos';
 
 
         let showMasSalidas = false;  // false = orden normal, true = más vendidos primero
@@ -1980,7 +2020,8 @@ function actualizarVisibilidadCarrito(n) {
                 const cliente = d[5] ? d[5].trim() : '';
                 const direccion = d[6] ? d[6].trim() : '';
                 const telefono = d[7] ? d[7].trim() : '';
-                const detalles = d[8] ? d[8].trim() : '';
+                const horario = d[8] ? d[7].trim() : '';
+                const detalles = d[9]  ? d[8].trim() : '';
 
                 // Si hay un "Cliente" (columna d[5]), creamos un NUEVO PEDIDO
                 if (cliente !== "") {
@@ -1992,6 +2033,7 @@ function actualizarVisibilidadCarrito(n) {
                         telefono: telefono,
                         envio: envio,
                         total: total,
+                        horario: horario,
                         detalles: detalles, // Nuevo campo agregado
                         items: [{
                             desc: codigo,
@@ -2033,69 +2075,61 @@ function actualizarVisibilidadCarrito(n) {
 
         //ETAPA 1
 
-        // 1. RE-RENDERIZAR LISTA (Asegurar que la llave cierre bien)
-        function renderStep0() {
-            const lista = document.getElementById('lista-pre-carga');
-            if (!lista) return;
+       function renderStep0() {
+    const lista = document.getElementById('lista-pre-carga');
+    if (!lista) return;
 
-            // 1. Filtramos solo los que están en preparación (pendientes)
-            const pedidosPendientes = pedidos.filter(p => p.estado === 'pendiente');
+    // 1. Siempre leer lo último de pedidos
+    // pedidos = JSON.parse(localStorage.getItem('z_pedidos')) || [];
 
-            const ABC = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    // 2. Filtrar por estado pendiente
+    let pendientes = pedidos.filter(p => p.estado === 'pendiente');
 
-            // 2. Renderizado y ASIGNACIÓN DE IDENTIDAD
-            lista.innerHTML = pedidosPendientes.map((p, i) => {
-                const letraAsignada = ABC[i % 26];
-                p.letra = letraAsignada;
-                const colorClase = getColorRuta(letraAsignada);
+    // 3. APLICAR FILTRO DE HORARIO
+    if (filtroHorarioActual !== 'Todos') {
+        pendientes = pendientes.filter(p => {
+            const hPedido = String(p.horario || "Cualquier horario").toLowerCase();
+            const hFiltro = String(filtroHorarioActual).toLowerCase();
+            return hPedido.includes(hFiltro);
+        });
+    }
 
-                return `
-    <div onclick="editarPedido(${p.id})" 
-         class="cursor-pointer bg-white p-3 rounded-xl border border-slate-100 flex items-center gap-3 shadow-sm hover:shadow-md transition-shadow active:scale-[0.98]" 
-         data-id="${p.id}">
-        
-        <div class="${colorClase} text-white min-w-[36px] h-9 rounded-full flex items-center justify-center font-black text-sm shadow-lg shadow-inner">
-            ${letraAsignada}
-        </div>
-        
-        <div class="flex-1 min-w-0">
-            <div class="flex items-center gap-2">
-                <h4 class="font-black text-[13px] truncate text-slate-800 flex items-center gap-1.5">
-                    <span class="opacity-40 scale-90">${ICONOS.cliente}</span>
-                    ${p.cliente}
-                </h4>
-            </div>
-            
-            <div class="flex items-center gap-2 flex-wrap mt-0.5">
-                <p class="text-[11px] truncate font-medium text-slate-500">${p.direccion}</p>
-                <div class="flex gap-1">
-                    <span class="bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded text-[9px] font-black">
-                        ${(p.items || []).length} CAJAS
-                    </span>
-                    <span class="bg-emerald-50 text-emerald-600 px-1.5 py-0.5 rounded text-[10px] font-black">
-                        $${(p.total || 0).toLocaleString()}
-                    </span>
+    const ABC = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+    // 4. Renderizar
+    if (pendientes.length === 0) {
+        lista.innerHTML = `<div class="p-10 text-center text-slate-400 text-xs font-bold uppercase tracking-widest">No hay pedidos en este horario</div>`;
+    } else {
+        lista.innerHTML = pendientes.map((p, i) => {
+            const letraAsignada = ABC[i % 26];
+            p.letra = letraAsignada; // Asignamos letra para el picking
+            const colorClase = getColorRuta(letraAsignada);
+
+            return `
+            <div onclick="editarPedido(${p.id})" class="bg-white p-3 rounded-xl border border-slate-100 flex items-center gap-3 shadow-sm mb-2 active:scale-[0.98] transition-transform">
+                <div class="${colorClase} text-white min-w-[36px] h-9 rounded-full flex items-center justify-center font-black text-xs shadow-lg">
+                    ${letraAsignada}
                 </div>
-            </div>
-        </div>
+                <div class="flex-1 min-w-0">
+                    <h4 class="font-black text-[13px] text-slate-800 truncate">${p.cliente}</h4>
+                    <div class="flex items-center gap-2">
+                        <p class="text-[11px] text-slate-500 truncate">${p.direccion}</p>
+                        <span class="text-[9px] font-black text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded uppercase">
+                            ${p.horario || 'S/H'}
+                        </span>
+                    </div>
+                </div>
+                <button onclick="event.stopPropagation(); eliminarPedido(${p.id})" class="p-2 text-slate-300 hover:text-red-500">
+                    ${ICON_DELETE}
+                </button>
+            </div>`;
+        }).join('');
+    }
 
-        <div class="flex items-center border-l border-slate-50 pl-2 gap-1">
-            <button onclick="event.stopPropagation(); editarPedido(${p.id})" class="p-2 text-slate-300 hover:text-blue-600 transition-colors hidden">
-                ${ICON_EDIT}
-            </button>
-            
-            <button onclick="event.stopPropagation(); eliminarPedido(${p.id})" class="p-2 text-slate-500 hover:text-red-500 transition-colors">
-                ${ICON_DELETE}
-            </button>
-        </div>
-    </div>`;
-            }).join('');
-
-            // Actualizar botón de siguiente etapa
-            const btnPicking = document.getElementById('btn-ir-a-picking');
-            if (btnPicking) btnPicking.classList.toggle('hidden', pedidosPendientes.length === 0);
-        }
-
+    // Mostrar/ocultar botón de picking
+    const btnPicking = document.getElementById('btn-ir-a-picking');
+    if (btnPicking) btnPicking.classList.toggle('hidden', pendientes.length === 0);
+}
 
 
 
@@ -2113,6 +2147,7 @@ function editarPedido(id) {
     document.getElementById('f-telefono').value = p.telefono || '';
     document.getElementById('f-envio').value = p.envio || 0;
     document.getElementById('f-total').value = p.total || 0;
+     document.getElementById('f-horario').value = p.horario || "";
     document.getElementById('f-detalles').value = p.detalles || '';
 
     // Llenar productos
@@ -2280,7 +2315,7 @@ function agregarFilaProducto(codigo = '', precio = '', bin = '', fotoUrl = '') {
 function guardarPedidoFormulario() {
     const idExistente = document.getElementById('f-edit-id').value;
 
-    // --- RECOLECCIÓN DE ITEMS (Asegúrate de que se vea así) ---
+    // 1. RECOLECCIÓN DE ITEMS (Productos)
     const filas = document.querySelectorAll('.fila-producto');
     const items = [];
 
@@ -2288,45 +2323,46 @@ function guardarPedidoFormulario() {
         const codigo = fila.querySelector('.f-codigo').value.trim();
         const precio = parseFloat(fila.querySelector('.f-precio').value) || 0;
         const bin = fila.querySelector('.f-bin').value.trim().toUpperCase();
-        
-        // CAPTURAMOS LA FOTO:
-        // Buscamos el src de la imagen y verificamos que no esté oculta (que no sea el placeholder)
         const imgElement = fila.querySelector('.f-foto');
 
-
-        // Verificamos que tenga src y que no sea un placeholder o esté oculto
-let fotoUrl = '';
-if (imgElement && !imgElement.classList.contains('hidden') && imgElement.src.includes('data:image')) {
-    fotoUrl = imgElement.src;
-} else if (imgElement && imgElement.src.startsWith('http')) {
-    fotoUrl = imgElement.src;
-}
-
-       
+        let fotoUrl = '';
+        if (imgElement && !imgElement.classList.contains('hidden') && imgElement.src.includes('data:image')) {
+            fotoUrl = imgElement.src;
+        } else if (imgElement && imgElement.src.startsWith('http')) {
+            fotoUrl = imgElement.src;
+        }
 
         if (codigo) {
             items.push({
-                desc: codigo, // Importante: renderPicking usa 'desc'
+                desc: codigo,
                 precio: precio,
                 bin: bin,
-                foto: fotoUrl // <-- AQUÍ SE GUARDA PARA EL PICKING
+                foto: fotoUrl
             });
         }
     });
 
-    // Armamos el objeto de datos del pedido
+    // 2. RECOLECCIÓN DE DATOS DEL CLIENTE Y ENVÍO
+    // Usamos || para asegurar que si un campo está vacío no rompa la lógica
     const datosPedido = {
-        cliente: document.getElementById('f-cliente').value,
+        cliente: document.getElementById('f-nombre').value.trim(),
+        direccion: document.getElementById('f-direccion').value.trim(),
+        telefono: document.getElementById('f-telefono').value.trim(),
+        envio: parseFloat(document.getElementById('f-envio').value) || 0,
+        total: parseFloat(document.getElementById('f-total').value) || 0,
+        horario: String(document.getElementById('f-horario').value).trim() || "",
+        detalles: document.getElementById('f-detalles').value.trim(),
+        
         nPedido: document.getElementById('f-numero').value,
-        letra: document.getElementById('f-letra').value, // La letra que define el color
-        items: items, // El array que acabamos de armar con fotos
-        total: items.reduce((sum, i) => sum + i.precio, 0)
+        letra: document.getElementById('f-letra').value.toUpperCase(),
+        items: items
     };
 
-    // --- (Sigue tu lógica de guardado: if (idExistente) ... else ...) ---
+    // 3. LÓGICA DE GUARDADO (EDITAR O NUEVO)
     if (idExistente) {
         const index = pedidos.findIndex(p => p.id == idExistente);
         if (index !== -1) {
+            // Mantenemos datos que no están en el form (como fecha original) y actualizamos el resto
             pedidos[index] = { ...pedidos[index], ...datosPedido };
         }
     } else {
@@ -2334,10 +2370,38 @@ if (imgElement && !imgElement.classList.contains('hidden') && imgElement.src.inc
             id: Date.now(),
             ...datosPedido,
             estado: 'pendiente',
-            fecha: new Date().toISOString()
+            fecha: new Date().toLocaleDateString(),
+            horaCreacion: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         };
         pedidos.push(nuevo);
     }
+
+    // 4. LIMPIEZA Y CIERRE
+    save(); // Guardar en LocalStorage
+    limpiarFormulario();
+    toggleForm(false);
+    
+    // Feedback visual y actualización de interfaz
+    if (typeof renderStep0 === 'function') renderStep0();
+    if (typeof actualizarContadorCarrito === 'function') actualizarContadorCarrito();
+    
+    // Si tienes un sonido de "guardado"
+    if (typeof playSound === 'function') playSound('click');
+}
+
+// Función auxiliar para dejar el form impecable después de usarlo
+function limpiarFormulario() {
+    document.getElementById('f-edit-id').value = "";
+    document.getElementById('f-nombre').value = "";
+    document.getElementById('f-direccion').value = "";
+    document.getElementById('f-telefono').value = "";
+    document.getElementById('f-envio').value = "";
+    document.getElementById('f-total').value = "";
+    document.getElementById('f-detalles').value = "";
+    document.getElementById('f-horario').value = "";
+    document.getElementById('f-numero').value = "";
+    document.getElementById('contenedor-productos').innerHTML = "";
+}
 
     // --- (Resto de tu código de limpieza y feedback) ---
     const contenedor = document.getElementById('contenedor-productos');
@@ -2345,7 +2409,7 @@ if (imgElement && !imgElement.classList.contains('hidden') && imgElement.src.inc
     
     if (typeof actualizarContadorCarrito === 'function') {
         actualizarContadorCarrito();
-    }
+    
 
     toggleForm(false);
     renderStep0();
@@ -2366,11 +2430,19 @@ if (imgElement && !imgElement.classList.contains('hidden') && imgElement.src.inc
 
    function renderPicking() {
     let todosItems = [];
-    const pedidosPendientes = pedidos.filter(p => p.estado === 'pendiente');
+    
+    // Filtramos exactamente igual que en renderStep0
+    let pendientes = pedidos.filter(p => p.estado === 'pendiente');
+    if (filtroHorarioActual !== 'Todos') {
+        pendientes = pendientes.filter(p => 
+            String(p.horario || "").toLowerCase().includes(filtroHorarioActual.toLowerCase())
+        );
+    }
 
-    pedidosPendientes.forEach((p) => {
-        const letraRuta = p.letra || 'A';
-        p.items.forEach(it => {
+    // Extraer items de esos pedidos
+    pendientes.forEach((p) => {
+        const letraRuta = p.letra; // La letra que asignamos en renderStep0
+        (p.items || []).forEach(it => {
             todosItems.push({
                 ...it,
                 letra: letraRuta,
@@ -2378,7 +2450,6 @@ if (imgElement && !imgElement.classList.contains('hidden') && imgElement.src.inc
             });
         });
     });
-
     // Agrupamos por Bin y Producto, buscando la FOTO en la base de datos global
     const agrupado = todosItems.reduce((acc, it) => {
         const b = it.bin || 'S/U';
@@ -3632,7 +3703,7 @@ if (imgElement && !imgElement.classList.contains('hidden') && imgElement.src.inc
 
 
         function cerrarHistorial() { nextStep(pedidos.length > 0 ? 2 : 0); }
-        function resetFormulario() { document.getElementById('f-edit-id').value = ""; document.getElementById('f-nombre').value = ""; document.getElementById('f-direccion').value = ""; document.getElementById('f-telefono').value = ""; document.getElementById('f-envio').value = ""; document.getElementById('f-total').value = ""; document.getElementById('f-detalles').value = ""; document.getElementById('contenedor-productos').innerHTML = ""; agregarFilaProducto(); }
+        function resetFormulario() { document.getElementById('f-edit-id').value = ""; document.getElementById('f-nombre').value = ""; document.getElementById('f-direccion').value = ""; document.getElementById('f-telefono').value = ""; document.getElementById('f-envio').value = ""; document.getElementById('f-total').value = "";  document.getElementById('f-horario').value = ""  ; document.getElementById('f-detalles').value = ""; document.getElementById('contenedor-productos').innerHTML = ""; agregarFilaProducto(); }
         function eliminarPedido(id) { if (confirm("¿Eliminar?")) { pedidos = pedidos.filter(x => x.id != id); save(); renderStep0(); } }
         function limpiarTodo() { if (confirm("¿Borrar todo?")) { localStorage.clear(); location.reload(); } }
         function llamar() { let p = pedidos.find(x => x.id == pActualID); if (p) window.location.href = `tel:${p.telefono}`; }
@@ -3674,7 +3745,9 @@ if (imgElement && !imgElement.classList.contains('hidden') && imgElement.src.inc
                 CLIENTE: 8,   // Columna H (Antes era 6)
                 DIRECCION: 9, // Columna I (Antes era 7)
                 TELEFONO: 10,  // Columna J (Antes era 8)
-                DETALLES: 11  // Columna K (Nueva)
+                HORARIO: 11,  // Columna L (Nueva)
+                DETALLES: 12  // Columna K (Nueva)
+               
             };
             // ------------------------------------------------------------------
 
@@ -3717,7 +3790,10 @@ if (imgElement && !imgElement.classList.contains('hidden') && imgElement.src.inc
                             telefono: d[COL.TELEFONO] || '',
                             envio: parseInt(d[COL.ENVIO]) || 0,
                             total: parseInt(d[COL.TOTAL]) || 0, // Nueva propiedad
+                            horario: d[COL.HORARIO] || '',    // Nueva propiedad
                             detalles: d[COL.DETALLES] || '',    // Nueva propiedad
+                            
+                            
                             items: [{
                                 desc: cod,
                                 precio: parseInt(d[COL.PRECIO]) || dbInfo?.precio || 0,
@@ -3876,6 +3952,8 @@ if (imgElement && !imgElement.classList.contains('hidden') && imgElement.src.inc
             const telefono = document.getElementById('f-telefono').value.trim();
             const envio = parseInt(document.getElementById('f-envio').value) || 0;
             const total = parseInt(document.getElementById('f-total').value) || 0;
+           // CORRECCIÓN AQUÍ: Quitamos el parseInt para que guarde el texto completo
+    const horario = document.getElementById('f-horario').value.trim() || "Cualquier horario";
             const detalles = document.getElementById('f-detalles').value.trim();
 
             let items = [];
@@ -3895,6 +3973,7 @@ if (imgElement && !imgElement.classList.contains('hidden') && imgElement.src.inc
                 telefono,
                 envio,
                 total, // Se guarda el total calculado
+                horario, // Se guardan los detalles
                 detalles, // Se guardan los detalles
                 items,
                 estado: 'pendiente'
@@ -4392,15 +4471,48 @@ function mostrarNotificacion(mensaje) {
 
 
 
+
+
+
+function filtrarPorHorario(horario) {
+    filtroHorarioActual = horario;
+    console.log("Cambiando filtro a:", filtroHorarioActual);
+
+    // 1. Actualizar visualmente los botones (chips)
+    document.querySelectorAll('.chip-filtro').forEach(btn => {
+        // Buscamos si el onclick del botón contiene el horario seleccionado
+        const btnOnClick = btn.getAttribute('onclick');
+        if (btnOnClick && btnOnClick.includes(`'${horario}'`)) {
+            btn.className = "chip-filtro bg-blue-600 text-white px-4 py-2 rounded-full text-xs font-black shadow-md transition-all";
+        } else {
+            btn.className = "chip-filtro bg-slate-100 text-slate-500 px-4 py-2 rounded-full text-xs font-bold transition-all";
+        }
+    });
+
+    // 2. Ejecutar los renders
+    renderStep0();
+    if (typeof renderPicking === 'function') renderPicking();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 //actualizaciones :
 
 
-//Actualizar visibillidad de carrito
-
-//Foto de producto en Picking
-
-
-//
+//Filtro por horarios
 
 
 
