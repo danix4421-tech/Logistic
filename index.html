@@ -168,7 +168,7 @@
                     class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-100 border border-slate-200/50 shadow-inner">
                     <span id="status-dot" class="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse"></span>
                     <span id="status-text"
-                        class="text-[10px] font-bold text-slate-600 uppercase tracking-tight">Cargando...</span>
+                        class="text-[10px] font-bold  text-slate-600 uppercase tracking-tight"></span>
                 </div>
                 <div class="flex gap-2 mt-0.5">
                     <span id="h-efectivo" class="text-[10px] font-bold text-emerald-600 hidden">$0</span>
@@ -321,7 +321,27 @@
                     </div>
                 </div>
 
-                <div class="col-span-12">
+
+
+        <div class="col-span-12">
+    <label class="text-[12px] text-slate-900 ml-2 mb-1 block">Horario de Entrega</label>
+    <div class="relative">
+        <input type="text" id="f-horario" list="opciones-horarios" placeholder="Selecciona o escribe un horario..."
+            class="w-full bg-slate-50 border focus:bg-white focus:border-blue-500 rounded-2xl text-sm py-3 px-5 transition-all outline-none">
+        
+        <datalist id="opciones-horarios">
+            <option value="Cualquier horario">
+            <option value="12:00 - 13:00">
+            <option value="19:00 - 21:00">
+            <option value="Mañana (antes de las 12)">
+            <option value="Tarde (después de las 18)">
+        </datalist>
+    </div>
+</div>
+
+
+
+            <div class="col-span-12">
                     <label class="text-[10px]  text-slate-900 ml-2 mb-1 block">Notas del Pedido</label>
                     <textarea id="f-detalles" placeholder="¿Algo que debamos saber?" rows="2"
                         class="w-full bg-slate-50 border focus:bg-white focus:border-blue-500 rounded-2xl text-sm py-3 px-5 transition-all"></textarea>
@@ -359,7 +379,7 @@
                 class="flex-[2] bg-blue-600 hover:bg-blue-700 text-white font-black py-5 rounded-2xl shadow-xl shadow-blue-200 uppercase text-xs tracking-widest transition-all transform active:scale-[0.98]">
                 Guardar Pedido en Ruta
             </button>
-            <button onclick="resetFormulario();toggleForm(false)"
+            <button onclick="resetFormulario();toggleForm(false);"
                 class="flex-1 bg-slate-100 hover:bg-red-50 hover:text-red-500 text-slate-500 font-black py-5 rounded-2xl text-xs uppercase transition-all">
                 Cancelar y Salir
             </button>
@@ -370,9 +390,50 @@
 
 
 
+<div class="mb-6 w-full max-w-full">
+    <label class="text-[10px] font-black text-slate-400 uppercase ml-2 mb-2 block tracking-widest">
+        Filtrar por Horario
+    </label>
+    
+    <div id="contenedor-filtros-horario" class="flex flex-nowrap gap-2 overflow-x-auto pb-2 no-scrollbar">
+        
+        <button onclick="filtrarPorHorario('Todos')" 
+            class="chip-filtro active bg-blue-600 text-white px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap flex-shrink-0 transition-all">
+            Todos
+        </button>
 
+        <button onclick="filtrarPorHorario('Mañana (antes de las 12)')" 
+            class="chip-filtro bg-slate-100 text-slate-500 px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap flex-shrink-0 transition-all">
+            Mañana
+        </button>
 
+        <button onclick="filtrarPorHorario('12:00 - 13:00')" 
+            class="chip-filtro bg-slate-100 text-slate-500 px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap flex-shrink-0 transition-all">
+            12:00 - 13:00
+        </button>
 
+        <button onclick="filtrarPorHorario('19:00 - 21:00')" 
+            class="chip-filtro bg-slate-100 text-slate-500 px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap flex-shrink-0 transition-all">
+            19:00 - 21:00
+        </button>
+
+        <button onclick="filtrarPorHorario('Tarde (después de las 18)')" 
+            class="chip-filtro bg-slate-100 text-slate-500 px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap flex-shrink-0 transition-all">
+            Tarde
+        </button>
+    </div>
+</div>
+
+<style>
+/* Estilo para ocultar la barra de scroll visualmente pero mantener la funcionalidad */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+.no-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+</style>
 
 
 
@@ -413,6 +474,9 @@
             class="w-full mt-10 bg-slate-200 text-slate-400 font-black py-6 rounded-3xl ">CONTINUAR</button>
     </section>
 
+
+
+    
 
     <!-- Modal Fondo Inicial (solo se muestra al iniciar ruta) -->
     <div id="modal-fondo-inicial"
@@ -1021,17 +1085,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
     <!--boton flotante -->
 
 
@@ -1057,7 +1110,7 @@
 
     <script>
         //--- CONFIGURACIÓN DE LINKS DE GOOGLE SHEETS ---
-        const URL_PRODUCTOS_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQxmMtrLlKEH1uQUNmUvQxXUmFJQNQc46rwfOpKMNzJytrGDRxyMjo_S2DhQIDJmXTv1o6G2fvZQZgi/pub?gid=441262518&single=true&output=csv";
+        const URL_PRODUCTOS_CSV = "";
         const URL_PEDIDOS_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQxmMtrLlKEH1uQUNmUvQxXUmFJQNQc46rwfOpKMNzJytrGDRxyMjo_S2DhQIDJmXTv1o6G2fvZQZgi/pub?gid=271238087&single=true&output=csv";
 
 
@@ -1071,10 +1124,14 @@
 
         let inventoryDataGlobal = []; // Guardamos los datos para no volver a fetch
 
-        
+        // Variable global para el filtro
+        let filtroHorarioActual = 'Todos';
 
 
         let showMasSalidas = false;  // false = orden normal, true = más vendidos primero
+        
+
+
 
         // Biblioteca de iconos centralizada
         const ICONOS = {
@@ -1110,8 +1167,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Llama aquí a la función que descarga o conecta la DB de inventario
 fetchInventory(); 
 
-    // Luego carga tus filas guardadas
-    misProductosGuardados.forEach(p => agregarFilaProducto(p.codigo));
+   
 });
 
 
@@ -1174,7 +1230,7 @@ fetchInventory();
         }
 
 
-
+        //INVENTARIO
         async function fetchInventory() {
     const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQxmMtrLlKEH1uQUNmUvQxXUmFJQNQc46rwfOpKMNzJytrGDRxyMjo_S2DhQIDJmXTv1o6G2fvZQZgi/pub?gid=148348685&single=true&output=csv";
 
@@ -1267,25 +1323,6 @@ function buscarEnInventario(codigo) {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         //CODIGO DE COLORES DE LETRA DE RUTA
         function getColorRuta(letra) {
             const l = letra.toUpperCase();
@@ -1320,10 +1357,24 @@ function buscarEnInventario(codigo) {
             actualizarArqueoHeader();
         }
 
-        function asignarLetrasFijas() {
-            pedidos.forEach((p, i) => { if (!p.letra) p.letra = ABC[i % 26]; });
-            save();
-        }
+       function asignarLetrasFijas() {
+    // 1. Filtramos los pedidos según el horario seleccionado
+    let pendientes = pedidos.filter(p => p.estado === 'pendiente');
+    
+    if (filtroHorarioActual !== 'Todos') {
+        pendientes = pendientes.filter(p => 
+            String(p.horario || "").toLowerCase().includes(filtroHorarioActual.toLowerCase())
+        );
+    }
+
+    // 2. Asignamos letras (A, B, C...) solo a esos pedidos filtrados
+    const abecedario = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    pendientes.forEach((p, index) => {
+        p.letra = abecedario[index % abecedario.length];
+    });
+
+    console.log(`Letras asignadas para el horario: ${filtroHorarioActual}`);
+}
 
         function retroceder() {
             if (currentStep === 0.5) nextStep(0);
@@ -1407,7 +1458,14 @@ if (n === 'inventory') {
     }
 }
 
+// ACTUALIZACIÓN DEL CARRITO:
+    // Llamamos a tu función para que cuente las filas actuales
+    actualizarContadorCarrito();
+
+
+
             actualizarBotonFlotante(n);
+            actualizarVisibilidadCarrito(n); // El nuevo del carrito de la galería
             window.scrollTo(0, 0);
         }
 
@@ -1417,6 +1475,11 @@ if (n === 'inventory') {
                 nextStep(0);
             }
         }
+
+
+
+
+
 
 
 
@@ -1574,6 +1637,8 @@ if (n === 'inventory') {
 
 
 
+
+
 function renderGalleryView(data) {
     const container = document.getElementById('gallery-grid');
     container.innerHTML = '';
@@ -1623,14 +1688,27 @@ function renderGalleryView(data) {
             .filter(([_, qty]) => qty > 0)
             .sort((a, b) => Number(a[0]) - Number(b[0]));
 
-        let tallasHTML = tallasOrdenadas.length > 0
-            ? tallasOrdenadas.map(([talla, qty]) => `
-                <div class="flex flex-col items-center min-w-[20px] px-1.5 py-1 bg-indigo-50/80 border border-indigo-200 rounded-md text-center text-[9px]">
-                    <span class="font-bold text-indigo-800">${talla}</span>
-                    <span class="font-semibold ${qty > 0 ? 'text-emerald-700' : 'text-red-600'}">${qty}</span>
-                </div>
-            `).join('')
-            : '<div class="text-xs text-slate-400 italic px-2">Sin stock</div>';
+       let tallasHTML = tallasOrdenadas.length > 0
+    ? tallasOrdenadas.map(([talla, qty]) => {
+        // Creamos el código completo para este botón
+        const codigoCompleto = `${grupo.modelo} ${grupo.genero} ${grupo.color} ${talla}`.toUpperCase();
+        
+        return `
+            <button type="button" 
+                onclick="agregarDesdeGaleria('${codigoCompleto}')"
+                class="flex flex-col items-center min-w-[35px] px-1.5 py-1 bg-white border-2 border-indigo-100 rounded-lg text-center transition-all active:scale-95 hover:border-indigo-500 hover:bg-indigo-50 group/talla">
+                <span class="text-[10px] font-bold text-indigo-800 group-hover/talla:text-indigo-600">${talla}</span>
+                <span class="text-[9px] font-semibold ${qty > 0 ? 'text-emerald-600' : 'text-red-400'}">
+                    ${qty > 0 ? qty : '0'}
+                </span>
+            </button>
+        `;
+    }).join('')
+    : '<div class="text-xs text-slate-400 italic px-2">Sin stock</div>';
+
+// ... resto del código de la tarjeta ...
+
+
 
         const card = document.createElement('div');
         card.className = "inventory-card bg-white rounded-2xl shadow border border-slate-200 overflow-hidden flex flex-col h-full hover:shadow-lg transition-shadow";
@@ -1677,7 +1755,7 @@ function renderGalleryView(data) {
                     </div>
                 </div>
                 
-                <div class="flex flex-nowrap items-center gap-1 overflow-x-auto pb-0.5 mt-auto">
+                <div class="flex flex-nowrap items-center gap-2 overflow-x-auto pb-2 mt-auto scrollbar-hide">
                     ${tallasHTML}
                 </div>
             </div>
@@ -1686,9 +1764,68 @@ function renderGalleryView(data) {
     });
 
     ejecutarFiltros();
+
+
+
+
+
+    //NUEVA FUNCION BADGE DE CARRITO FLOTANTE
+
+
+if (!document.getElementById('cart-floating-badge')) {
+    const badge = document.createElement('div');
+    badge.id = 'cart-floating-badge';
+    badge.className = "fixed bottom-6 right-6 z-50 flex items-center justify-center hidden";
+    badge.innerHTML = `
+        <div class="relative bg-indigo-600 text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-transform cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+            <span id="cart-count-number" class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded-full border-2 border-white">
+                0
+            </span>
+        </div>
+    `;
+
+    badge.onclick = () => {
+        // 1. Usamos tu función nextStep para ir al paso del formulario (Paso 0)
+        // Esto activará la sección 'step0' y ocultará 'step_inventory'
+        nextStep(0);
+
+        // 2. Forzamos la apertura del formulario si tienes la función toggleForm
+        if (typeof toggleForm === 'function') {
+            toggleForm(true);
+        }
+
+        // 3. Scroll suave hacia el editor (con un pequeño delay para que el DOM se actualice)
+        setTimeout(() => {
+            const editor = document.getElementById('contenedor-formulario');
+            if (editor) {
+                editor.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    };
+
+    document.body.appendChild(badge);
 }
 
 
+}
+
+
+
+
+function actualizarVisibilidadCarrito(n) {
+    const badge = document.getElementById('cart-floating-badge');
+    if (!badge) return;
+
+    // Se muestra SOLO en la galería (inventory)
+    if (n === 'inventory') {
+        badge.classList.remove('hidden');
+    } else {
+        badge.classList.add('hidden');
+    }
+}
 
 
 
@@ -1746,10 +1883,6 @@ function renderGalleryView(data) {
 
 
 
-
-
-
-
         // NUEVO: Render de la tabla de inventario
         function renderInventory(data = []) {
             const tableBody = document.getElementById('inventory-table-body');
@@ -1779,17 +1912,6 @@ function renderGalleryView(data) {
 
             actualizarFechaInventario();
         }
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -1909,30 +2031,6 @@ function renderGalleryView(data) {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         // --- LÓGICA DE CARGA MASIVA (ESTILO SHEETS) ---
 
         function toggleMasivo() { document.getElementById('area-masiva').classList.toggle('hidden'); }
@@ -1960,7 +2058,8 @@ function renderGalleryView(data) {
                 const cliente = d[5] ? d[5].trim() : '';
                 const direccion = d[6] ? d[6].trim() : '';
                 const telefono = d[7] ? d[7].trim() : '';
-                const detalles = d[8] ? d[8].trim() : '';
+                const horario = d[8] ? d[7].trim() : '';
+                const detalles = d[9]  ? d[8].trim() : '';
 
                 // Si hay un "Cliente" (columna d[5]), creamos un NUEVO PEDIDO
                 if (cliente !== "") {
@@ -1972,6 +2071,7 @@ function renderGalleryView(data) {
                         telefono: telefono,
                         envio: envio,
                         total: total,
+                        horario: horario,
                         detalles: detalles, // Nuevo campo agregado
                         items: [{
                             desc: codigo,
@@ -2013,69 +2113,61 @@ function renderGalleryView(data) {
 
         //ETAPA 1
 
-        // 1. RE-RENDERIZAR LISTA (Asegurar que la llave cierre bien)
-        function renderStep0() {
-            const lista = document.getElementById('lista-pre-carga');
-            if (!lista) return;
+       function renderStep0() {
+    const lista = document.getElementById('lista-pre-carga');
+    if (!lista) return;
 
-            // 1. Filtramos solo los que están en preparación (pendientes)
-            const pedidosPendientes = pedidos.filter(p => p.estado === 'pendiente');
+    // 1. Siempre leer lo último de pedidos
+    // pedidos = JSON.parse(localStorage.getItem('z_pedidos')) || [];
 
-            const ABC = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    // 2. Filtrar por estado pendiente
+    let pendientes = pedidos.filter(p => p.estado === 'pendiente');
 
-            // 2. Renderizado y ASIGNACIÓN DE IDENTIDAD
-            lista.innerHTML = pedidosPendientes.map((p, i) => {
-                const letraAsignada = ABC[i % 26];
-                p.letra = letraAsignada;
-                const colorClase = getColorRuta(letraAsignada);
+    // 3. APLICAR FILTRO DE HORARIO
+    if (filtroHorarioActual !== 'Todos') {
+        pendientes = pendientes.filter(p => {
+            const hPedido = String(p.horario || "Cualquier horario").toLowerCase();
+            const hFiltro = String(filtroHorarioActual).toLowerCase();
+            return hPedido.includes(hFiltro);
+        });
+    }
 
-                return `
-    <div onclick="editarPedido(${p.id})" 
-         class="cursor-pointer bg-white p-3 rounded-xl border border-slate-100 flex items-center gap-3 shadow-sm hover:shadow-md transition-shadow active:scale-[0.98]" 
-         data-id="${p.id}">
-        
-        <div class="${colorClase} text-white min-w-[36px] h-9 rounded-full flex items-center justify-center font-black text-sm shadow-lg shadow-inner">
-            ${letraAsignada}
-        </div>
-        
-        <div class="flex-1 min-w-0">
-            <div class="flex items-center gap-2">
-                <h4 class="font-black text-[13px] truncate text-slate-800 flex items-center gap-1.5">
-                    <span class="opacity-40 scale-90">${ICONOS.cliente}</span>
-                    ${p.cliente}
-                </h4>
-            </div>
-            
-            <div class="flex items-center gap-2 flex-wrap mt-0.5">
-                <p class="text-[11px] truncate font-medium text-slate-500">${p.direccion}</p>
-                <div class="flex gap-1">
-                    <span class="bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded text-[9px] font-black">
-                        ${(p.items || []).length} CAJAS
-                    </span>
-                    <span class="bg-emerald-50 text-emerald-600 px-1.5 py-0.5 rounded text-[10px] font-black">
-                        $${(p.total || 0).toLocaleString()}
-                    </span>
+    const ABC = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+    // 4. Renderizar
+    if (pendientes.length === 0) {
+        lista.innerHTML = `<div class="p-10 text-center text-slate-400 text-xs font-bold uppercase tracking-widest">No hay pedidos en este horario</div>`;
+    } else {
+        lista.innerHTML = pendientes.map((p, i) => {
+            const letraAsignada = ABC[i % 26];
+            p.letra = letraAsignada; // Asignamos letra para el picking
+            const colorClase = getColorRuta(letraAsignada);
+
+            return `
+            <div onclick="editarPedido(${p.id})" class="bg-white p-3 rounded-xl border border-slate-100 flex items-center gap-3 shadow-sm mb-2 active:scale-[0.98] transition-transform">
+                <div class="${colorClase} text-white min-w-[36px] h-9 rounded-full flex items-center justify-center font-black text-xs shadow-lg">
+                    ${letraAsignada}
                 </div>
-            </div>
-        </div>
+                <div class="flex-1 min-w-0">
+                    <h4 class="font-black text-[13px] text-slate-800 truncate">${p.cliente}</h4>
+                    <div class="flex items-center gap-2">
+                        <p class="text-[11px] text-slate-500 truncate">${p.direccion}</p>
+                        <span class="text-[9px] font-black text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded uppercase">
+                            ${p.horario || 'S/H'}
+                        </span>
+                    </div>
+                </div>
+                <button onclick="event.stopPropagation(); eliminarPedido(${p.id})" class="p-2 text-slate-300 hover:text-red-500">
+                    ${ICON_DELETE}
+                </button>
+            </div>`;
+        }).join('');
+    }
 
-        <div class="flex items-center border-l border-slate-50 pl-2 gap-1">
-            <button onclick="event.stopPropagation(); editarPedido(${p.id})" class="p-2 text-slate-300 hover:text-blue-600 transition-colors hidden">
-                ${ICON_EDIT}
-            </button>
-            
-            <button onclick="event.stopPropagation(); eliminarPedido(${p.id})" class="p-2 text-slate-500 hover:text-red-500 transition-colors">
-                ${ICON_DELETE}
-            </button>
-        </div>
-    </div>`;
-            }).join('');
-
-            // Actualizar botón de siguiente etapa
-            const btnPicking = document.getElementById('btn-ir-a-picking');
-            if (btnPicking) btnPicking.classList.toggle('hidden', pedidosPendientes.length === 0);
-        }
-
+    // Mostrar/ocultar botón de picking
+    const btnPicking = document.getElementById('btn-ir-a-picking');
+    if (btnPicking) btnPicking.classList.toggle('hidden', pendientes.length === 0);
+}
 
 
 
@@ -2093,6 +2185,7 @@ function editarPedido(id) {
     document.getElementById('f-telefono').value = p.telefono || '';
     document.getElementById('f-envio').value = p.envio || 0;
     document.getElementById('f-total').value = p.total || 0;
+     document.getElementById('f-horario').value = p.horario || "";
     document.getElementById('f-detalles').value = p.detalles || '';
 
     // Llenar productos
@@ -2141,14 +2234,6 @@ function buscarEnInventario(codigo) {
 
 
 
-
-
-
-
-
-
-
-
 function agregarFilaProducto(codigo = '', precio = '', bin = '', fotoUrl = '') {
     const contenedor = document.getElementById('contenedor-productos');
     const div = document.createElement('div');
@@ -2173,7 +2258,7 @@ function agregarFilaProducto(codigo = '', precio = '', bin = '', fotoUrl = '') {
                     value="${codigo}">
             </div>
 
-            <button type="button" onclick="this.closest('.fila-producto').remove()" 
+            <button type="button" onclick="this.closest('.fila-producto').remove(); typeof actualizarContadorCarrito === 'function' && actualizarContadorCarrito();"
                 class="self-start p-1.5 text-slate-300 hover:text-red-500 transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -2265,47 +2350,57 @@ function agregarFilaProducto(codigo = '', precio = '', bin = '', fotoUrl = '') {
 
 
 
-
-        
-       // 4. GUARDAR CAMBIOS (Actualizado para persistir la foto)
 function guardarPedidoFormulario() {
     const idExistente = document.getElementById('f-edit-id').value;
 
-    const items = [];
+    // 1. RECOLECCIÓN DE ITEMS (Productos)
     const filas = document.querySelectorAll('.fila-producto');
-    
+    const items = [];
+
     filas.forEach(fila => {
-        const codigo = fila.querySelector('.f-codigo').value;
-        const precio = fila.querySelector('.f-precio').value;
-        const bin = fila.querySelector('.f-bin').value;
-        // CAPTURAMOS LA FOTO: Leemos el src de la imagen que está en la fila
-        const foto = fila.querySelector('.f-foto').src;
+        const codigo = fila.querySelector('.f-codigo').value.trim();
+        const precio = parseFloat(fila.querySelector('.f-precio').value) || 0;
+        const bin = fila.querySelector('.f-bin').value.trim().toUpperCase();
+        const imgElement = fila.querySelector('.f-foto');
+
+        let fotoUrl = '';
+        if (imgElement && !imgElement.classList.contains('hidden') && imgElement.src.includes('data:image')) {
+            fotoUrl = imgElement.src;
+        } else if (imgElement && imgElement.src.startsWith('http')) {
+            fotoUrl = imgElement.src;
+        }
 
         if (codigo) {
             items.push({
-                desc: codigo, // O puedes usar 'codigo' según tu estructura
-                precio: parseFloat(precio) || 0,
-                bin: bin.toUpperCase(),
-                foto: foto, // <-- IMPORTANTE: Guardamos la URL para no perderla
-                cant: 1
+                desc: codigo,
+                precio: precio,
+                bin: bin,
+                foto: fotoUrl
             });
         }
     });
 
+    // 2. RECOLECCIÓN DE DATOS DEL CLIENTE Y ENVÍO
+    // Usamos || para asegurar que si un campo está vacío no rompa la lógica
     const datosPedido = {
-        cliente: document.getElementById('f-nombre').value,
-        direccion: document.getElementById('f-direccion').value,
-        telefono: document.getElementById('f-telefono').value,
+        cliente: document.getElementById('f-nombre').value.trim(),
+        direccion: document.getElementById('f-direccion').value.trim(),
+        telefono: document.getElementById('f-telefono').value.trim(),
         envio: parseFloat(document.getElementById('f-envio').value) || 0,
         total: parseFloat(document.getElementById('f-total').value) || 0,
-        detalles: document.getElementById('f-detalles').value,
+        horario: String(document.getElementById('f-horario').value).trim() || "",
+        detalles: document.getElementById('f-detalles').value.trim(),
+        
+        nPedido: document.getElementById('f-numero').value,
+        letra: document.getElementById('f-letra').value.toUpperCase(),
         items: items
     };
 
+    // 3. LÓGICA DE GUARDADO (EDITAR O NUEVO)
     if (idExistente) {
         const index = pedidos.findIndex(p => p.id == idExistente);
         if (index !== -1) {
-            // Mantenemos la fecha original u otros campos no editables con el spread
+            // Mantenemos datos que no están en el form (como fecha original) y actualizamos el resto
             pedidos[index] = { ...pedidos[index], ...datosPedido };
         }
     } else {
@@ -2313,12 +2408,47 @@ function guardarPedidoFormulario() {
             id: Date.now(),
             ...datosPedido,
             estado: 'pendiente',
-            fecha: new Date().toISOString() // Recomendado añadir fecha
+            fecha: new Date().toLocaleDateString(),
+            horaCreacion: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         };
         pedidos.push(nuevo);
     }
 
-    // Feedback visual y limpieza
+    // 4. LIMPIEZA Y CIERRE
+    save(); // Guardar en LocalStorage
+    limpiarFormulario();
+    toggleForm(false);
+    
+    // Feedback visual y actualización de interfaz
+    if (typeof renderStep0 === 'function') renderStep0();
+    if (typeof actualizarContadorCarrito === 'function') actualizarContadorCarrito();
+    
+    // Si tienes un sonido de "guardado"
+    if (typeof playSound === 'function') playSound('click');
+}
+
+// Función auxiliar para dejar el form impecable después de usarlo
+function limpiarFormulario() {
+    document.getElementById('f-edit-id').value = "";
+    document.getElementById('f-nombre').value = "";
+    document.getElementById('f-direccion').value = "";
+    document.getElementById('f-telefono').value = "";
+    document.getElementById('f-envio').value = "";
+    document.getElementById('f-total').value = "";
+    document.getElementById('f-detalles').value = "";
+    document.getElementById('f-horario').value = "";
+    document.getElementById('f-numero').value = "";
+    document.getElementById('contenedor-productos').innerHTML = "";
+}
+
+    // --- (Resto de tu código de limpieza y feedback) ---
+    const contenedor = document.getElementById('contenedor-productos');
+    if (contenedor) contenedor.innerHTML = '';
+    
+    if (typeof actualizarContadorCarrito === 'function') {
+        actualizarContadorCarrito();
+    
+
     toggleForm(false);
     renderStep0();
 }
@@ -2326,76 +2456,96 @@ function guardarPedidoFormulario() {
 
 
 
-        function renderPicking() {
-            // 1. ELIMINAMOS el array de colores interno para usar el GLOBAL
-            let todosItems = [];
 
-            // FILTRO: Solo pedidos pendientes
-            const pedidosPendientes = pedidos.filter(p => p.estado === 'pendiente');
 
-            pedidosPendientes.forEach((p) => {
-                // 2. IMPORTANTE: No sobrescribimos p.letra ni p.color aquí.
-                // Simplemente leemos lo que Step 0 ya guardó.
-                const letraRuta = p.letra || 'A';
-                const colorClase = getColorRuta(letraRuta); // Usamos la función global
 
-                p.items.forEach(it => {
-                    todosItems.push({
-                        ...it,
-                        nPedido: p.nPedido,
-                        letra: letraRuta,
-                        color: colorClase // Guardamos el color calculado
-                    });
-                });
+
+
+
+
+
+
+
+   function renderPicking() {
+    let todosItems = [];
+    
+    // Filtramos exactamente igual que en renderStep0
+    let pendientes = pedidos.filter(p => p.estado === 'pendiente');
+    if (filtroHorarioActual !== 'Todos') {
+        pendientes = pendientes.filter(p => 
+            String(p.horario || "").toLowerCase().includes(filtroHorarioActual.toLowerCase())
+        );
+    }
+
+    // Extraer items de esos pedidos
+    pendientes.forEach((p) => {
+        const letraRuta = p.letra; // La letra que asignamos en renderStep0
+        (p.items || []).forEach(it => {
+            todosItems.push({
+                ...it,
+                letra: letraRuta,
+                color: getColorRuta(letraRuta) 
             });
+        });
+    });
+    // Agrupamos por Bin y Producto, buscando la FOTO en la base de datos global
+    const agrupado = todosItems.reduce((acc, it) => {
+        const b = it.bin || 'S/U';
+        if (!acc[b]) acc[b] = {};
 
-            // 3. Agrupamos por Estante (Bin) y luego por Producto (Desc)
-            const agrupado = todosItems.reduce((acc, it) => {
-                const b = it.bin || 'S/U';
-                if (!acc[b]) acc[b] = {};
+        if (!acc[b][it.desc]) {
+            // --- BÚSQUEDA EN LA BASE DE DATOS DE INVENTARIO ---
+            // Buscamos el producto en inventoryDataGlobal que coincida con el código (it.desc)
+            const infoInventario = inventoryDataGlobal.find(p => 
+                p.codigo.trim().toLowerCase() === it.desc.trim().toLowerCase()
+            );
 
-                if (!acc[b][it.desc]) {
-                    acc[b][it.desc] = {
-                        desc: it.desc,
-                        cantidad: 0,
-                        pedidosRelacionados: []
-                    };
-                }
+            acc[b][it.desc] = {
+                desc: it.desc,
+                // Si lo encuentra, usa p.foto, si no, usa la foto que traía el item o vacío
+                foto: infoInventario ? infoInventario.foto : (it.foto || ''), 
+                cantidad: 0,
+                pedidosRelacionados: []
+            };
+        }
 
-                acc[b][it.desc].cantidad += 1;
-                // Agregamos la letra y color real del pedido
-                acc[b][it.desc].pedidosRelacionados.push({
-                    letra: it.letra,
-                    color: getColorRuta(it.letra) // Aseguramos el color oficial
-                });
+        acc[b][it.desc].cantidad += 1;
+        acc[b][it.desc].pedidosRelacionados.push({ letra: it.letra, color: it.color });
+        return acc;
+    }, {});
 
-                return acc;
-            }, {});
+    let html = '';
+    for (const bin in agrupado) {
+        const unidadesEnBin = Object.values(agrupado[bin]).reduce((sum, item) => sum + item.cantidad, 0);
 
-            let html = '';
-            for (const bin in agrupado) {
-                const unidadesEnBin = Object.values(agrupado[bin]).reduce((sum, item) => sum + item.cantidad, 0);
-
-                html += `
+        html += `
         <div class="bg-white rounded-2xl overflow-hidden border border-slate-200 mb-4 shadow-sm">
-            <div class="bg-slate-200 text-slate-800 px-3 py-2 text-[12px] font-black flex justify-between">
-                <span>ESTANTE: ${bin}</span>
-                <span>${unidadesEnBin} ${ICONOS.caja}</span>
+            <div class="bg-slate-800 text-white px-3 py-2 text-[12px] font-black flex justify-between uppercase">
+                <span>📍 ESTANTE: ${bin}</span>
+                <span>${unidadesEnBin} ITEMS</span>
             </div>
             <div class="p-2 space-y-2">
                 ${Object.values(agrupado[bin]).map(it => `
-                    <label class="flex items-center gap-3 p-3 bg-slate-50 rounded-xl has-[:checked]:opacity-30 transition-all border border-transparent has-[:checked]:border-slate-200">
-                        <input type="checkbox" onchange="validarPicking()" class="w-5 h-5 check-picking">
-                        <div class="flex-1">
-                            <div class="flex justify-between items-start">
-                                <div>
-                                    <span class="text font-black text-blue-600">${ICONOS.caja} x${it.cantidad}</span>
-                                    <span class="text-[11px] font-bold ml-1 text-slate-700 uppercase">${it.desc}</span>
+                    <label class="flex items-center gap-3 p-2 bg-slate-50 rounded-xl has-[:checked]:opacity-40 transition-all border border-transparent has-[:checked]:border-slate-200 cursor-pointer">
+                        <input type="checkbox" onchange="validarPicking()" class="w-6 h-6 check-picking rounded-full accent-blue-600">
+                        
+                        <div class="flex-shrink-0 w-16 h-16 bg-white rounded-lg border border-slate-200 overflow-hidden flex items-center justify-center shadow-sm">
+                            ${it.foto && it.foto !== ''
+                                ? `<img src="${it.foto}" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/150?text=Error'">` 
+                                : `<span class="text-2xl text-slate-300">📦</span>`
+                            }
+                        </div>
+
+                        <div class="flex-1 min-w-0">
+                            <div class="flex justify-between items-start gap-2">
+                                <div class="truncate">
+                                    <div class="text-[14px] font-black text-blue-600 leading-none mb-1">x${it.cantidad}</div>
+                                    <div class="text-[11px] font-bold text-slate-700 uppercase truncate">${it.desc}</div>
                                 </div>
                                 
-                                <div class="flex gap-1 flex-wrap justify-end max-w-[100px]">
+                                <div class="flex gap-1 flex-wrap justify-end max-w-[80px]">
                                     ${it.pedidosRelacionados.map(p => `
-                                        <span class="${p.color} text-white w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black shadow-sm">
+                                        <span class="${p.color} text-white w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-black ring-1 ring-white shadow-sm">
                                             ${p.letra}
                                         </span>
                                     `).join('')}
@@ -2405,12 +2555,12 @@ function guardarPedidoFormulario() {
                     </label>`).join('')}
             </div>
         </div>`;
-            }
+    }
 
-            document.getElementById('lista-picking').innerHTML = html || '<p class="text-center py-10">Sin productos por recolectar</p>';
-            validarPicking();
-        }
-
+    document.getElementById('lista-picking').innerHTML = html || '<p class="text-center py-10">Sin productos por recolectar</p>';
+    validarPicking();
+}
+        
         function validarPicking() {
             playSound('scanner');
 
@@ -2425,28 +2575,32 @@ function guardarPedidoFormulario() {
         }
 
 
-        function renderChecklistCarga() {
-            // 1. FILTRO: Solo pedidos pendientes
-            const pedidosARuta = pedidos.filter(p => p.estado === 'pendiente');
-            const contenedor = document.getElementById('checklist-furgon');
 
-            if (!contenedor) return;
 
-            contenedor.innerHTML = pedidosARuta.map((p) => {
-                // USAMOS LA LETRA Y COLOR OFICIAL (identidad grabada en Step 0)
-                const letra = (p.letra || '?').toUpperCase();
-                const colorClase = getColorRuta(letra); // Función global
-                const totalProductos = p.items ? p.items.length : 0;
 
-                return `
+       function renderChecklistCarga() {
+    // APLICAMOS EL MISMO FILTRO
+    let pedidosFiltrados = pedidos.filter(p => p.estado === 'pendiente');
+    if (filtroHorarioActual !== 'Todos') {
+        pedidosFiltrados = pedidosFiltrados.filter(p => 
+            String(p.horario || "").toLowerCase().includes(filtroHorarioActual.toLowerCase())
+        );
+    }
+
+    const contenedor = document.getElementById('checklist-furgon');
+    if (!contenedor) return;
+
+    contenedor.innerHTML = pedidosFiltrados.map((p) => {
+        const letra = (p.letra || '?').toUpperCase();
+        const colorClase = getColorRuta(letra);
+        const totalProductos = p.items ? p.items.length : 0;
+
+        return `
         <label class="flex items-center gap-3 bg-white p-2.5 rounded-2xl border-2 border-transparent has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50/40 shadow-sm cursor-pointer active:scale-[0.98] transition-all mb-2">
-            
             <input type="checkbox" class="w-6 h-6 check-carga accent-blue-600 ml-1" onchange="validarCarga()">
-            
             <div class="${colorClase} w-10 h-10 min-w-[40px] flex items-center justify-center rounded-full text-white text-xl font-black shadow-sm">
                 ${letra}
             </div>
-
             <div class="flex-1 min-w-0">
                 <div class="font-bold text-slate-800 text-[13px] leading-tight truncate uppercase">
                     ${p.cliente}
@@ -2455,17 +2609,16 @@ function guardarPedidoFormulario() {
                     ${p.direccion || 'Sin dirección'}
                 </div>
             </div>
-
             <div class="text-[10px] font-black text-slate-700 bg-slate-50 px-2 py-1 rounded-lg border border-slate-100 whitespace-nowrap">
                 ${ICONOS.caja} ${totalProductos} ${totalProductos === 1 ? 'PAQUETE' : 'PAQUETES'}
             </div>
+        </label>`;
+    }).join('') || '<p class="text-center py-10 text-slate-400 italic">No hay pedidos en este horario para cargar</p>';
 
-        </label>
-        `;
-            }).join('') || '<p class="text-center py-10 text-slate-400 italic">No hay pedidos pendientes para cargar</p>';
+    validarCarga();
+}
 
-            validarCarga();
-        }
+
 
         function validarCarga() {
             // Si tienes una función playSound, asegúrate de que no falle si no hay sonido
@@ -2487,47 +2640,62 @@ function guardarPedidoFormulario() {
 
 
 
-        function renderStep2() {
-            const pedidosARuta = pedidos.filter(p => p.estado === 'pendiente');
-            const totalPendientes = pedidosARuta.length;
+      function renderStep2() {
+    // 1. Filtrar pedidos pendientes DEL HORARIO ACTUAL
+    let pedidosARuta = pedidos.filter(p => p.estado === 'pendiente');
+    if (filtroHorarioActual !== 'Todos') {
+        pedidosARuta = pedidosARuta.filter(p => 
+            String(p.horario || "").toLowerCase().includes(filtroHorarioActual.toLowerCase())
+        );
+    }
 
-            if (totalPendientes === 0) return nextStep(0);
+    // 2. ¿QUÉ PASA SI YA NO HAY PENDIENTES?
+    if (pedidosARuta.length === 0) {
+        // Si ya no hay pendientes en este horario, pero hay algo en el historial de este horario
+        const historialTurno = historial.filter(h => 
+            String(h.horario || "").toLowerCase().includes(filtroHorarioActual.toLowerCase())
+        );
 
-            const [p, ...resto] = pedidosARuta;
+        if (historialTurno.length > 0) {
+            return nextStep(6); // <--- MANDAR A VERIFICACIÓN (Arqueo)
+        } else {
+            return nextStep(0); // No hay pedidos ni historial, volver al inicio
+        }
+    }
 
-            // Identidad de la entrega actual
-            const letraP = (p.letra || 'A').toUpperCase();
-            const colorP = getColorRuta(letraP);
 
-            const iconWS = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>`;
-            const iconMaps = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>`;
 
-            // Corregido el enlace de Google Maps
-            const getMapsLink = (dir) => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(dir)}`;
+    const totalPendientes = pedidosARuta.length;
+    if (totalPendientes === 0) return nextStep(0);
 
-            const contadorHTML = document.getElementById('contador-texto');
-            if (contadorHTML) {
-                contadorHTML.innerText = `${totalPendientes} ${totalPendientes === 1 ? 'pedido pendiente' : 'pedidos pendientes'}`;
-            }
+    const [p, ...resto] = pedidosARuta;
+    const letraP = (p.letra || 'A').toUpperCase();
+    const colorP = getColorRuta(letraP);
 
-            // --- ENTREGA ACTUAL (Destacada) ---
-            document.getElementById('next-delivery-info').innerHTML = `
+    const iconWS = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>`;
+    const iconMaps = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>`;
+
+    const getMapsLink = (dir) => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(dir)}`;
+
+    const contadorHTML = document.getElementById('contador-texto');
+    if (contadorHTML) {
+        contadorHTML.innerText = `${totalPendientes} ${totalPendientes === 1 ? 'pedido pendiente' : 'pedidos pendientes'}`;
+    }
+
+    // --- ENTREGA ACTUAL ---
+    document.getElementById('next-delivery-info').innerHTML = `
         <div class="bg-white p-4 rounded-3xl border-2 border-slate-200 shadow-xl mb-6">
             <div class="flex items-center gap-4">
                 <div class="${colorP} text-white w-14 h-14 rounded-full flex-shrink-0 flex items-center justify-center font-black text-2xl shadow-lg">
                     ${letraP}
                 </div>
-                
                 <div class="flex-1 min-w-0" onclick="abrirPerfil(${p.id})">
-                    <h1 class="text-[18px] font-black truncate text-slate-900 flex items-center gap-2">
-                        ${p.cliente}
-                    </h1>
+                    <h1 class="text-[18px] font-black truncate text-slate-900">${p.cliente}</h1>
                     <p class="text-[13px] text-slate-500 truncate mt-0.5 font-bold flex items-center gap-1">
                         <span class="text-blue-500">${ICONOS.mapa}</span> ${p.direccion}
                     </p>
                 </div>
             </div>
-
             <div class="grid grid-cols-2 gap-2 mt-4">
                 <a href="${getMapsLink(p.direccion)}" target="_blank" class="flex items-center justify-center gap-2 bg-slate-800 text-white py-3 rounded-2xl font-bold text-xs shadow-md active:scale-95 transition-transform">
                     ${iconMaps} VER MAPA
@@ -2536,44 +2704,29 @@ function guardarPedidoFormulario() {
                     ${iconWS} WHATSAPP
                 </a>
             </div>
-            
-            ${p.detalles ? `
-                <div class="mt-4 py-2.5 px-3 bg-slate-50 rounded-xl border border-dashed border-slate-200 text-[10px] text-slate-600 font-bold tracking-wider">
-                    <span class="text-blue-500 mr-1">●</span> Nota: ${p.detalles}
-                </div>
-            ` : ''}
         </div>`;
 
-            // --- LISTA SIGUIENTES (Más compacta) ---
-            document.getElementById('lista-ruta-activa').innerHTML = resto.map((item) => {
-                const letraItem = (item.letra || 'A').toUpperCase();
-                const colorItem = getColorRuta(letraItem);
-
-                return `
+    // --- LISTA SIGUIENTES ---
+    document.getElementById('lista-ruta-activa').innerHTML = resto.map((item) => {
+        const letraItem = (item.letra || 'A').toUpperCase();
+        const colorItem = getColorRuta(letraItem);
+        return `
         <div class="bg-white border border-slate-300 p-3 rounded-3xl flex items-center gap-3 shadow-sm mb-2 opacity-80 hover:opacity-100 transition-opacity">
-            <div onclick="abrirPerfil(${item.id})" 
-                 class="w-10 h-10 flex-shrink-0 flex items-center justify-center font-black text-[14px] text-white ${colorItem} rounded-full shadow-sm">
+            <div onclick="abrirPerfil(${item.id})" class="w-10 h-10 flex-shrink-0 flex items-center justify-center font-black text-[14px] text-white ${colorItem} rounded-full shadow-sm">
                 ${letraItem}
             </div>
-            
             <div class="flex-1 min-w-0" onclick="abrirPerfil(${item.id})">
                 <div class="font-bold text-[14px] truncate text-slate-800 leading-none">${item.cliente}</div>
                 <div class="text-[11px] text-slate-400 truncate mt-1 font-medium">${item.direccion}</div>
             </div>
-            
             <div class="flex gap-1">
-                <a href="${getMapsLink(item.direccion)}" target="_blank" class="p-2 text-slate-300 hover:text-blue-500 transition-colors">
+                <a href="${getMapsLink(item.direccion)}" target="_blank" class="p-2 text-slate-300 hover:text-blue-500">
                     ${iconMaps}
                 </a>
             </div>
         </div>`;
-            }).join('');
-        }
-
-
-
-
-
+    }).join('');
+}
 
 
 
@@ -2676,13 +2829,6 @@ function guardarPedidoFormulario() {
 
 
 
-
-
-
-
-
-
-
         function renderVistaUnificada() {
             let p = pedidos.find(x => x.id == pActualID);
             if (!p) return;
@@ -2734,12 +2880,6 @@ function guardarPedidoFormulario() {
             }).join('');
 
             document.getElementById('multi-venta-selector').innerHTML = htmlItems;
-
-
-
-
-
-
 
 
 
@@ -2810,24 +2950,6 @@ function guardarPedidoFormulario() {
             }
             recalcularTotalConsolidado();
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -3113,8 +3235,13 @@ function guardarPedidoFormulario() {
         }
 
 
+
+
+
+
+
         // Reemplaza con la URL que copiaste en el paso anterior
-        const URL_SHEETS = "";
+        const URL_SHEETS = "https://script.google.com/macros/s/AKfycbwMVN9i_Dzbc3LEAP4nCHdEPPW4ShGvxrCwnt0DYtVovocOzN6KMrKViGnITXdOWzNA/exec";
 
         async function confirmarFinalTotal() {
             let p = pedidos.find(x => x.id == pActualID);
@@ -3141,6 +3268,9 @@ function guardarPedidoFormulario() {
 
             nextStep(pedidos.length === 0 ? 6 : 2);
         }
+
+
+
 
         function enviarVentaASheets(datos) {
             // Mapeamos los productos para asegurar que tengan las propiedades correctas
@@ -3174,13 +3304,6 @@ function guardarPedidoFormulario() {
 
 
 
-
-
-
-
-
-
-
         //----------------------------------------------------------------------------------------
 
 
@@ -3188,184 +3311,149 @@ function guardarPedidoFormulario() {
 
 
 
+function renderVerificacionFinalRuta() {
+    // 0. APLICAR FILTRO POR HORARIO AL HISTORIAL
+    let historialFiltrado = historial;
+    if (filtroHorarioActual !== 'Todos') {
+        historialFiltrado = historial.filter(h => 
+            String(h.horario || "").toLowerCase().includes(filtroHorarioActual.toLowerCase())
+        );
+    }
 
+    // 1. Calcular montos totales cobrados SOLO del historial filtrado
+    let cobradoEfectivo = 0;
+    let cobradoTappDani = 0;
+    let cobradoTappLore = 0;
+    let cobradoRutDani = 0;
+    let cobradoRutLore = 0;
+    let cobradoDigital = 0;
 
+    historialFiltrado.forEach(h => {
+        if (h.estado === 'completado') {
+            const monto = h.totalFinal || 0;
+            const metodo = String(h.metodoPago || "");
 
-        // NUEVO: Render para Verificación Final de Ruta (step6) - con letra del pedido
-        function renderVerificacionFinalRuta() {
+            if (metodo === 'Efectivo') {
+                cobradoEfectivo += monto;
+            } else if (metodo.includes('TAPP Dani')) {
+                cobradoTappDani += monto;
+            } else if (metodo.includes('TAPP Lore')) {
+                cobradoTappLore += monto;
+            } else if (metodo.includes('RUT Dani')) {
+                cobradoRutDani += monto;
+            } else if (metodo.includes('RUT Lore')) {
+                cobradoRutLore += monto;
+            } else {
+                cobradoDigital += monto; 
+            }
+        }
+    });
 
+    // 2. Calcular esperados (Usando el fondoInicial que ya cargamos por horario)
+    const esperadoEfectivo = (fondoInicial.efectivo || 0) + cobradoEfectivo;
+    const esperadoTappDani = (fondoInicial.tapp_dani || 0) + cobradoTappDani;
+    const esperadoTappLore = (fondoInicial.tapp_lore || 0) + cobradoTappLore;
+    const esperadoRutDani = (fondoInicial.rut_dani || 0) + cobradoRutDani;
+    const esperadoRutLore = (fondoInicial.rut_lore || 0) + cobradoRutLore;
+    const totalEsperadoDigital = esperadoTappDani + esperadoTappLore + esperadoRutDani + esperadoRutLore;
 
-            // 1. Calcular montos totales cobrados en la ruta
-            let cobradoEfectivo = 0;
-            let cobradoDigital = 0;
-            let cobradoTappDani = 0;
-            let cobradoTappLore = 0;
-            let cobradoRutDani = 0;
-            let cobradoRutLore = 0;
-
-            historial.forEach(h => {
-                if (h.estado === 'completado') {
-                    const monto = h.totalFinal || 0;
-                    if (h.metodoPago === 'Efectivo') {
-                        cobradoEfectivo += monto;
-                    } else if (h.metodoPago.includes('TAPP Dani')) {
-                        cobradoTappDani += monto;
-                    } else if (h.metodoPago.includes('TAPP Lore')) {
-                        cobradoTappLore += monto;
-                    } else if (h.metodoPago.includes('RUT Dani')) {
-                        cobradoRutDani += monto;
-                    } else if (h.metodoPago.includes('RUT Lore')) {
-                        cobradoRutLore += monto;
-                    } else {
-                        cobradoDigital += monto; // otros métodos digitales no especificados
-                    }
-                }
-            });
-
-            // 2. Calcular esperados (fondo inicial + cobrado)
-            const esperadoEfectivo = (fondoInicial.efectivo || 0) + cobradoEfectivo;
-            const esperadoTappDani = (fondoInicial.tapp_dani || 0) + cobradoTappDani;
-            const esperadoTappLore = (fondoInicial.tapp_lore || 0) + cobradoTappLore;
-            const esperadoRutDani = (fondoInicial.rut_dani || 0) + cobradoRutDani;
-            const esperadoRutLore = (fondoInicial.rut_lore || 0) + cobradoRutLore;
-
-            const totalEsperadoDigital = esperadoTappDani + esperadoTappLore + esperadoRutDani + esperadoRutLore;
-
-
-
-            // --- NUEVO: MENSAJE DE RECORDATORIO ---
-            const mensajeRecordatorio = `
+    // --- MENSAJE DE RECORDATORIO ---
+    const mensajeRecordatorio = `
         <div class="bg-amber-50 border-l-4 border-amber-400 p-4 mb-6 rounded-r-2xl shadow-sm animate-pulse">
             <div class="flex items-center">
                 <div class="flex-shrink-0 text-amber-400 text-xl">⚠️</div>
                 <div class="ml-3">
-                    <p class="text-xs text-amber-800 font-black uppercase tracking-wider">Paso Crítico</p>
+                    <p class="text-xs text-amber-800 font-black uppercase tracking-wider">Paso Crítico: ${filtroHorarioActual}</p>
                     <p class="text-[11px] text-amber-700 font-medium">
-                        Asegúrate de haber registrado las ventas en tu planilla/Sheets para descontar stock antes de finalizar la ruta.
+                        Solo se muestran pedidos de la <b>${filtroHorarioActual}</b>. Asegúrate de registrar en Sheets antes de finalizar.
                     </p>
                 </div>
             </div>
-        </div>
-    `;
+        </div>`;
 
-
-
-
-            // 3. HTML del arqueo comparativo
-            const arqueoComparativo = `
-    ${mensajeRecordatorio}
-        <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-200 mb-6">
-            <h3 class="text-[10px] font-black text-slate-500 uppercase mb-4 tracking-widest">Arqueo Esperado</h3>
-            <div class="space-y-4">
-                <div class="flex justify-between items-center py-1 border-b border-slate-100">
-                    <span class="text-slate-400 text-[10px] font-black ">Efectivo (inicial + cobrado)</span>
-                    <span class="font-black   text-emerald-700 text-xl">$${esperadoEfectivo.toLocaleString()}</span>
-                </div>
-                <div class=" grid grid-cols-2 gap-4">
-                    <div class="text-center">
-                        <p class="text-xs text-slate-500">TAPP Dani</p>
-                        <p class="font-bold text-slate-700">$${esperadoTappDani.toLocaleString()}</p>
+    // 3. HTML del arqueo comparativo
+    const arqueoComparativo = `
+        <div id="arqueo-contenedor-dinamico">
+            ${mensajeRecordatorio}
+            <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-200 mb-6">
+                <h3 class="text-[10px] font-black text-slate-500 uppercase mb-4 tracking-widest">Arqueo Esperado (${filtroHorarioActual})</h3>
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center py-1 border-b border-slate-100">
+                        <span class="text-slate-400 text-[10px] font-black">Efectivo (inicial + cobrado)</span>
+                        <span class="font-black text-emerald-700 text-xl">$${esperadoEfectivo.toLocaleString()}</span>
                     </div>
-                    <div class="text-center">
-                        <p class="text-xs text-slate-500">TAPP Lore</p>
-                        <p class="font-bold text-slate-700">$${esperadoTappLore.toLocaleString()}</p>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="text-center">
+                            <p class="text-xs text-slate-500">TAPP Dani</p>
+                            <p class="font-bold text-slate-700">$${esperadoTappDani.toLocaleString()}</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-xs text-slate-500">TAPP Lore</p>
+                            <p class="font-bold text-slate-700">$${esperadoTappLore.toLocaleString()}</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-xs text-slate-500">RUT Dani</p>
+                            <p class="font-bold text-slate-700">$${esperadoRutDani.toLocaleString()}</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-xs text-slate-500">RUT Lore</p>
+                            <p class="font-bold text-slate-700">$${esperadoRutLore.toLocaleString()}</p>
+                        </div>
                     </div>
-                    <div class="text-center">
-                        <p class="text-xs text-slate-500">RUT Dani</p>
-                        <p class="font-bold text-slate-700">$${esperadoRutDani.toLocaleString()}</p>
-                    </div>
-                    <div class="text-center">
-                        <p class="text-xs text-slate-500">RUT Lore</p>
-                        <p class="font-bold text-slate-700">$${esperadoRutLore.toLocaleString()}</p>
-                    </div>
-                </div>
-                <div class="pt-3  border-slate-200 text-center">
-                    <p class="text-xs  font-bold text-slate-400">Total Digital Esperado</p>
-                    <p class="text-2xl  font-black text-indigo-700">$${totalEsperadoDigital.toLocaleString()}</p>
-                </div>
-            </div>
-            <p class="text-[10px] text-slate-400 italic mt-4 text-center">
-                Registra lo que realmente tienes ahora y compara
-            </p>
-        </div>
-    `;
-
-            // 4. Insertar el arqueo comparativo ANTES de la lista de devoluciones
-            const contenedor = document.getElementById('lista-devoluciones-globales');
-            contenedor.insertAdjacentHTML('beforebegin', arqueoComparativo);
-
-            // 5. (el resto de la función sigue igual: calcular devoluciones, renderizarlas, validar checkboxes...)
-            // ... aquí va el código de letras + devoluciones que ya teníamos ...
-
-            // Por ejemplo:
-            const devolucionesGlobales = [];
-            historial.forEach(h => {
-                if (h.estado === 'completado' && h.devoluciones?.length > 0) {
-                    h.devoluciones.forEach(item => {
-                        devolucionesGlobales.push({
-                            letra: h.letra || '?',
-                            codigo: item.desc,
-                            cliente: h.cliente || 'Sin nombre'
-                        });
-                    });
-                }
-            });
-
-            // 2. ORDENAR POR LETRA (A → Z)
-            devolucionesGlobales.sort((a, b) => {
-                // Orden natural por letra (A antes que B, etc.)
-                return a.letra.localeCompare(b.letra);
-            });
-
-
-
-
-            // 3. Renderizar lista
-            const lista = document.getElementById('lista-devoluciones-globales');
-
-
-
-            // Dentro de renderVerificacionFinalRuta(), en la parte donde renderizas devolucionesGlobales
-
-            lista.innerHTML = devolucionesGlobales.map((dev, idx) => {
-                const colorClase = getColorRuta(dev.letra);  // ← Aquí usamos la función existente
-
-                return `
-        
-        <label class="flex justify-between items-center bg-white p-2 rounded-2xl border-2 border-transparent has-[:checked]:border-emerald-500 shadow-sm transition-all mb-3 cursor-pointer hover:bg-slate-50">
-            
-            <div class="flex items-center gap-4 flex-1">
-                
-                <input type="checkbox" 
-                       class="w-6 h-6 check-global-dev appearance-none border-2 border-slate-300 checked:bg-emerald-500 rounded-lg transition-all" 
-                       onchange="validarChecklistDevolucionesGlobales()">
-                
-                <div class="flex items-center gap-3">
-                    <!-- Círculo con el color de la letra -->
-                    <div class="${colorClase} text-white w-10 h-10 rounded-full flex items-center justify-center font-black text-xl shadow-md">
-                        ${dev.letra}
-                    </div>
-                    
-                    <div>
-                        <p class="font-black uppercase text-base text-slate-800">${dev.codigo}</p>
-                        <p class="text-[11px] text-slate-500 mt-0.5 hidden">${dev.cliente || 'Cliente no registrado'}</p>
+                    <div class="pt-3 border-slate-200 text-center">
+                        <p class="text-xs font-bold text-slate-400">Total Digital Esperado</p>
+                        <p class="text-2xl font-black text-indigo-700">$${totalEsperadoDigital.toLocaleString()}</p>
                     </div>
                 </div>
             </div>
-            
-            <span class="text-slate-400 opacity-70">${ICONOS.caja}</span>
-        </label>
-    `;
-            }).join('') || '<p class="text-center text-slate-400 py-6 text-sm">No hay devoluciones en esta ruta</p>';
+        </div>`;
 
-            // 4. Validar botón
-            validarChecklistDevolucionesGlobales();
+    // 4. Limpiar arqueos previos para evitar duplicados al re-renderizar
+    const viejoArqueo = document.getElementById('arqueo-contenedor-dinamico');
+    if (viejoArqueo) viejoArqueo.remove();
 
+    const contenedorLista = document.getElementById('lista-devoluciones-globales');
+    contenedorLista.insertAdjacentHTML('beforebegin', arqueoComparativo);
 
-            // Al final de renderVerificacionFinalRuta()
-            calcularEfectivoContado();  // Inicializa la comparación
-
+    // 5. PROCESAR DEVOLUCIONES FILTRADAS
+    const devolucionesGlobales = [];
+    historialFiltrado.forEach(h => {
+        if (h.estado === 'completado' && h.devoluciones?.length > 0) {
+            h.devoluciones.forEach(item => {
+                devolucionesGlobales.push({
+                    letra: h.letra || '?',
+                    codigo: item.desc,
+                    cliente: h.cliente || 'Sin nombre'
+                });
+            });
         }
+    });
+
+    devolucionesGlobales.sort((a, b) => a.letra.localeCompare(b.letra));
+
+    // 6. RENDERIZAR LISTA DE DEVOLUCIONES
+    contenedorLista.innerHTML = devolucionesGlobales.map((dev) => {
+        const colorClase = getColorRuta(dev.letra);
+        return `
+            <label class="flex justify-between items-center bg-white p-2 rounded-2xl border-2 border-transparent has-[:checked]:border-emerald-500 shadow-sm transition-all mb-3 cursor-pointer hover:bg-slate-50">
+                <div class="flex items-center gap-4 flex-1">
+                    <input type="checkbox" class="w-6 h-6 check-global-dev appearance-none border-2 border-slate-300 checked:bg-emerald-500 rounded-lg transition-all" onchange="validarChecklistDevolucionesGlobales()">
+                    <div class="flex items-center gap-3">
+                        <div class="${colorClase} text-white w-10 h-10 rounded-full flex items-center justify-center font-black text-xl shadow-md">
+                            ${dev.letra}
+                        </div>
+                        <div>
+                            <p class="font-black uppercase text-base text-slate-800">${dev.codigo}</p>
+                        </div>
+                    </div>
+                </div>
+                <span class="text-slate-400 opacity-70">${ICONOS.caja}</span>
+            </label>`;
+    }).join('') || `<p class="text-center text-slate-400 py-6 text-sm">No hay devoluciones para el horario ${filtroHorarioActual}</p>`;
+
+    validarChecklistDevolucionesGlobales();
+    if (typeof calcularEfectivoContado === 'function') calcularEfectivoContado();
+}
 
 
 
@@ -3624,7 +3712,7 @@ function guardarPedidoFormulario() {
 
 
         function cerrarHistorial() { nextStep(pedidos.length > 0 ? 2 : 0); }
-        function resetFormulario() { document.getElementById('f-edit-id').value = ""; document.getElementById('f-nombre').value = ""; document.getElementById('f-direccion').value = ""; document.getElementById('f-telefono').value = ""; document.getElementById('f-envio').value = ""; document.getElementById('f-total').value = ""; document.getElementById('f-detalles').value = ""; document.getElementById('contenedor-productos').innerHTML = ""; agregarFilaProducto(); }
+        function resetFormulario() { document.getElementById('f-edit-id').value = ""; document.getElementById('f-nombre').value = ""; document.getElementById('f-direccion').value = ""; document.getElementById('f-telefono').value = ""; document.getElementById('f-envio').value = ""; document.getElementById('f-total').value = "";  document.getElementById('f-horario').value = ""  ; document.getElementById('f-detalles').value = ""; document.getElementById('contenedor-productos').innerHTML = ""; agregarFilaProducto(); }
         function eliminarPedido(id) { if (confirm("¿Eliminar?")) { pedidos = pedidos.filter(x => x.id != id); save(); renderStep0(); } }
         function limpiarTodo() { if (confirm("¿Borrar todo?")) { localStorage.clear(); location.reload(); } }
         function llamar() { let p = pedidos.find(x => x.id == pActualID); if (p) window.location.href = `tel:${p.telefono}`; }
@@ -3632,12 +3720,7 @@ function guardarPedidoFormulario() {
 
         window.onload = () => { if (currentStep > 0) nextStep(currentStep); else renderStep0(); actualizarArqueoHeader(); };
 
-        Sortable.create(document.getElementById('lista-pre-carga'), {
-            animation: 200, onEnd: () => {
-                let nuevos = []; document.querySelectorAll('#lista-pre-carga > div').forEach(el => nuevos.push(pedidos.find(p => p.id == el.dataset.id)));
-                pedidos = nuevos; save(); renderStep0();
-            }
-        });
+        
         agregarFilaProducto();
 
 
@@ -3648,94 +3731,94 @@ function guardarPedidoFormulario() {
         }
 
 
+
+
+
         //FUNCION: SINCRONIZAR PEDIDOS SHEETS
 
-        async function sincronizarPedidosDesdeSheets(event) {
-            if (!confirm("¿Sincronizar pedidos desde Google Sheets?")) return;
+       async function sincronizarPedidosDesdeSheets(event) {
+    if (!confirm("¿Sincronizar pedidos desde Google Sheets?")) return;
 
-            // --- CONFIGURACIÓN DE COLUMNAS ACTUALIZADA (A=0, B=1, C=2...) ---
-            const COL = {
-                CODIGO: 2,    // Columna C
-                PRECIO: 3,    // Columna D
-                BIN: 4,       // Columna E
-                ENVIO: 5,     // Columna F
-                TOTAL: 6,     // Columna G (Nueva)
-                CLIENTE: 7,   // Columna H (Antes era 6)
-                DIRECCION: 8, // Columna I (Antes era 7)
-                TELEFONO: 9,  // Columna J (Antes era 8)
-                DETALLES: 10  // Columna K (Nueva)
-            };
-            // ------------------------------------------------------------------
+    const COL = {
+        CODIGO: 3, PRECIO: 4, BIN: 5, ENVIO: 6, TOTAL: 7, 
+        CLIENTE: 8, DIRECCION: 9, TELEFONO: 10, HORARIO: 11, DETALLES: 12
+    };
 
-            try {
-                console.log("--- INICIANDO SINCRONIZACIÓN ---");
-                const respuesta = await fetch(URL_PEDIDOS_CSV);
-                let textoFull = await respuesta.text();
+    try {
+        console.log("--- INICIANDO SINCRONIZACIÓN ---");
+        const respuesta = await fetch(URL_PEDIDOS_CSV);
+        let textoFull = await respuesta.text();
+        textoFull = textoFull.replace(/^\uFEFF/, '');
 
-                textoFull = textoFull.replace(/^\uFEFF/, '');
+        const filas = textoFull.split(/\r?\n/).filter(linea => linea.trim() !== "");
+        const datos = filas.slice(1);
+        if (datos.length === 0) return;
 
-                const filas = textoFull.split(/\r?\n/).filter(linea => linea.trim() !== "");
-                const datos = filas.slice(1);
+        const separador = datos[0].includes(',') ? ',' : ';';
+        let ultimoPedido = null;
+        let count = 0;
 
-                if (datos.length === 0) return;
+        // --- PROTECCIÓN 1: Limpiar el array actual antes de inyectar nuevos ---
+        // Esto elimina cualquier 'null' que ya existiera en la memoria
+        pedidos = pedidos.filter(p => p !== null && typeof p === 'object');
 
-                const separador = datos[0].includes(',') ? ',' : ';';
-                let ultimoPedido = null;
-                let count = 0;
+        datos.forEach((linea, index) => {
+            const d = linea.split(separador).map(celda => celda.trim().replace(/^"|"$/g, ''));
 
-                datos.forEach((linea, index) => {
-                    const d = linea.split(separador).map(celda => celda.trim().replace(/^"|"$/g, ''));
+            const nombreCliente = d[COL.CLIENTE] || "";
+            const cod = d[COL.CODIGO]?.toUpperCase();
 
-                    const nombreCliente = d[COL.CLIENTE] || "";
-                    const cod = d[COL.CODIGO]?.toUpperCase();
+            if (!cod) return;
 
-                    if (!cod) {
-                        console.warn(`Fila ${index + 2} omitida: Sin código en columna definida.`);
-                        return;
-                    }
+            const dbInfo = buscarEnDB(cod);
 
-                    const dbInfo = buscarEnDB(cod);
-
-                    if (nombreCliente !== "") {
-                        // Se crea un pedido nuevo
-                        ultimoPedido = {
-                            id: Date.now() + Math.random(),
-                            nPedido: sigNum++,
-                            cliente: nombreCliente,
-                            direccion: d[COL.DIRECCION] || '',
-                            telefono: d[COL.TELEFONO] || '',
-                            envio: parseInt(d[COL.ENVIO]) || 0,
-                            total: parseInt(d[COL.TOTAL]) || 0, // Nueva propiedad
-                            detalles: d[COL.DETALLES] || '',    // Nueva propiedad
-                            items: [{
-                                desc: cod,
-                                precio: parseInt(d[COL.PRECIO]) || dbInfo?.precio || 0,
-                                bin: d[COL.BIN] ? d[COL.BIN].toUpperCase() : (dbInfo?.bin || 'S/U')
-                            }],
-                            estado: 'pendiente'
-                        };
-                        pedidos.push(ultimoPedido);
-                        count++;
-                    }
-                    else if (ultimoPedido) {
-                        // Es un ítem adicional para el mismo pedido
-                        ultimoPedido.items.push({
-                            desc: cod,
-                            precio: parseInt(d[COL.PRECIO]) || dbInfo?.precio || 0,
-                            bin: d[COL.BIN] ? d[COL.BIN].toUpperCase() : (dbInfo?.bin || 'S/U')
-                        });
-                    }
+            if (nombreCliente !== "") {
+                ultimoPedido = {
+                    id: Date.now() + Math.random(),
+                    nPedido: sigNum++,
+                    cliente: nombreCliente,
+                    direccion: d[COL.DIRECCION] || '',
+                    telefono: d[COL.TELEFONO] || '',
+                    envio: parseInt(d[COL.ENVIO]) || 0,
+                    total: parseInt(d[COL.TOTAL]) || 0,
+                    horario: d[COL.HORARIO] || '',
+                    detalles: d[COL.DETALLES] || '',
+                    items: [{
+                        desc: cod,
+                        precio: parseInt(d[COL.PRECIO]) || dbInfo?.precio || 0,
+                        bin: d[COL.BIN] ? d[COL.BIN].toUpperCase() : (dbInfo?.bin || 'S/U')
+                    }],
+                    estado: 'pendiente'
+                };
+                pedidos.push(ultimoPedido);
+                count++;
+            } else if (ultimoPedido) {
+                ultimoPedido.items.push({
+                    desc: cod,
+                    precio: parseInt(d[COL.PRECIO]) || dbInfo?.precio || 0,
+                    bin: d[COL.BIN] ? d[COL.BIN].toUpperCase() : (dbInfo?.bin || 'S/U')
                 });
-
-                save();
-                renderStep0();
-                alert(`Sincronización exitosa: ${count} pedidos nuevos.`);
-
-            } catch (e) {
-                alert("Error crítico. Revisa la consola.");
-                console.error(e);
             }
-        }
+        });
+
+        // --- PROTECCIÓN 2: Limpieza final antes de guardar ---
+        pedidos = pedidos.filter(p => p && p.estado); 
+
+        save();
+        renderStep0();
+        alert(`Sincronización exitosa: ${count} pedidos nuevos.`);
+
+    } catch (e) {
+        // --- PROTECCIÓN 3: Si falla el render por un null, capturamos el error ---
+        console.error("Error detectado:", e);
+        alert("Error en los datos. Limpiando pedidos corruptos...");
+        pedidos = pedidos.filter(p => p != null);
+        save();
+    }
+}
+
+
+
 
         //FUNCION: METODO DE PAGO
 
@@ -3865,6 +3948,8 @@ function guardarPedidoFormulario() {
             const telefono = document.getElementById('f-telefono').value.trim();
             const envio = parseInt(document.getElementById('f-envio').value) || 0;
             const total = parseInt(document.getElementById('f-total').value) || 0;
+           // CORRECCIÓN AQUÍ: Quitamos el parseInt para que guarde el texto completo
+    const horario = document.getElementById('f-horario').value.trim() || "Cualquier horario";
             const detalles = document.getElementById('f-detalles').value.trim();
 
             let items = [];
@@ -3884,6 +3969,7 @@ function guardarPedidoFormulario() {
                 telefono,
                 envio,
                 total, // Se guarda el total calculado
+                horario, // Se guardan los detalles
                 detalles, // Se guardan los detalles
                 items,
                 estado: 'pendiente'
@@ -3947,6 +4033,8 @@ function guardarPedidoFormulario() {
             }
         }
 
+
+
         function actualizarBotonFlotante(n) {
             const btnContainer = document.getElementById('contenedor-boton-flotante');
             if (!btnContainer) return;
@@ -3963,6 +4051,7 @@ function guardarPedidoFormulario() {
         }
 
 
+        
 
 
 
@@ -3977,22 +4066,38 @@ function guardarPedidoFormulario() {
             fecha: null
         };
 
+function guardarFondoInicial() {
+    // 1. Capturar los valores de los inputs
+    fondoInicial = {
+        efectivo: parseInt(document.getElementById('fondo-efectivo-inicial').value) || 0,
+        tapp_dani: parseInt(document.getElementById('fondo-tapp-dani').value) || 0,
+        tapp_lore: parseInt(document.getElementById('fondo-tapp-lore').value) || 0,
+        rut_dani: parseInt(document.getElementById('fondo-rut-dani').value) || 0,
+        rut_lore: parseInt(document.getElementById('fondo-rut-lore').value) || 0,
+        fecha: new Date().toISOString()
+    };
 
-        // Guardar fondo
-        function guardarFondoInicial() {
-            fondoInicial = {
-                efectivo: parseInt(document.getElementById('fondo-efectivo-inicial').value) || 0,
-                tapp_dani: parseInt(document.getElementById('fondo-tapp-dani').value) || 0,
-                tapp_lore: parseInt(document.getElementById('fondo-tapp-lore').value) || 0,
-                rut_dani: parseInt(document.getElementById('fondo-rut-dani').value) || 0,
-                rut_lore: parseInt(document.getElementById('fondo-rut-lore').value) || 0,
-                fecha: new Date().toISOString()
-            };
+    // 2. Guardar en LocalStorage con una clave que dependa del horario 
+    // Esto evita que un horario bloquee al otro
+    const keyHorario = 'z_fondo_inicial_' + filtroHorarioActual.toLowerCase().replace(/\s/g, '_');
+    localStorage.setItem(keyHorario, JSON.stringify(fondoInicial));
 
-            localStorage.setItem('z_fondo_inicial_ruta', JSON.stringify(fondoInicial));
-            cerrarModalFondoInicial();
-            nextStep(2); // o la etapa que corresponda
-        }
+    // 3. ¡ESTA ES LA CLAVE! 
+    // Antes de seguir, asignamos las letras A, B, C a los pedidos del horario elegido
+    asignarLetrasFijas(); 
+
+    // 4. Cerrar el modal y avanzar al paso 1 (Picking)
+    // Si tu picking es el paso 1, asegúrate de poner nextStep(1)
+    if (typeof cerrarModalFondoInicial === 'function') {
+        cerrarModalFondoInicial();
+    } else {
+        document.getElementById('modal-fondo-inicial').classList.add('hidden');
+    }
+
+    nextStep(2); 
+}
+
+
 
 
         function cerrarModalFondoInicial() {
@@ -4005,23 +4110,22 @@ function guardarPedidoFormulario() {
 
 
 
+function mostrarFondoInicialSiEsNecesario() {
+    // Creamos una clave única por horario, ej: z_fondo_inicial_ruta_mañana
+    const keyHorario = 'z_fondo_inicial_ruta_' + filtroHorarioActual.toLowerCase().replace(/\s/g, '_');
 
-        function mostrarFondoInicialSiEsNecesario() {
-            // Solo mostramos el modal si NO hay fondo guardado para esta ruta
-            // (o si quieres forzar cada vez, quita la condición)
-            if (!localStorage.getItem('z_fondo_inicial_ruta')) {
-                document.getElementById('modal-fondo-inicial').classList.remove('hidden');
-                // Opcional: precargar valores si ya existían de rutas anteriores
-                if (fondoInicial.efectivo) {
-                    document.getElementById('fondo-efectivo-inicial').value = fondoInicial.efectivo;
-                }
-            } else {
-                // Ya existe fondo → continuamos directo
-                asignarLetrasFijas();
-                nextStep(1);
-            }
-        }
-
+    if (!localStorage.getItem(keyHorario)) {
+        // Si no hay fondo para ESTE horario, mostramos el modal
+        document.getElementById('modal-fondo-inicial').classList.remove('hidden');
+        
+        // Limpiamos el input por si acaso
+        document.getElementById('fondo-efectivo-inicial').value = ''; 
+    } else {
+        // Si ya existe fondo para este horario, asignamos letras a los pedidos actuales y seguimos
+        asignarLetrasFijas(); 
+        nextStep(1);
+    }
+}
 
 
         //NUEVO 26-02-26
@@ -4154,6 +4258,9 @@ function guardarPedidoFormulario() {
 }
 
 
+
+//funcion nueva Detalle de producto en grande
+
 function openProductDetail(encodedData) {
     // Decodificar los datos recibidos
     const grupo = JSON.parse(atob(encodedData));
@@ -4285,7 +4392,136 @@ function sugerirTallasExtras(codigoActual) {
 
 
 
+//NUEVO FUNCION PARA aGREGAR PEDIDO DESDE GALERIA
 
+function agregarDesdeGaleria(codigoCompleto) {
+    const producto = typeof buscarEnInventario === 'function' 
+        ? buscarEnInventario(codigoCompleto) 
+        : null;
+
+    if (!producto) {
+        alert("No se encontró la información del producto.");
+        return;
+    }
+
+    // 1. Buscamos todas las filas de productos actuales
+    const filasExistentes = document.querySelectorAll('.fila-producto');
+    let filaVacia = null;
+
+    // 2. Verificamos si la primera (o alguna) está vacía
+    for (let fila of filasExistentes) {
+        const inputCod = fila.querySelector('.f-codigo');
+        if (inputCod && inputCod.value.trim() === "") {
+            filaVacia = fila;
+            break; // Encontramos la primera vacía, nos quedamos con esa
+        }
+    }
+
+    if (filaVacia) {
+        // --- CASO A: LLENAR FILA EXISTENTE ---
+        const inCod = filaVacia.querySelector('.f-codigo');
+        inCod.value = producto.codigo;
+        
+        // Disparamos el evento 'input' manualmente para que se cargue la foto, precio y bin
+        inCod.dispatchEvent(new Event('input'));
+        
+        mostrarNotificacion(`Llenado: ${producto.codigo}`);
+    } else {
+        // --- CASO B: CREAR FILA NUEVA ---
+        // Si no hay vacías, usamos tu función original
+        agregarFilaProducto(
+            producto.codigo, 
+            producto.precio, 
+            producto.bin, 
+            producto.foto
+        );
+        mostrarNotificacion(`Añadido: ${producto.codigo}`);
+    }
+
+// --- LÍNEA NUEVA: Actualizamos el contador aquí ---
+    actualizarContadorCarrito();
+}
+
+
+
+
+
+function actualizarContadorCarrito() {
+    const filas = document.querySelectorAll('.fila-producto');
+    let totalItems = 0;
+
+    filas.forEach(fila => {
+        const inputCod = fila.querySelector('.f-codigo');
+        // Si la fila tiene un código (no está vacía), sumamos 1
+        if (inputCod && inputCod.value.trim() !== "") {
+            totalItems++;
+        }
+    });
+
+    const contadorElemento = document.getElementById('cart-count-number');
+    if (contadorElemento) {
+        contadorElemento.innerText = totalItems;
+        
+        // Animación rápida de "pop" cuando cambia
+        contadorElemento.parentElement.classList.add('scale-125');
+        setTimeout(() => contadorElemento.parentElement.classList.remove('scale-125'), 200);
+    }
+}
+
+
+
+
+// Función auxiliar para avisar al usuario
+function mostrarNotificacion(mensaje) {
+    const toast = document.createElement('div');
+    toast.className = "fixed bottom-5 left-1/2 -translate-x-1/2 bg-slate-800 text-white px-4 py-2 rounded-full text-xs font-bold shadow-lg z-[9999] animate-bounce";
+    toast.innerText = mensaje;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 2000);
+}
+
+
+
+
+
+function filtrarPorHorario(horario) {
+    filtroHorarioActual = horario;
+
+    document.querySelectorAll('.chip-filtro').forEach(btn => {
+        const btnOnClick = btn.getAttribute('onclick');
+        const esActivo = btnOnClick && btnOnClick.includes(`'${horario}'`);
+
+        if (esActivo) {
+            // Clases para el activo
+            btn.classList.add('bg-blue-600', 'text-white', 'font-black', 'shadow-md');
+            btn.classList.remove('bg-slate-100', 'text-slate-500', 'font-bold');
+        } else {
+            // Clases para el inactivo
+            btn.classList.remove('bg-blue-600', 'text-white', 'font-black', 'shadow-md');
+            btn.classList.add('bg-slate-100', 'text-slate-500', 'font-bold');
+        }
+    });
+
+    renderStep0();
+    if (typeof renderPicking === 'function') renderPicking();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+//actualizaciones :
+
+
+//Filtro por horarios
 
 
 
@@ -4296,5 +4532,7 @@ function sugerirTallasExtras(codigoActual) {
 
 
 </body>
+
+
 
 </html>
