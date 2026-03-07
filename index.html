@@ -402,15 +402,7 @@
     <div id="contenedor-filtros-horario" class="flex flex-nowrap gap-2 overflow-x-auto pb-1 no-scrollbar">
 
 
-        <div id="chip-especifico" class="chip-filtro bg-slate-100 text-slate-500 px-4 py-1.5 rounded-full text-xs font-bold whitespace-nowrap flex-shrink-0 transition-all flex items-center gap-2">
-    <span>Hora exacta:</span>
-    <input type="time" 
-        id="input-hora-personalizada"
-        onchange="filtrarPorHorario(this.value)" 
-        class="bg-transparent outline-none cursor-pointer text-blue-600 font-black"
-        style="color: inherit;" 
-    >
-</div>
+       
         
         <button onclick="filtrarPorHorario('Todos')" 
             class="chip-filtro active bg-blue-600 text-white px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap flex-shrink-0 transition-all">
@@ -429,6 +421,19 @@
             19:00 - 21:00
         </button>
 
+
+     <div id="chip-especifico" class="chip-filtro bg-slate-100 text-slate-500 px-4 py-1.5 rounded-full text-xs font-bold whitespace-nowrap flex-shrink-0 transition-all flex items-center gap-2">
+    <span>Hora exacta:</span>
+    <input type="time" 
+        id="input-hora-personalizada"
+        onchange="filtrarPorHorario(this.value)" 
+        class="bg-transparent outline-none cursor-pointer text-blue-600 font-black"
+        style="color: inherit;" 
+    >
+</div>
+
+
+        
         
     </div>
 </div>
@@ -4689,3 +4694,4 @@ function filtrarPorHorario(horario) {
 
 
 </html>
+
