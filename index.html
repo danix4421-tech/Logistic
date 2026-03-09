@@ -462,30 +462,43 @@
             Iniciar Configuracion de Rutas
         </button>
 
-
-
     </section>
 
 
+
+ <!-- CONFIGURACIN RUTA-->
 <div id="step_config_ruta" class="step">
     </div>
 
 
 
+
+  <!-- PICKING -->
  <section id="step_picking" class="step py-8">
     <h2 class="text-[16px] text-slate-500 font-black py-6">ORDEN DE RECOLECCIÓN</h2>
     
     <div id="lista-picking" class="space-y-4"></div>
 
-    <button id="btn-picking-done" onclick="mostrarResumenPicking()" disabled
+ 
+    <button id="btn-picking-done" onclick="nextStep(1)" disabled
         class="w-full mt-10 bg-slate-200 text-slate-400 font-black py-6 rounded-3xl uppercase transition-all duration-300">
         FINALIZAR RECOLECCIÓN
     </button>
     
+    
 
     <!-- CHECK LIST CARGA -->
 </section> <section id="step1" class="step py-8">
-    <h2 class="text-[16px] text-slate-500 font-black px-2 py-6">CHECKLIST DE CARGA</h2>
+
+    <div class="text-center mb-6 flex-shrink-0">
+                <div class="w-20 h-1.5 bg-slate-100 rounded-full mx-auto mb-6 sm:hidden"></div>
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-50 text-blue-600 rounded-full mb-4">
+                    <span class="text-3xl">📦</span>
+                </div>
+                <h3 class="text-2xl font-black text-slate-800">Resumen de Carga</h3>
+                <p class="text-slate-500 text-sm">Clientes listos para despacho</p>
+            </div>
+    
     
     <div id="checklist-furgon" class="space-y-1"></div>
     
@@ -719,121 +732,95 @@ function toggleMenuSecundario() {
             Transacción</button>
     </section>
 
+
+
     <section id="step7" class="step">
         <div class="flex justify-between items-center p-10"></div>
         <div id="lista-historial" class="space-y-3"></div>
     </section>
 
 
-    <!--ETAPA 5 verificacion final -->
-
-    <section id="step5" class="step p-7">
-        <div class="bg-red-500 rounded-[2.5rem] p-8  text-white mb-6 shadow-lg">
-            <h2 class="text-xs font-black uppercase opacity-80 tracking-widest">Paso Final</h2>
-            <h3 class="text-2xl font-black">Verificar Retorno</h3>
-            <p class="text-[10px] font-bold opacity-90 mt-1">Asegúrate de subir estos productos al furgón:</p>
-        </div>
-
-        <div id="lista-verificacion-devoluciones" class="space-y-3 mb-8">
-        </div>
-
-        <button id="btn-cerrar-ruta" onclick="confirmarFinalTotal()" disabled
-            class="w-full bg-slate-300 text-white font-black py-7 rounded-[2rem] shadow-xl text-lg uppercase">
-            Finalizar Entrega
-        </button>
-    </section>
 
 
-    
-    <!-- NUEVO: Step6 - Verificación Final de Ruta (al llegar a casa) -->
-    <section id="step6" class="step p-7">
-        <div class="bg-blue-500 rounded-[2.5rem] p-6 text-white mb-6 shadow-lg ">
-            <h2 class="text-xs font-black uppercase opacity-80 tracking-widest">Fin de Ruta</h2>
-            <h3 class="text-2xl font-black">Verificar Arqueo y Devoluciones</h3>
-            <p class="text-[10px] font-bold opacity-90 mt-1">Confirma los montos y que todos los productos devueltos han
-                sido recuperados.</p>
-        </div>
+<section id="step6" class="step p-7">
+    <div class="bg-blue-500 rounded-[2.5rem] p-6 text-white mb-6 shadow-lg ">
+        <h2 class="text-xs font-black uppercase opacity-80 tracking-widest">Fin de Ruta</h2>
+        <h3 class="text-2xl font-black">Verificar Arqueo y Devoluciones</h3>
+        <p class="text-[10px] font-bold opacity-90 mt-1">
+            Confirma los montos y que todos los productos devueltos han sido recuperados.
+        </p>
+    </div>
 
+    <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 mb-6">
+        <h3 class="text-[11px] font-black text-slate-600 uppercase mb-3 tracking-wider">Conteo real efectivo</h3>
 
-        <!-- Conteo manual de efectivo - versión compacta -->
-        <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 mb-6">
-            <h3 class="text-[11px] font-black text-slate-600 uppercase mb-3 tracking-wider">Conteo real efectivo</h3>
-
-            <div class="grid grid-cols-3 gap-3 mb-4">
-                <!-- $20.000 -->
-                <div class="text-center">
-                    <div class="text-[10px] font-bold text-slate-700 mb-1">$20.000</div>
-                    <input type="number" min="0" id="billete-20000" placeholder="0"
-                        class="w-full bg-slate-50 border border-slate-200 rounded-lg py-2 px-2 text-center text-base font-semibold focus:ring-1 focus:ring-emerald-500 focus:border-emerald-400"
-                        oninput="calcularEfectivoContado()">
-                </div>
-
-                <!-- $10.000 -->
-                <div class="text-center">
-                    <div class="text-[10px] font-bold text-slate-700 mb-1">$10.000</div>
-                    <input type="number" min="0" id="billete-10000" placeholder="0"
-                        class="w-full bg-slate-50 border border-slate-200 rounded-lg py-2 px-2 text-center text-base font-semibold focus:ring-1 focus:ring-emerald-500 focus:border-emerald-400"
-                        oninput="calcularEfectivoContado()">
-                </div>
-
-                <!-- $5.000 -->
-                <div class="text-center">
-                    <div class="text-[10px] font-bold text-slate-700 mb-1">$5.000</div>
-                    <input type="number" min="0" id="billete-5000" placeholder="0"
-                        class="w-full bg-slate-50 border border-slate-200 rounded-lg py-2 px-2 text-center text-base font-semibold focus:ring-1 focus:ring-emerald-500 focus:border-emerald-400"
-                        oninput="calcularEfectivoContado()">
-                </div>
-
-                <!-- $2.000 -->
-                <div class="text-center">
-                    <div class="text-[10px] font-bold text-slate-700 mb-1">$2.000</div>
-                    <input type="number" min="0" id="billete-2000" placeholder="0"
-                        class="w-full bg-slate-50 border border-slate-200 rounded-lg py-2 px-2 text-center text-base font-semibold focus:ring-1 focus:ring-emerald-500 focus:border-emerald-400"
-                        oninput="calcularEfectivoContado()">
-                </div>
-
-                <!-- $1.000 -->
-                <div class="text-center">
-                    <div class="text-[10px] font-bold text-slate-700 mb-1">$1.000</div>
-                    <input type="number" min="0" id="billete-1000" placeholder="0"
-                        class="w-full bg-slate-50 border border-slate-200 rounded-lg py-2 px-2 text-center text-base font-semibold focus:ring-1 focus:ring-emerald-500 focus:border-emerald-400"
-                        oninput="calcularEfectivoContado()">
-                </div>
-
-                <!-- $500 -->
-                <div class="text-center">
-                    <div class="text-[10px] font-bold text-slate-700 mb-1">$500</div>
-                    <input type="number" min="0" id="moneda-500" placeholder="0"
-                        class="w-full bg-slate-50 border border-slate-200 rounded-lg py-2 px-2 text-center text-base font-semibold focus:ring-1 focus:ring-emerald-500 focus:border-emerald-400"
-                        oninput="calcularEfectivoContado()">
-                </div>
+        <div class="grid grid-cols-3 gap-3 mb-4">
+            <div class="text-center">
+                <div class="text-[10px] font-bold text-slate-700 mb-1">$20.000</div>
+                <input type="number" min="0" id="billete-20000" placeholder="0"
+                    class="w-full bg-slate-50 border border-slate-200 rounded-lg py-2 px-2 text-center text-base font-semibold focus:ring-1 focus:ring-emerald-500 focus:border-emerald-400"
+                    oninput="calcularEfectivoContado()">
             </div>
 
-            <!-- Resultado compacto -->
-            <div class="bg-emerald-50/70 rounded-xl p-3.5 text-center border border-emerald-100">
-                <p class="text-[11px] font-medium text-emerald-700 mb-0.5">Total contado</p>
-                <p id="total-contado-efectivo" class="text-2xl font-black text-emerald-800 ">$0</p>
+            <div class="text-center">
+                <div class="text-[10px] font-bold text-slate-700 mb-1">$10.000</div>
+                <input type="number" min="0" id="billete-10000" placeholder="0"
+                    class="w-full bg-slate-50 border border-slate-200 rounded-lg py-2 px-2 text-center text-base font-semibold focus:ring-1 focus:ring-emerald-500 focus:border-emerald-400"
+                    oninput="calcularEfectivoContado()">
             </div>
 
-            <!-- Diferencia -->
-            <div id="diferencia-arqueo" class="mt-3 text-center text-[13px] font-medium min-h-[1.5rem]"></div>
+            <div class="text-center">
+                <div class="text-[10px] font-bold text-slate-700 mb-1">$5.000</div>
+                <input type="number" min="0" id="billete-5000" placeholder="0"
+                    class="w-full bg-slate-50 border border-slate-200 rounded-lg py-2 px-2 text-center text-base font-semibold focus:ring-1 focus:ring-emerald-500 focus:border-emerald-400"
+                    oninput="calcularEfectivoContado()">
+            </div>
+
+            <div class="text-center">
+                <div class="text-[10px] font-bold text-slate-700 mb-1">$2.000</div>
+                <input type="number" min="0" id="billete-2000" placeholder="0"
+                    class="w-full bg-slate-50 border border-slate-200 rounded-lg py-2 px-2 text-center text-base font-semibold focus:ring-1 focus:ring-emerald-500 focus:border-emerald-400"
+                    oninput="calcularEfectivoContado()">
+            </div>
+
+            <div class="text-center">
+                <div class="text-[10px] font-bold text-slate-700 mb-1">$1.000</div>
+                <input type="number" min="0" id="billete-1000" placeholder="0"
+                    class="w-full bg-slate-50 border border-slate-200 rounded-lg py-2 px-2 text-center text-base font-semibold focus:ring-1 focus:ring-emerald-500 focus:border-emerald-400"
+                    oninput="calcularEfectivoContado()">
+            </div>
+
+            <div class="text-center">
+                <div class="text-[10px] font-bold text-slate-700 mb-1">$500</div>
+                <input type="number" min="0" id="moneda-500" placeholder="0"
+                    class="w-full bg-slate-50 border border-slate-200 rounded-lg py-2 px-2 text-center text-base font-semibold focus:ring-1 focus:ring-emerald-500 focus:border-emerald-400"
+                    oninput="calcularEfectivoContado()">
+            </div>
         </div>
 
+        <div class="bg-emerald-50/70 rounded-xl p-3.5 text-center border border-emerald-100">
+            <p class="text-[11px] font-medium text-emerald-700 mb-0.5">Total contado</p>
+            <p id="total-contado-efectivo" class="text-2xl font-black text-emerald-800 ">$0</p>
+        </div>
 
+        <div id="diferencia-arqueo" class="mt-3 text-center text-[13px] font-medium min-h-[1.5rem]"></div>
+    </div>
 
-
-        <!-- Lista de devoluciones globales -->
-
+    <div class="mb-4 px-2">
+        <h3 class="text-[11px] font-black text-slate-600 uppercase mb-2 tracking-wider">Productos a devolver</h3>
         <div id="lista-devoluciones-globales"
-            class="space-y-3 mb-8 bg-white rounded-[2rem] p-6 shadow-sm border border-slate-100"></div>
+            class="space-y-3 bg-white rounded-[2rem] p-6 shadow-sm border border-slate-100">
+            </div>
+    </div>
 
-        <button id="btn-fin-ruta" onclick="confirmarFinRuta()" disabled
-            class="w-full bg-slate-300 text-white font-black py-7 rounded-[2rem] shadow-xl text-lg uppercase">
-            Finalizar Ruta
-        </button>
+    <button id="btn-fin-ruta" onclick="confirmarFinRuta()" disabled
+        class="w-full bg-slate-300 text-white font-black py-7 rounded-[2rem] shadow-xl text-lg uppercase">
+        Finalizar Ruta
+    </button>
+</section>
 
 
-    </section>
+
 
 
     <!--VENTA RAPIDA-->
@@ -1175,7 +1162,7 @@ function toggleMenuSecundario() {
         let pActualID = localStorage.getItem('z_pActualID') || null;
         let baseDeDatosProductos = [];
         const ABC = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-
+        let totalCobradoEfectivoGlobal = 0; // Para que el arqueo lo pueda leer
         let inventoryDataGlobal = []; // Guardamos los datos para no volver a fetch
 
         // Variable global para el filtro
@@ -1439,18 +1426,22 @@ function buscarEnInventario(codigo) {
     console.log(`Letras asignadas para el horario: ${filtroHorarioActual}`);
 }
 
-        function retroceder() {
-            if (currentStep === 0.4) nextStep(0);             // De Config Ruta a Inicio
-            else if (currentStep === 0.5) nextStep(0.4);      // DE PICKING A CONFIG RUTA (Cambio aquí)
-            else if (currentStep === 1) nextStep(0.5);
-            else if (currentStep === 2) nextStep(1);
-            else if (currentStep === 3) nextStep(2);
-            else if (currentStep === 4) nextStep(3);
-            else if (currentStep === 5) nextStep(4);
-            else if (currentStep === 6) nextStep(2);           // Retrocede de step6
-            else if (currentStep === 'inventory') nextStep(0); // Retrocede de inventario a inicio
-            else if (currentStep === 7) cerrarHistorial();
-        }
+
+
+
+
+       function retroceder() {
+    if (currentStep === 0.4) nextStep(0); 
+    else if (currentStep === 0.5) nextStep(0.4); 
+    else if (currentStep === 1) nextStep(0.5);
+    else if (currentStep === 2) nextStep(1);
+    else if (currentStep === 3) nextStep(2);
+    else if (currentStep === 4) nextStep(3);
+    // ELIMINADO EL PASO 5 AQUÍ
+    else if (currentStep === 6) nextStep(2); // Salta del arqueo de vuelta a la lista
+    else if (currentStep === 'inventory') nextStep(0);
+    else if (currentStep === 7) cerrarHistorial();
+}
 
 
      
@@ -1510,10 +1501,7 @@ function buscarEnInventario(codigo) {
             if (n === 2) renderStep2();
             if (n === 3) renderStep3();
             if (n === 4) renderVistaUnificada();
-            if (n === 5) {
-                const p = pedidos.find(x => x.id == pActualID);
-                if (p && p.temp_devoluciones) renderVerificacionDevoluciones(p.temp_devoluciones);
-            }
+            
             if (n === 6) renderVerificacionFinalRuta();
 
 // BUSCA ESTO EN TU FUNCIÓN nextStep:
@@ -2658,7 +2646,7 @@ function cambiarOrdenRuta(indexActual, direccion) {
 
 
 
-   function renderPicking() {
+ function renderPicking() {
     let todosItems = [];
     
     // 1. Filtrado de pedidos
@@ -2714,10 +2702,10 @@ function cambiarOrdenRuta(indexActual, direccion) {
     <div class="sticky top-0 z-20 bg-slate-50/90 backdrop-blur-md pb-4 pt-2">
         <div class="flex justify-between items-end mb-2 px-1">
             <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Progreso de Recolección</span>
-            <span id="picking-stats" class="text-sm font-black text-orange-600">0/0</span>
+            <span id="picking-stats" class="text-sm font-black text-blue-600">0/0</span>
         </div>
         <div class="w-full h-3 bg-slate-200 rounded-full overflow-hidden">
-            <div id="picking-bar" class="h-full bg-orange-500 transition-all duration-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]" style="width: 0%"></div>
+            <div id="picking-bar" class="h-full bg-blue-500 transition-all duration-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]" style="width: 0%"></div>
         </div>
     </div>
     <div id="picking-container-scroll" class="space-y-6 pb-20">`;
@@ -2729,7 +2717,7 @@ function cambiarOrdenRuta(indexActual, direccion) {
         html += `
         <section class="bin-group">
             <div class="flex items-center gap-2 mb-4">
-                <div class="bg-orange-600 text-white px-3 py-1 rounded-lg text-[18px] font-black uppercase">
+                <div class="bg-blue-600 text-white px-3 py-1 rounded-lg text-[11px] font-black uppercase">
                     📍 ${bin}
                 </div>
                 <div class="h-[1px] flex-1 bg-blue-100"></div>
@@ -2757,7 +2745,7 @@ function cambiarOrdenRuta(indexActual, direccion) {
                                 
                                 <div class="flex gap-1 mt-2">
                                     ${it.pedidosRelacionados.map(p => `
-                                        <span class="${p.color} text-white w-7 h-7 rounded-md flex items-center justify-center text-[14px] font-black">
+                                        <span class="${p.color} text-white w-5 h-5 rounded-md flex items-center justify-center text-[9px] font-black">
                                             ${p.letra}
                                         </span>
                                     `).join('')}
@@ -2777,8 +2765,6 @@ function cambiarOrdenRuta(indexActual, direccion) {
     // Inicializar visualmente
     actualizarEnfoquePicking(true);
 }
-
-
 
 function actualizarEnfoquePicking(isFirstLoad = false) {
     if (!isFirstLoad) playSound('scanner');
@@ -2829,107 +2815,29 @@ function actualizarEnfoquePicking(isFirstLoad = false) {
     }
 }
 
+ function validarPicking() {
+
+            playSound('scanner');
 
 
 
-function mostrarResumenPicking() {
-    // 1. Cálculo de datos (Agrupamos por cliente dentro de cada ruta)
-    const totalesPorRuta = {};
-    let pendientes = pedidos.filter(p => p.estado === 'pendiente');
-    
-    if (typeof filtroHorarioActual !== 'undefined' && filtroHorarioActual !== 'Todos') {
-        pendientes = pendientes.filter(p => 
-            String(p.horario || "").toLowerCase().includes(filtroHorarioActual.toLowerCase())
-        );
-    }
 
-    pendientes.forEach(p => {
-        const letra = p.letra || 'S/R';
-        if (!totalesPorRuta[letra]) {
-            totalesPorRuta[letra] = { 
-                color: getColorRuta(letra), 
-                clientes: [] 
-            };
+
+            // playSound('scanner'); // Opcional: solo si quieres que suene al marcar
+
+            const todos = Array.from(document.querySelectorAll('.check-picking')).every(c => c.checked);
+
+            const btn = document.getElementById('btn-picking-done');
+
+            btn.disabled = !todos;
+
+            btn.className = todos
+
+                ? "w-full mt-10 bg-blue-600 text-white font-black py-6 rounded-3xl"
+
+                : "w-full mt-10 bg-slate-200 text-slate-400 font-black py-6 rounded-3xl uppercase";
+
         }
-        totalesPorRuta[letra].clientes.push({
-            nombre: p.cliente || "Sin Nombre",
-            direccion: p.direccion || "Sin Dirección",
-            cant: (p.items || []).length
-        });
-    });
-
-    // 2. Renderizado del Modal con el estilo de tarjetas anterior
-    const modalHtml = `
-    <div id="modal-resumen" class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-        <div class="bg-white w-full max-w-md rounded-t-[40px] sm:rounded-[40px] p-8 shadow-2xl animate-in slide-in-from-bottom duration-300 flex flex-col max-h-[85vh]">
-            
-            <div class="text-center mb-6 flex-shrink-0">
-                <div class="w-20 h-1.5 bg-slate-100 rounded-full mx-auto mb-6 sm:hidden"></div>
-                <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-50 text-blue-600 rounded-full mb-4">
-                    <span class="text-3xl">📦</span>
-                </div>
-                <h3 class="text-2xl font-black text-slate-800">Resumen de Carga</h3>
-                <p class="text-slate-500 text-sm">Clientes listos para despacho</p>
-            </div>
-
-            <div class="flex-1 overflow-y-auto pr-1 space-y-3">
-                ${Object.entries(totalesPorRuta).map(([letra, data]) => 
-                    data.clientes.map(c => `
-                    <div class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                        <div class="flex items-center gap-4 min-w-0">
-                            <span class="${data.color} text-white w-12 h-12 rounded-2xl flex items-center justify-center font-black text-xl shadow-sm flex-shrink-0">
-                                ${letra}
-                            </span>
-                            <div class="truncate">
-                                <div class="text-sm font-black text-slate-700 truncate">${c.nombre}</div>
-                                <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest truncate">
-                                    📍 ${c.direccion}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="text-right flex-shrink-0 ml-2">
-                            <div class="text-2xl font-black text-blue-600">${c.cant}</div>
-                            <div class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter text-center">Items</div>
-                        </div>
-                    </div>
-                `).join('')).join('')}
-            </div>
-
-            <div class="space-y-3 mt-8 flex-shrink-0">
-                <button onclick="confirmarFinalizacion()" class="w-full bg-blue-600 text-white font-black py-5 rounded-3xl shadow-xl shadow-blue-200 active:scale-95 transition-transform">
-                    CONFIRMAR Y CONTINUAR
-                </button>
-                <button onclick="document.getElementById('modal-resumen').remove()" class="w-full bg-white text-slate-400 font-bold py-3 text-sm">
-                    VOLVER A REVISAR
-                </button>
-            </div>
-        </div>
-    </div>`;
-
-    document.body.insertAdjacentHTML('beforeend', modalHtml);
-}
-
-function confirmarFinalizacion() {
-    const modal = document.getElementById('modal-resumen');
-    if(modal) modal.remove();
-
-    if (typeof asignarLetrasFijas === "function") asignarLetrasFijas(); 
-    
-    // Cambiado a 1 si es tu siguiente paso (Checklist)
-    nextStep(1); 
-}
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -2956,6 +2864,8 @@ function confirmarFinalizacion() {
         const totalProductos = p.items ? p.items.length : 0;
 
         return `
+
+         
         <label class="flex items-center gap-3 bg-white p-2.5 rounded-2xl border-2 border-transparent has-[:checked]:border-green-500 has-[:checked]:bg-blue-50/40 shadow-sm cursor-pointer active:scale-[0.98] transition-all mb-2">
             <input type="checkbox" 
     class="w-7 h-7 appearance-none border-2 border-slate-300 check-carga rounded-full checked:bg-green-500 checked:border-green-500 checked:bg-[url('data:image/svg+xml;charset=utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22white%22%20stroke-width%3D%224%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%2220%206%209%2017%204%2012%22%3E%3C/polyline%3E%3C/svg%3E')] bg-[length:14px] bg-no-repeat bg-center transition-all cursor-pointer active:scale-90 ml-1" 
@@ -2964,16 +2874,21 @@ function confirmarFinalizacion() {
                 ${letra}
             </div>
             <div class="flex-1 min-w-0">
-                <div class="font-bold text-slate-800 text-[13px] leading-tight truncate uppercase">
+                <div class="font-bold text-slate-800 text-[13px] leading-tight truncate">
                     ${p.cliente}
                 </div>
                 <div class="text-[10px] text-slate-500 truncate font-medium">
                     ${p.direccion || 'Sin dirección'}
                 </div>
+
+                
             </div>
-            <div class="text-[10px] font-black text-slate-700 bg-slate-50 px-2 py-1 rounded-lg border border-slate-100 whitespace-nowrap">
-                ${ICONOS.caja} ${totalProductos} ${totalProductos === 1 ? 'PAQUETE' : 'PAQUETES'}
+            <div class=" text-2xl font-black text-blue-600 bg-slate-50 px-2 py-1 rounded-lg border border-slate-100 whitespace-nowrap">
+            ${totalProductos}
             </div>
+
+            <div class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter text-center">Items</div>
+
         </label>`;
     }).join('') || '<p class="text-center py-10 text-slate-400 italic">No hay pedidos en este horario para cargar</p>';
 
@@ -3245,31 +3160,6 @@ document.addEventListener('click', function(e) {
         menu.classList.add('hidden');
     }
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -3602,6 +3492,18 @@ document.addEventListener('click', function(e) {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
         function finalizarEntrega() {
             const met = document.getElementById('metodo-pago').value;
             if (!met) return alert("Selecciona método de pago");
@@ -3634,39 +3536,47 @@ document.addEventListener('click', function(e) {
 
 
 
+function irAVerificacion() {
+    const met = document.getElementById('metodo-pago').value;
+    if (!met) return alert("Selecciona método de pago antes de continuar");
 
-        function irAVerificacion() {
-            const met = document.getElementById('metodo-pago').value;
-            if (!met) return alert("Selecciona método de pago antes de continuar");
+    // Buscamos el pedido. Usamos == por si uno es string y el otro número
+    let p = pedidos.find(x => x.id == pActualID);
 
-            // --- EL SONIDO VA AQUÍ ---
-            playSound('cash');
+    // VALIDACIÓN DE SEGURIDAD: Si no encuentra el pedido, aborta para no dar error
+    if (!p) {
+        console.error("No se encontró el pedido con ID:", pActualID);
+        alert("Hubo un error al recuperar los datos del pedido. Reintenta desde la lista.");
+        return;
+    }
 
-            let p = pedidos.find(x => x.id == pActualID);
-            const checks = document.querySelectorAll('.venta-check-consolidado');
+    // --- EL SONIDO VA AQUÍ ---
+    if (typeof playSound === 'function') playSound('cash');
 
-            // Guardamos temporalmente qué se marcó como vendido
-            p.temp_vendidos = [];
-            p.temp_devoluciones = [];
+    const checks = document.querySelectorAll('.venta-check-consolidado');
 
-            checks.forEach(c => {
-                if (c.checked) p.temp_vendidos.push(p.items[c.dataset.idx]);
-                else p.temp_devoluciones.push(p.items[c.dataset.idx]);
-            });
+    // Guardamos temporalmente qué se marcó como vendido
+    p.temp_vendidos = [];
+    p.temp_devoluciones = [];
 
-            // Si no hay devoluciones, saltamos directo al final
-            if (p.temp_devoluciones.length === 0) {
-                confirmarFinalTotal();
-                return;
+    checks.forEach(c => {
+        // Aseguramos que el índice exista en el pedido original
+        const item = p.items[c.dataset.idx];
+        if (item) {
+            if (c.checked) {
+                p.temp_vendidos.push(item);
+            } else {
+                p.temp_devoluciones.push(item);
             }
-
-            renderVerificacionDevoluciones(p.temp_devoluciones);
-            nextStep(5);
         }
+    });
+
+    // Como eliminamos el paso 5, ejecutamos directamente el cierre total
+    confirmarFinalTotal();
+}
 
 
-
-
+        //
      function renderVerificacionDevoluciones(devoluciones) {
     const lista = document.getElementById('lista-verificacion-devoluciones');
     
@@ -3702,6 +3612,9 @@ document.addEventListener('click', function(e) {
 }
 
 
+
+
+
         function validarChecklistRetorno() {
             const todos = Array.from(document.querySelectorAll('.check-retorno')).every(c => c.checked);
             const btn = document.getElementById('btn-cerrar-ruta');
@@ -3717,33 +3630,104 @@ document.addEventListener('click', function(e) {
 
 
 
-        // Reemplaza con la URL que copiaste en el paso anterior
-       
-        async function confirmarFinalTotal() {
-            let p = pedidos.find(x => x.id == pActualID);
+      async function confirmarFinalTotal() {
+    let p = pedidos.find(x => x.id == pActualID);
+    if (!p) return;
 
-            // Preparar datos existentes
-            p.vendidos = p.temp_vendidos || p.items;
-            p.devoluciones = p.temp_devoluciones || [];
-            p.metodoPago = document.getElementById('metodo-pago').value;
-            p.estado = 'completado';
-            p.fechaFinal = new Date().toLocaleDateString();
-            p.hora = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    // Procesar datos finales del pedido
+    p.vendidos = p.temp_vendidos || p.items;
+    p.devoluciones = p.temp_devoluciones || [];
+    p.metodoPago = document.getElementById('metodo-pago').value;
+    p.estado = 'completado';
+    p.fechaFinal = new Date().toLocaleDateString();
+    p.hora = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-            // ENVIAR A GOOGLE SHEETS con los nuevos campos
-            // Nota: Asegúrate de que p.cliente, p.direccion, p.contacto, p.envio y p.total existan en tu objeto pedido
-            enviarVentaASheets(p);
+    // Enviar a Google Sheets
+    enviarVentaASheets(p);
 
-            // Proceso normal de guardado
-            historial.unshift({ ...p });
-            pedidos = pedidos.filter(x => x.id != pActualID);
+    // Mover a historial y quitar de pendientes
+    historial.unshift({ ...p });
+    pedidos = pedidos.filter(x => x.id != pActualID);
 
-            playSound('complete');
-            pActualID = null;
-            save();
+    playSound('complete');
+    pActualID = null;
+    save(); // Guardar en LocalStorage
 
-            nextStep(pedidos.length === 0 ? 6 : 2);
-        }
+    // LÓGICA DE NAVEGACIÓN:
+    // Si quedan pedidos -> volver a la lista (paso 2)
+    // Si NO quedan pedidos -> ir al Arqueo y Devoluciones Finales (paso 6)
+    if (pedidos.length === 0) {
+        renderVerificacionFinalRuta(); // Preparamos la pantalla final
+        nextStep(6); 
+    } else {
+        nextStep(2);
+    }
+}
+
+
+
+
+// Función para habilitar/deshabilitar el botón final
+function validarChecklistDevolucionesGlobales() {
+    const checks = document.querySelectorAll('.check-global-dev');
+    const btn = document.getElementById('btn-fin-ruta');
+    
+    // Si no hay pedidos, el botón se habilita (caso raro, pero por seguridad)
+    if (checks.length === 0) {
+        btn.disabled = false;
+        btn.className = "w-full bg-emerald-600 text-white font-black py-7 rounded-[2rem] shadow-xl text-lg uppercase";
+        return;
+    }
+
+    // Comprobar si todos están marcados
+    const todosMarcados = Array.from(checks).every(c => c.checked);
+    
+    btn.disabled = !todosMarcados;
+    
+    if (todosMarcados) {
+        btn.className = "w-full bg-emerald-600 text-white font-black py-7 rounded-[2rem] shadow-xl text-lg uppercase animate-pulse";
+    } else {
+        btn.className = "w-full bg-slate-300 text-white font-black py-7 rounded-[2rem] shadow-xl text-lg uppercase";
+    }
+}
+
+// Función que se ejecuta al presionar el botón final
+function confirmarFinRuta() {
+    const mensaje = `⚠️ ¡ATENCIÓN!\n\n` +
+        `¿Confirmas que has revisado todos los pedidos (A, B, C...), el efectivo coincide y has recuperado las devoluciones?\n\n` +
+        `Al finalizar, se cerrará la jornada actual.`;
+
+    if (confirm(mensaje)) {
+        alert("✅ Ruta finalizada con éxito. ¡Buen trabajo!");
+        
+        // Opcional: Limpiar datos para mañana
+        // historial = [];
+        // save(); 
+
+        nextStep(0); // Volver al inicio
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -3787,45 +3771,51 @@ document.addEventListener('click', function(e) {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 function renderVerificacionFinalRuta() {
-    // 0. APLICAR FILTRO POR HORARIO AL HISTORIAL
-    let historialFiltrado = historial;
+    // 0. FILTRAR Y ORDENAR HISTORIAL
+
+//
+    let historialFiltrado = historial.filter(h => h.estado === 'completado');
     if (filtroHorarioActual !== 'Todos') {
-        historialFiltrado = historial.filter(h => 
+        historialFiltrado = historialFiltrado.filter(h => 
             String(h.horario || "").toLowerCase().includes(filtroHorarioActual.toLowerCase())
         );
     }
+    historialFiltrado.sort((a, b) => (a.letra || "").localeCompare(b.letra || ""));
 
-    // 1. Calcular montos totales cobrados SOLO del historial filtrado
+    // 1. CÁLCULOS DE DINERO (Vuelve al formato anterior)
     let cobradoEfectivo = 0;
-    let cobradoTappDani = 0;
-    let cobradoTappLore = 0;
-    let cobradoRutDani = 0;
-    let cobradoRutLore = 0;
-    let cobradoDigital = 0;
+    let cobradoTappDani = 0, cobradoTappLore = 0, cobradoRutDani = 0, cobradoRutLore = 0;
 
     historialFiltrado.forEach(h => {
-        if (h.estado === 'completado') {
-            const monto = h.totalFinal || 0;
-            const metodo = String(h.metodoPago || "");
-
-            if (metodo === 'Efectivo') {
-                cobradoEfectivo += monto;
-            } else if (metodo.includes('TAPP Dani')) {
-                cobradoTappDani += monto;
-            } else if (metodo.includes('TAPP Lore')) {
-                cobradoTappLore += monto;
-            } else if (metodo.includes('RUT Dani')) {
-                cobradoRutDani += monto;
-            } else if (metodo.includes('RUT Lore')) {
-                cobradoRutLore += monto;
-            } else {
-                cobradoDigital += monto; 
-            }
-        }
+        const monto = h.totalFinal || 0;
+        const met = String(h.metodoPago || "");
+        if (met === 'Efectivo') cobradoEfectivo += monto;
+        else if (met.includes('TAPP Dani')) cobradoTappDani += monto;
+        else if (met.includes('TAPP Lore')) cobradoTappLore += monto;
+        else if (met.includes('RUT Dani')) cobradoRutDani += monto;
+        else if (met.includes('RUT Lore')) cobradoRutLore += monto;
     });
 
-    // 2. Calcular esperados (Usando el fondoInicial que ya cargamos por horario)
+    // ¡ESTA LÍNEA ES LA CLAVE!
+    totalCobradoEfectivoGlobal = cobradoEfectivo;
+
+
     const esperadoEfectivo = (fondoInicial.efectivo || 0) + cobradoEfectivo;
     const esperadoTappDani = (fondoInicial.tapp_dani || 0) + cobradoTappDani;
     const esperadoTappLore = (fondoInicial.tapp_lore || 0) + cobradoTappLore;
@@ -3833,26 +3823,15 @@ function renderVerificacionFinalRuta() {
     const esperadoRutLore = (fondoInicial.rut_lore || 0) + cobradoRutLore;
     const totalEsperadoDigital = esperadoTappDani + esperadoTappLore + esperadoRutDani + esperadoRutLore;
 
-    // --- MENSAJE DE RECORDATORIO ---
-    const mensajeRecordatorio = `
-        <div class="bg-amber-50 border-l-4 border-amber-400 p-4 mb-6 rounded-r-2xl shadow-sm animate-pulse">
-            <div class="flex items-center">
-                <div class="flex-shrink-0 text-amber-400 text-xl">⚠️</div>
-                <div class="ml-3">
-                    <p class="text-xs text-amber-800 font-black uppercase tracking-wider">Paso Crítico: ${filtroHorarioActual}</p>
-                    <p class="text-[11px] text-amber-700 font-medium">
-                        Solo se muestran pedidos de la <b>${filtroHorarioActual}</b>. Asegúrate de registrar en Sheets antes de finalizar.
-                    </p>
-                </div>
-            </div>
-        </div>`;
+    // ... (dentro de renderVerificacionFinalRuta, después de calcular esperadoEfectivo)
+window.totalEfectivoEsperadoGlobal = esperadoEfectivo; 
+//
 
-    // 3. HTML del arqueo comparativo
-    const arqueoComparativo = `
+    // 2. RENDER ARQUEO COMPARATIVO (Diseño original solicitado)
+    const arqueoHTML = `
         <div id="arqueo-contenedor-dinamico">
-            ${mensajeRecordatorio}
             <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-200 mb-6">
-                <h3 class="text-[10px] font-black text-slate-500 uppercase mb-4 tracking-widest">Arqueo Esperado (${filtroHorarioActual})</h3>
+                <h3 class="text-[10px] font-black text-slate-500 uppercase mb-4 tracking-widest text-center">Arqueo Esperado (${filtroHorarioActual})</h3>
                 <div class="space-y-4">
                     <div class="flex justify-between items-center py-1 border-b border-slate-100">
                         <span class="text-slate-400 text-[10px] font-black">Efectivo (inicial + cobrado)</span>
@@ -3876,7 +3855,7 @@ function renderVerificacionFinalRuta() {
                             <p class="font-bold text-slate-700">$${esperadoRutLore.toLocaleString()}</p>
                         </div>
                     </div>
-                    <div class="pt-3 border-slate-200 text-center">
+                    <div class="pt-3 border-t border-slate-100 text-center">
                         <p class="text-xs font-bold text-slate-400">Total Digital Esperado</p>
                         <p class="text-2xl font-black text-indigo-700">$${totalEsperadoDigital.toLocaleString()}</p>
                     </div>
@@ -3884,100 +3863,78 @@ function renderVerificacionFinalRuta() {
             </div>
         </div>`;
 
-    // 4. Limpiar arqueos previos para evitar duplicados al re-renderizar
     const viejoArqueo = document.getElementById('arqueo-contenedor-dinamico');
     if (viejoArqueo) viejoArqueo.remove();
-
     const contenedorLista = document.getElementById('lista-devoluciones-globales');
-    contenedorLista.insertAdjacentHTML('beforebegin', arqueoComparativo);
+    contenedorLista.insertAdjacentHTML('beforebegin', arqueoHTML);
 
-    // 5. PROCESAR DEVOLUCIONES FILTRADAS
-    const devolucionesGlobales = [];
-    historialFiltrado.forEach(h => {
-        if (h.estado === 'completado' && h.devoluciones?.length > 0) {
-            h.devoluciones.forEach(item => {
-                devolucionesGlobales.push({
-                    letra: h.letra || '?',
-                    codigo: item.desc,
-                    cliente: h.cliente || 'Sin nombre'
-                });
-            });
-        }
-    });
+    // 3. GENERAR LISTA POR PEDIDO (Productos Vendidos + Devoluciones con Foto)
+    contenedorLista.innerHTML = historialFiltrado.map(pedido => {
+        const colorClase = getColorRuta(pedido.letra);
+        const totalItems = (pedido.vendidos?.length || 0) + (pedido.devoluciones?.length || 0);
 
-    devolucionesGlobales.sort((a, b) => a.letra.localeCompare(b.letra));
+        // Render Vendidos (Puntos verdes)
+        const htmlVendidos = (pedido.vendidos || []).map(it => `
+            <div class="flex items-center gap-2 py-1 border-b border-slate-50 last:border-0">
+                <span class="text-emerald-500 text-[10px]">●</span>
+                <span class="text-[11px] font-bold text-slate-700 uppercase flex-1">${it.desc}</span>
+                <span class="text-[10px] font-black text-slate-400">$${(it.precio || 0).toLocaleString()}</span>
+            </div>
+        `).join('');
 
-    // 6. RENDERIZAR LISTA DE DEVOLUCIONES
-    contenedorLista.innerHTML = devolucionesGlobales.map((dev) => {
-        const colorClase = getColorRuta(dev.letra);
+        // Render Devoluciones (Con Foto y Check estilo picking)
+        const htmlDevoluciones = (pedido.devoluciones || []).map(it => {
+            const infoInv = inventoryDataGlobal.find(inv => inv.codigo.trim().toLowerCase() === it.desc.trim().toLowerCase());
+            const urlFoto = infoInv ? infoInv.foto : (it.foto || '');
+            
+            return `
+            <label class="flex items-center gap-3 p-2 bg-red-50/50 rounded-2xl border border-red-100 mt-2 cursor-pointer has-[:checked]:opacity-30 transition-all">
+                <input type="checkbox" class="hidden" onchange="if(typeof playSound==='function') playSound('scanner')">
+                <div class="w-12 h-12 bg-white rounded-xl border border-red-100 overflow-hidden flex-shrink-0">
+                    ${urlFoto ? `<img src="${urlFoto}" class="w-full h-full object-cover">` : `<span class="flex items-center justify-center h-full">📦</span>`}
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-[10px] font-black text-red-700 uppercase truncate">${it.desc}</p>
+                    <p class="text-[9px] font-bold text-red-400">RECUPERAR PRODUCTO</p>
+                </div>
+                <div class="w-5 h-5 rounded-full border-2 border-red-200 flex items-center justify-center bg-white">
+                    <div class="w-2 h-2 bg-red-500 rounded-full scale-0 transition-transform"></div>
+                </div>
+            </label>
+            <style>label:has(input:checked) .w-2 { transform: scale(1); }</style>`;
+        }).join('');
+
         return `
-            <label class="flex justify-between items-center bg-white p-2 rounded-2xl border-2 border-transparent has-[:checked]:border-emerald-500 shadow-sm transition-all mb-3 cursor-pointer hover:bg-slate-50">
-                <div class="flex items-center gap-4 flex-1">
-                    <input type="checkbox" class="w-6 h-6 check-global-dev appearance-none border-2 border-slate-300 checked:bg-emerald-500 rounded-lg transition-all" onchange="validarChecklistDevolucionesGlobales()">
-                    <div class="flex items-center gap-3">
-                        <div class="${colorClase} text-white w-10 h-10 rounded-full flex items-center justify-center font-black text-xl shadow-md">
-                            ${dev.letra}
-                        </div>
-                        <div>
-                            <p class="font-black uppercase text-base text-slate-800">${dev.codigo}</p>
-                        </div>
+        <div class="bg-white rounded-[2rem] border border-slate-200 shadow-sm mb-6 overflow-hidden">
+            <div class="p-4 bg-slate-50 flex items-center justify-between border-b border-slate-100">
+                <div class="flex items-center gap-3">
+                    <div class="${colorClase} text-white w-9 h-9 rounded-full flex items-center justify-center font-black text-lg">
+                        ${pedido.letra}
+                    </div>
+                    <div>
+                        <p class="text-xs font-black text-slate-800 uppercase leading-none">${pedido.cliente}</p>
+                        <p class="text-[10px] font-bold text-slate-400 mt-1">${pedido.metodoPago} • <span class="text-slate-600">$${(pedido.totalFinal || 0).toLocaleString()}</span></p>
                     </div>
                 </div>
-                <span class="text-slate-400 opacity-70">${ICONOS.caja}</span>
-            </label>`;
-    }).join('') || `<p class="text-center text-slate-400 py-6 text-sm">No hay devoluciones para el horario ${filtroHorarioActual}</p>`;
+                <div class="text-right">
+                    <p class="text-[10px] font-black text-slate-300 uppercase leading-none">Items</p>
+                    <p class="text-lg font-black text-slate-800">${totalItems}</p>
+                </div>
+            </div>
+            <div class="p-4">
+                <div class="mb-2">${htmlVendidos}</div>
+                ${htmlDevoluciones ? `<div class="mt-3 pt-3 border-t-2 border-dashed border-slate-100">${htmlDevoluciones}</div>` : ''}
+                
+                <label class="mt-4 flex items-center justify-center gap-3 p-3 bg-slate-100 rounded-2xl cursor-pointer has-[:checked]:bg-emerald-600 has-[:checked]:text-white transition-all">
+                    <input type="checkbox" class="check-global-dev hidden" onchange="validarChecklistDevolucionesGlobales()">
+                    <span class="text-[10px] font-black uppercase tracking-widest">Confirmar Pedido ${pedido.letra}</span>
+                </label>
+            </div>
+        </div>`;
+    }).join('');
 
     validarChecklistDevolucionesGlobales();
-    if (typeof calcularEfectivoContado === 'function') calcularEfectivoContado();
 }
-
-
-
-        // NUEVO: Validar checkboxes de devoluciones globales
-        function validarChecklistDevolucionesGlobales() {
-            const checks = document.querySelectorAll('.check-global-dev');
-            const todosMarcados = Array.from(checks).every(c => c.checked);
-            const btn = document.getElementById('btn-fin-ruta');
-            btn.disabled = !todosMarcados;
-            btn.className = todosMarcados
-                ? "w-full bg-emerald-600 text-white font-black py-7 rounded-[2rem] shadow-xl text-lg uppercase animate-pulse"
-                : "w-full bg-slate-300 text-white font-black py-7 rounded-[2rem] shadow-xl text-lg uppercase";
-        }
-
-        function confirmarFinRuta() {
-            // Texto del mensaje de advertencia
-            const mensaje = `⚠️ ¡ALTO! ANTES DE FINALIZAR:\n\n` +
-                `1. ¿Ya registraste las ventas en Google Sheets?\n` +
-                `2. ¿Revisaste que el stock coincida?\n` +
-                `3. ¿El efectivo está guardado?\n\n` +
-                `Si finalizas ahora, el historial se borrará y no podrás ver estos datos después. ¿Confirmas que todo está registrado?`;
-
-            if (confirm(mensaje)) {
-                // Aquí va la lógica de cierre
-                alert("✅ Ruta finalizada y registro completado. ¡Buen trabajo!");
-
-                // OPCIONAL: Aquí podrías limpiar el historial para el día siguiente
-                // historial = []; 
-                // guardarHistorial(); 
-
-                nextStep(0); // Volver al inicio o pantalla de bienvenida
-            }
-        }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -4138,6 +4095,10 @@ function renderVerificacionFinalRuta() {
         }
 
 
+
+
+        
+
         //FUNCION : EXPORTAR A SHEETS
         // Función para exportar a un CSV que Sheets pueda abrir
         function exportarASheets() {
@@ -4216,7 +4177,7 @@ function renderVerificacionFinalRuta() {
     if (!confirm("¿Sincronizar pedidos desde Google Sheets?")) return;
 
     const COL = {
-       CODIGO: 7, PRECIO: 8, BIN: 9, ENVIO: 10, TOTAL: 11, 
+        CODIGO: 7, PRECIO: 8, BIN: 9, ENVIO: 10, TOTAL: 11, 
         CLIENTE: 12, DIRECCION: 13, TELEFONO: 14, HORARIO: 15, DETALLES: 16
     };
 
@@ -4624,31 +4585,25 @@ function mostrarFondoInicialSiEsNecesario() {
             const totalEl = document.getElementById('total-contado-efectivo');
             totalEl.textContent = `$${total.toLocaleString('es-CL')}`;
 
-            // Comparar con esperado (debe estar calculado antes en renderVerificacionFinalRuta)
-            const esperado = (fondoInicial.efectivo || 0) + (cobradoEfectivo || 0); // variables que ya calculas
+            // --- CORRECCIÓN AQUÍ ---
+    // Usamos el fondo inicial + la variable global que actualizamos en el render
+    const esperado = (fondoInicial.efectivo || 0) + totalCobradoEfectivoGlobal;
 
-            const diferencia = total - esperado;
-            const diffEl = document.getElementById('diferencia-arqueo');
+    const diferencia = totalContado - esperado;
+    const diffEl = document.getElementById('diferencia-arqueo');
 
-            if (diferencia === 0) {
-                diffEl.innerHTML = `<span class="text-emerald-600 font-bold">✓ Cuadra perfecto</span>`;
-                diffEl.className = "mt-4 text-center text-sm font-medium text-emerald-600";
-            } else if (diferencia > 0) {
-                diffEl.innerHTML = `<span class="text-amber-600 font-bold">Sobra +$${Math.abs(diferencia).toLocaleString('es-CL')}</span>`;
-                diffEl.className = "mt-4 text-center text-sm font-medium text-amber-600";
-            } else {
-                diffEl.innerHTML = `<span class="text-red-600 font-bold">Falta $${Math.abs(diferencia).toLocaleString('es-CL')}</span>`;
-                diffEl.className = "mt-4 text-center text-sm font-medium text-red-600";
-            }
-
-            // Opcional: cambiar color del total según diferencia
-            if (diferencia === 0) {
-                totalEl.className = "text-3xl font-black text-emerald-800";
-            } else if (diferencia > 0) {
-                totalEl.className = "text-3xl font-black text-amber-700";
-            } else {
-                totalEl.className = "text-3xl font-black text-red-700";
-            }
+    // ... (tu lógica de colores y mensajes de diferencia se ve excelente) ...
+    // Solo asegúrate de usar 'totalContado' en lugar de 'total' si cambiaste el nombre
+    if (diferencia === 0) {
+        diffEl.innerHTML = `<span class="text-emerald-600 font-bold">✓ Cuadra perfecto</span>`;
+        totalEl.className = "text-3xl font-black text-emerald-800";
+    } else if (diferencia > 0) {
+        diffEl.innerHTML = `<span class="text-amber-600 font-bold">Sobra +$${Math.abs(diferencia).toLocaleString('es-CL')}</span>`;
+        totalEl.className = "text-3xl font-black text-amber-700";
+    } else {
+        diffEl.innerHTML = `<span class="text-red-600 font-bold">Falta $${Math.abs(diferencia).toLocaleString('es-CL')}</span>`;
+        totalEl.className = "text-3xl font-black text-red-700";
+    }
         }
 
 
@@ -4681,6 +4636,8 @@ function mostrarFondoInicialSiEsNecesario() {
                     break;
             }
         }
+
+
 
 
         // SECCIÓN DE INICIO: Se ejecuta apenas abre la página
@@ -4997,10 +4954,7 @@ function filtrarPorHorario(horario) {
 //actualizaciones :
 
 
-//+añadir art. desde formulario
-
-//configuracion de rutas por horario
-
+//eliminar seccion devoluciones, y arqueo final
 
 
     </script>
@@ -5013,4 +4967,3 @@ function filtrarPorHorario(horario) {
 
 
 </html>
-
