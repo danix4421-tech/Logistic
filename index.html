@@ -574,6 +574,16 @@
     <!--rutas -->
 
     <section id="step2" class="step">
+        <div class="text-center mb-6 flex-shrink-0">
+                <div class="w-20 h-1.5 bg-slate-100 rounded-full mx-auto mb-6 sm:hidden"></div>
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-50 text-blue-600 rounded-full mb-4">
+                    <span class="text-3xl"><svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+</svg></span>
+                </div>
+                <h3 class="text-2xl font-black text-slate-800">Resumen de Rutas</h3>
+                <p class="text-slate-500 text-sm">Clientes listos para despacho</p>
+            </div>
         <div id="next-delivery-info" class=" [2.5rem] p-8 text-white mb-6 stycky top-0 "></div>
         <h3 class="text-xs font-black text-slate-400 uppercase mb-4 ml-2">Próximas paradas</h3>
         <div id="lista-ruta-activa" class="space-y-3 border-slate-200 rounded-3xl p-5">
@@ -742,8 +752,8 @@ function toggleMenuSecundario() {
 
 
 
-<section id="step6" class="step p-7">
-    <div class="bg-blue-500 rounded-[2.5rem] p-6 text-white mb-6 shadow-lg ">
+<section id="step6" class="step p-9">
+    <div class="bg-blue-500 rounded-[2.5rem] p-6 text-white mb-8 shadow-lg ">
         <h2 class="text-xs font-black uppercase opacity-80 tracking-widest">Fin de Ruta</h2>
         <h3 class="text-2xl font-black">Verificar Arqueo y Devoluciones</h3>
         <p class="text-[10px] font-bold opacity-90 mt-1">
@@ -807,9 +817,9 @@ function toggleMenuSecundario() {
     </div>
 
     <div class="mb-4 px-2">
-        <h3 class="text-[11px] font-black text-slate-600 uppercase mb-2 tracking-wider">Productos a devolver</h3>
+        <h3 class="text-[11px] font-black text-slate-600 uppercase mb-2 tracking-wider"></h3>
         <div id="lista-devoluciones-globales"
-            class="space-y-3 bg-white rounded-[2rem] p-6 shadow-sm border border-slate-100">
+            class="space-y-3 bg-white rounded-[2rem] shadow-sm border border-slate-100">
             </div>
     </div>
 
@@ -1167,7 +1177,7 @@ function toggleMenuSecundario() {
 
         // Variable global para el filtro
         let filtroHorarioActual = 'Todos';
-
+        let filtroHistorial = 'completado';
 
         let showMasSalidas = false;  // false = orden normal, true = más vendidos primero
         
@@ -2961,6 +2971,8 @@ function actualizarEnfoquePicking(isFirstLoad = false) {
 
     // --- ENTREGA ACTUAL ---
     document.getElementById('next-delivery-info').innerHTML = `
+
+
         <div class="bg-white p-4 rounded-3xl border-2 border-slate-200 shadow-xl mb-6">
             <div class="flex items-center gap-4">
                 <div class="${colorP} text-white w-14 h-14 rounded-full flex-shrink-0 flex items-center justify-center font-black text-2xl shadow-lg">
@@ -3787,9 +3799,7 @@ function confirmarFinRuta() {
 
 
 function renderVerificacionFinalRuta() {
-    // 0. FILTRAR Y ORDENAR HISTORIAL
-
-//
+    // 0. FILTRAR Y ORDENAR
     let historialFiltrado = historial.filter(h => h.estado === 'completado');
     if (filtroHorarioActual !== 'Todos') {
         historialFiltrado = historialFiltrado.filter(h => 
@@ -3798,148 +3808,178 @@ function renderVerificacionFinalRuta() {
     }
     historialFiltrado.sort((a, b) => (a.letra || "").localeCompare(b.letra || ""));
 
-    // 1. CÁLCULOS DE DINERO (Vuelve al formato anterior)
+    // 1. CÁLCULOS
     let cobradoEfectivo = 0;
-    let cobradoTappDani = 0, cobradoTappLore = 0, cobradoRutDani = 0, cobradoRutLore = 0;
+    let cTappD = 0, cTappL = 0, cRutD = 0, cRutL = 0;
 
     historialFiltrado.forEach(h => {
-        const monto = h.totalFinal || 0;
+        const m = h.totalFinal || 0;
         const met = String(h.metodoPago || "");
-        if (met === 'Efectivo') cobradoEfectivo += monto;
-        else if (met.includes('TAPP Dani')) cobradoTappDani += monto;
-        else if (met.includes('TAPP Lore')) cobradoTappLore += monto;
-        else if (met.includes('RUT Dani')) cobradoRutDani += monto;
-        else if (met.includes('RUT Lore')) cobradoRutLore += monto;
+        if (met === 'Efectivo') cobradoEfectivo += m;
+        else if (met.includes('TAPP Dani')) cTappD += m;
+        else if (met.includes('TAPP Lore')) cTappL += m;
+        else if (met.includes('RUT Dani')) cRutD += m;
+        else if (met.includes('RUT Lore')) cRutL += m;
     });
 
-    // ¡ESTA LÍNEA ES LA CLAVE!
-    totalCobradoEfectivoGlobal = cobradoEfectivo;
+    const totalEfectivo = (fondoInicial.efectivo || 0) + cobradoEfectivo;
+    const totalDigital = (fondoInicial.tapp_dani || 0) + cTappD + (fondoInicial.tapp_lore || 0) + cTappL + (fondoInicial.rut_dani || 0) + cRutD + (fondoInicial.rut_lore || 0) + cRutL;
 
-
-    const esperadoEfectivo = (fondoInicial.efectivo || 0) + cobradoEfectivo;
-    const esperadoTappDani = (fondoInicial.tapp_dani || 0) + cobradoTappDani;
-    const esperadoTappLore = (fondoInicial.tapp_lore || 0) + cobradoTappLore;
-    const esperadoRutDani = (fondoInicial.rut_dani || 0) + cobradoRutDani;
-    const esperadoRutLore = (fondoInicial.rut_lore || 0) + cobradoRutLore;
-    const totalEsperadoDigital = esperadoTappDani + esperadoTappLore + esperadoRutDani + esperadoRutLore;
-
-    // ... (dentro de renderVerificacionFinalRuta, después de calcular esperadoEfectivo)
-window.totalEfectivoEsperadoGlobal = esperadoEfectivo; 
-//
-
-    // 2. RENDER ARQUEO COMPARATIVO (Diseño original solicitado)
+    // 2. ARQUEO DE CAJA (Margen mínimo, máximo ancho)
     const arqueoHTML = `
-        <div id="arqueo-contenedor-dinamico">
-            <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-200 mb-6">
-                <h3 class="text-[10px] font-black text-slate-500 uppercase mb-4 tracking-widest text-center">Arqueo Esperado (${filtroHorarioActual})</h3>
-                <div class="space-y-4">
-                    <div class="flex justify-between items-center py-1 border-b border-slate-100">
-                        <span class="text-slate-400 text-[10px] font-black">Efectivo (inicial + cobrado)</span>
-                        <span class="font-black text-emerald-700 text-xl">$${esperadoEfectivo.toLocaleString()}</span>
+        <div id="arqueo-contenedor-dinamico" class="px-[6px] mb-4">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-tighter">Efectivo en Caja</p>
+                        <p class="text-3xl font-black text-emerald-600">$${totalEfectivo.toLocaleString()}</p>
                     </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="text-center">
-                            <p class="text-xs text-slate-500">TAPP Dani</p>
-                            <p class="font-bold text-slate-700">$${esperadoTappDani.toLocaleString()}</p>
-                        </div>
-                        <div class="text-center">
-                            <p class="text-xs text-slate-500">TAPP Lore</p>
-                            <p class="font-bold text-slate-700">$${esperadoTappLore.toLocaleString()}</p>
-                        </div>
-                        <div class="text-center">
-                            <p class="text-xs text-slate-500">RUT Dani</p>
-                            <p class="font-bold text-slate-700">$${esperadoRutDani.toLocaleString()}</p>
-                        </div>
-                        <div class="text-center">
-                            <p class="text-xs text-slate-500">RUT Lore</p>
-                            <p class="font-bold text-slate-700">$${esperadoRutLore.toLocaleString()}</p>
-                        </div>
+                    <div class="text-right">
+                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-tighter">Total Digital</p>
+                        <p class="text-xl font-black text-indigo-600">$${totalDigital.toLocaleString()}</p>
                     </div>
-                    <div class="pt-3 border-t border-slate-100 text-center">
-                        <p class="text-xs font-bold text-slate-400">Total Digital Esperado</p>
-                        <p class="text-2xl font-black text-indigo-700">$${totalEsperadoDigital.toLocaleString()}</p>
-                    </div>
+                </div>
+                <div class="grid grid-cols-4 gap-1 mt-4 pt-3 border-t border-slate-100 text-center">
+                    <div class="bg-slate-50 py-1 rounded-lg"><p class="text-[8px] text-slate-400 font-bold">T.Dani</p><p class="text-[10px] font-black">$${((fondoInicial.tapp_dani || 0) + cTappD).toLocaleString()}</p></div>
+                    <div class="bg-slate-50 py-1 rounded-lg"><p class="text-[8px] text-slate-400 font-bold">T.Lore</p><p class="text-[10px] font-black">$${((fondoInicial.tapp_lore || 0) + cTappL).toLocaleString()}</p></div>
+                    <div class="bg-slate-50 py-1 rounded-lg"><p class="text-[8px] text-slate-400 font-bold">R.Dani</p><p class="text-[10px] font-black">$${((fondoInicial.rut_dani || 0) + cRutD).toLocaleString()}</p></div>
+                    <div class="bg-slate-50 py-1 rounded-lg"><p class="text-[8px] text-slate-400 font-bold">R.Lore</p><p class="text-[10px] font-black">$${((fondoInicial.rut_lore || 0) + cRutL).toLocaleString()}</p></div>
                 </div>
             </div>
         </div>`;
 
-    const viejoArqueo = document.getElementById('arqueo-contenedor-dinamico');
-    if (viejoArqueo) viejoArqueo.remove();
-    const contenedorLista = document.getElementById('lista-devoluciones-globales');
-    contenedorLista.insertAdjacentHTML('beforebegin', arqueoHTML);
+    // 3. BARRA DE PROGRESO (Encima de las devoluciones)
+    const progresoHTML = `
+        <div id="cabecera-progreso-fija" class="px-[6px] mb-4 sticky top-0 z-50 bg-slate-50/90 backdrop-blur-sm py-2">
+            <div class="bg-white rounded-xl shadow-md border border-red-100 p-3">
+                <h2 class="text-[12px] font-black text-slate-800 uppercase mb-2">📦 Productos a Devolver</h2>
+                <div class="flex justify-between items-center mb-1">
+                    <p id="txt-progreso-dev" class="text-[10px] font-bold text-red-500 uppercase">Iniciando verificación...</p>
+                    <span id="porcentaje-dev" class="text-lg font-black text-red-600">0%</span>
+                </div>
+                <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+                    <div id="barra-dev-fill" class="bg-red-500 h-full w-0 transition-all duration-500"></div>
+                </div>
+            </div>
+        </div>`;
 
-    // 3. GENERAR LISTA POR PEDIDO (Productos Vendidos + Devoluciones con Foto)
+    const contenedorLista = document.getElementById('lista-devoluciones-globales');
+    
+    // Limpieza estricta de elementos previos
+    const idsParaLimpiar = ['arqueo-contenedor-dinamico', 'cabecera-progreso-fija'];
+    idsParaLimpiar.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.remove();
+    });
+
+    contenedorLista.insertAdjacentHTML('beforebegin', arqueoHTML + progresoHTML);
+
+    // 4. LISTA DE TARJETAS (Máximo ancho con margen mínimo)
     contenedorLista.innerHTML = historialFiltrado.map(pedido => {
         const colorClase = getColorRuta(pedido.letra);
-        const totalItems = (pedido.vendidos?.length || 0) + (pedido.devoluciones?.length || 0);
-
-        // Render Vendidos (Puntos verdes)
+        
         const htmlVendidos = (pedido.vendidos || []).map(it => `
-            <div class="flex items-center gap-2 py-1 border-b border-slate-50 last:border-0">
-                <span class="text-emerald-500 text-[10px]">●</span>
-                <span class="text-[11px] font-bold text-slate-700 uppercase flex-1">${it.desc}</span>
-                <span class="text-[10px] font-black text-slate-400">$${(it.precio || 0).toLocaleString()}</span>
+            <div class="flex justify-between items-center py-2.5 border-b border-slate-50 last:border-0 opacity-60">
+                <span class="text-[13px] font-medium text-slate-700 uppercase truncate flex-1 pr-2">${it.desc}</span>
+                <span class="text-[13px] font-bold text-slate-400">$${(it.precio || 0).toLocaleString()}</span>
             </div>
         `).join('');
 
-        // Render Devoluciones (Con Foto y Check estilo picking)
         const htmlDevoluciones = (pedido.devoluciones || []).map(it => {
             const infoInv = inventoryDataGlobal.find(inv => inv.codigo.trim().toLowerCase() === it.desc.trim().toLowerCase());
             const urlFoto = infoInv ? infoInv.foto : (it.foto || '');
-            
             return `
-            <label class="flex items-center gap-3 p-2 bg-red-50/50 rounded-2xl border border-red-100 mt-2 cursor-pointer has-[:checked]:opacity-30 transition-all">
-                <input type="checkbox" class="hidden" onchange="if(typeof playSound==='function') playSound('scanner')">
-                <div class="w-12 h-12 bg-white rounded-xl border border-red-100 overflow-hidden flex-shrink-0">
-                    ${urlFoto ? `<img src="${urlFoto}" class="w-full h-full object-cover">` : `<span class="flex items-center justify-center h-full">📦</span>`}
+            <label class="flex items-center gap-3 p-3 bg-red-50 rounded-xl border border-red-100 mt-2 active:bg-red-100 has-[:checked]:bg-slate-50 has-[:checked]:border-slate-200 has-[:checked]:opacity-50 transition-all">
+            <input type="checkbox" class="check-item-devolucion hidden" onchange="manejarCheckRuta(this)">
+                <div class="w-12 h-12 bg-white rounded-lg overflow-hidden flex-shrink-0 border border-red-200">
+                    ${urlFoto ? `<img src="${urlFoto}" class="w-full h-full object-cover">` : `<span class="flex items-center justify-center h-full text-lg">📦</span>`}
                 </div>
                 <div class="flex-1 min-w-0">
-                    <p class="text-[10px] font-black text-red-700 uppercase truncate">${it.desc}</p>
-                    <p class="text-[9px] font-bold text-red-400">RECUPERAR PRODUCTO</p>
+                    <p class="text-[12px] font-black text-red-900 uppercase leading-none truncate">${it.desc}</p>
+                    <p class="text-[9px] font-bold text-red-400 uppercase mt-1">${pedido.cliente}</p>
                 </div>
-                <div class="w-5 h-5 rounded-full border-2 border-red-200 flex items-center justify-center bg-white">
-                    <div class="w-2 h-2 bg-red-500 rounded-full scale-0 transition-transform"></div>
+                <div class="w-7 h-7 rounded-full border-2 border-red-200 bg-white flex items-center justify-center">
+                    <div class="w-3.5 h-3.5 bg-slate-200 rounded-full scale-0 transition-transform duration-300"></div>
                 </div>
-            </label>
-            <style>label:has(input:checked) .w-2 { transform: scale(1); }</style>`;
+            </label>`;
         }).join('');
 
+         window.manejarCheckRuta = function(input) {
+        // AQUÍ ES DONDE VA TU SONIDO
+        if (input.checked) {
+            if (typeof playSound === 'function') {
+                playSound('scanner'); 
+            }
+        }
+
+ }
+
+
         return `
-        <div class="bg-white rounded-[2rem] border border-slate-200 shadow-sm mb-6 overflow-hidden">
-            <div class="p-4 bg-slate-50 flex items-center justify-between border-b border-slate-100">
-                <div class="flex items-center gap-3">
-                    <div class="${colorClase} text-white w-9 h-9 rounded-full flex items-center justify-center font-black text-lg">
-                        ${pedido.letra}
+        <div class="px-[6px] mb-4">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="px-3 py-3 bg-slate-50/50 flex items-center justify-between border-b border-slate-100">
+                    <div class="flex items-center gap-2 min-w-0">
+                        <div class="${colorClase} text-white w-8 h-8 rounded-lg flex-shrink-0 flex items-center justify-center font-black text-sm">
+                            ${pedido.letra}
+                        </div>
+                        <p class="text-[13px] font-black text-slate-800 uppercase truncate">${pedido.cliente}</p>
                     </div>
-                    <div>
-                        <p class="text-xs font-black text-slate-800 uppercase leading-none">${pedido.cliente}</p>
-                        <p class="text-[10px] font-bold text-slate-400 mt-1">${pedido.metodoPago} • <span class="text-slate-600">$${(pedido.totalFinal || 0).toLocaleString()}</span></p>
-                    </div>
+                    <p class="text-[15px] font-black text-blue-900 ml-2 whitespace-nowrap">$${(pedido.totalFinal || 0).toLocaleString()}</p>
                 </div>
-                <div class="text-right">
-                    <p class="text-[10px] font-black text-slate-300 uppercase leading-none">Items</p>
-                    <p class="text-lg font-black text-slate-800">${totalItems}</p>
+                <div class="px-3 pb-3">
+                    <div>${htmlVendidos}</div>
+                    ${htmlDevoluciones ? `<div class="mt-2 pt-2 border-t border-dashed border-red-100">${htmlDevoluciones}</div>` : ''}
                 </div>
-            </div>
-            <div class="p-4">
-                <div class="mb-2">${htmlVendidos}</div>
-                ${htmlDevoluciones ? `<div class="mt-3 pt-3 border-t-2 border-dashed border-slate-100">${htmlDevoluciones}</div>` : ''}
-                
-                <label class="mt-4 flex items-center justify-center gap-3 p-3 bg-slate-100 rounded-2xl cursor-pointer has-[:checked]:bg-emerald-600 has-[:checked]:text-white transition-all">
-                    <input type="checkbox" class="check-global-dev hidden" onchange="validarChecklistDevolucionesGlobales()">
-                    <span class="text-[10px] font-black uppercase tracking-widest">Confirmar Pedido ${pedido.letra}</span>
-                </label>
             </div>
         </div>`;
-    }).join('');
+    }).join('') + `<style>label:has(input:checked) .w-3\\.5 { transform: scale(1); }</style>`;
 
-    validarChecklistDevolucionesGlobales();
+   
+
+// --- 5. LÓGICA GLOBAL (FUERA DEL MAP) ---
+
+    window.manejarCheckRuta = function(input) {
+        if (input.checked) {
+            if (typeof playSound === 'function') {
+                playSound('scanner'); 
+            }
+        }
+        actualizarProgresoDevoluciones();
+    };
+
+
+
+
+
+
+
+    // 5. LÓGICA DE ACTUALIZACIÓN
+    window.actualizarProgresoDevoluciones = function() {
+        const items = document.querySelectorAll('.check-item-devolucion');
+        const marcados = document.querySelectorAll('.check-item-devolucion:checked');
+        const total = items.length;
+        const porcentaje = total > 0 ? Math.round((marcados.length / total) * 100) : 0;
+
+        const barra = document.getElementById('barra-dev-fill');
+        const txtP = document.getElementById('porcentaje-dev');
+        const txtC = document.getElementById('txt-progreso-dev');
+
+        if (barra) {
+            barra.style.width = `${porcentaje}%`;
+            barra.style.backgroundColor = porcentaje === 100 ? '#10b981' : '#ef4444';
+        }
+        if (txtP) txtP.innerText = `${porcentaje}%`;
+        if (txtC) txtC.innerText = `${marcados.length} de ${total} productos listos`;
+
+        if (typeof validarChecklistDevolucionesGlobales === 'function') {
+            validarChecklistDevolucionesGlobales();
+        }
+    };
+
+    setTimeout(actualizarProgresoDevoluciones, 100);
+   
 }
-
-
-
-
-
 
 
 
@@ -3988,7 +4028,7 @@ window.totalEfectivoEsperadoGlobal = esperadoEfectivo;
         function cancelarPedido() { if (!confirm("¿Cancelar este pedido?")) return; let p = pedidos.find(x => x.id == pActualID); if (!p) return; p.estado = 'cancelado'; p.fechaFinal = new Date().toLocaleDateString(); p.horaFinal = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); historial.unshift({ ...p }); pedidos = pedidos.filter(x => x.id != pActualID); pActualID = null; save(); nextStep(pedidos.length > 0 ? 2 : 0); }
 
         // Variable global para controlar qué pestaña ver (puedes inicializarla en 0)
-        let filtroHistorial = 'completado';
+        
 
 
         function verHistorial(filtro = 'completado') {
