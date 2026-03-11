@@ -450,11 +450,20 @@
 </style>
 
 
-<div>
-                
-                <h2 class="text-center text-[16px]  font-black text-slate-800 tracking-tight px-2">Pedidos pendientes</h2>
-                <p class=" text-center text-slate-400 text-sm px-2  mb-4">Elige un Horario para configurar la Ruta de Entrega</p>
-            </div>
+<div class="flex flex-col items-center justify-center text-center mb-6 pt-4 px-2">
+    
+    <div class="inline-flex items-center justify-center w-14 h-14 bg-blue-50 text-blue-600 rounded-full mb-3 shadow-sm border border-blue-100">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-7 h-7">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 3.5h6" />
+        </svg>
+    </div>
+
+    <h2 class="text-xl font-black text-slate-800 uppercase tracking-tighter">Pedidos pendientes</h2>
+    <p class="text-[11px] text-slate-500 leading-tight max-w-[250px] mt-1">
+        Elige un Horario para configurar la Ruta de Entrega.
+    </p>
+</div>
 
         <!-- lISTA PRE CARGA -->
    
@@ -480,8 +489,7 @@
 
   <!-- PICKING -->
  <section id="step_picking" class="step py-8 ">
-    <h2 class="text-center text-[16px] text-slate-800 font-black px-2">Orden de Recoleccion</h2>
-     <p class="text-center text-slate-400 text-sm px-2 mb-4 ">Busca, Checkea y deposita en su Totem cada articulo</p>
+   
     
     <div id="lista-picking" class="space-y-4"></div>
 
@@ -498,7 +506,9 @@
 
     <div class="text-center mb-6 flex-shrink-0">
                 <div class="w-20 h-1.5 bg-slate-100 rounded-full mx-auto mb-6 sm:hidden"></div>
-               
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-50 text-blue-600 rounded-full mb-4">
+                    <span class="text-3xl">📦</span>
+                </div>
                 <h3 class="text-[16px] font-black text-slate-800">Resumen de Carga</h3>
                 <p class="text-slate-400 text-sm px-2  mb-4">Reviza la cantidad de bolsas, y Carga el Furgon</p>
                 
@@ -578,10 +588,13 @@
 
     <!--rutas -->
 
-    <section id="step2" class="step mb-8">
-        <div class=" text-center mb-8 flex-shrink-0">
+    <section id="step2" class="step">
+        <div class=" text-center mb-6 flex-shrink-0">
                 <div class="w-20 h-1.5 bg-slate-100 rounded-full mx-auto mb-6 sm:hidden"></div>
-             
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-50 text-blue-600 rounded-full mb-4">
+                    <span class=" text-3xl"><svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+</svg></span>
                 </div>
                 <h3 class="text-center text-2xl font-black text-slate-800">Resumen de Rutas</h3>
                 <p class="text-center text-slate-500 text-sm">Empieza las Ruta de Entrega !Buena Suerte!</p>
@@ -662,8 +675,12 @@ function toggleMenuSecundario() {
     <!-- Etapa4, pago-->
 
     <section id="step4" class="step mb-8 text-center">
-        <div class="w-20 h-1.5 bg-slate-100 rounded-full mx-auto mb-8 sm:hidden"></div>
-                
+         <h3 class=" text-2xl font-black text-[16px] text-slate-900  leading-tight px-2 mb-4">Validacion y Pago</h3>
+        <div class="inline-flex items-center justify-center w-16 h-16 bg-green-50 text-green-600 border rounded-full mp-10  mb-2">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-8 h-8">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+    </svg>
+</div>
         <h3 class=" text-2xl font-black text-[16px] text-slate-900  leading-tight px-2">Validacion y Pago</h3>
         <p class="text-slate-800 text-sm  px-2">Valida la Entrega y Recibe el Pago</p>
 
@@ -752,6 +769,8 @@ function toggleMenuSecundario() {
 
 
 
+
+<!-- Etapa7 Historial-->
     <section id="step7" class="step">
         <div class="flex justify-between items-center p-10"></div>
         <div id="lista-historial" class="space-y-3"></div>
@@ -759,84 +778,91 @@ function toggleMenuSecundario() {
 
 
 
-
-<section id="step6" class="step p-9">
-    <div class=" text-center rounded-[2.5rem] p-6 mb-8 ">
-        <h2 class="text-xs font-black   tracking-widest">Fin de Ruta</h2>
-        <h3 class="text-[16px] font-black">Verificar Arqueo y Devoluciones</h3>
-        <p class="text-[10px] mt-1">
-            Confirma montos y todos los Articulos devueltos
+<section id="step6" class="step px-2 py-6"> <div class="text-center p-6 mb-4">
+        <div class="inline-flex items-center justify-center w-16 h-16 bg-indigo-50 text-indigo-600 rounded-full mb-4 shadow-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
+            </svg>
+        </div>
+        <h2 class="text-xs font-black tracking-widest text-slate-400 uppercase">Fin de Ruta</h2>
+        <h3 class="text-xl font-black text-slate-800 tracking-tighter">Verificar Arqueo y Devoluciones</h3>
+        <p class="text-[11px] text-slate-500 mt-1 max-w-[280px] mx-auto">
+            Confirma los montos y que todos los productos devueltos han sido recuperados.
         </p>
     </div>
 
-    <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 mb-6">
-        <h3 class="text-[11px] font-black text-slate-600 uppercase mb-3 tracking-wider">Conteo real efectivo</h3>
+    <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 mb-6 w-full">
+        <h3 class="text-[12px] font-black text-slate-600 mb-5 tracking-wider flex items-center">
+            <span class="w-2 h-2 bg-emerald-500 rounded-full mr-2"></span>
+            Conteo real efectivo
+        </h3>
 
-        <div class="grid grid-cols-3 gap-3 mb-4">
-            <div class="text-center">
-                <div class="text-[10px] font-bold text-slate-700 mb-1">$20.000</div>
+        <div class="grid grid-cols-3 gap-3 mb-6">
+            <div class="flex flex-col">
+                <label class="text-[10px] font-bold text-slate-400 mb-1 ml-1 uppercase">$20.000</label>
                 <input type="number" min="0" id="billete-20000" placeholder="0"
-                    class="w-full bg-slate-50 border border-slate-200 rounded-lg py-2 px-2 text-center text-base font-semibold focus:ring-1 focus:ring-emerald-500 focus:border-emerald-400"
+                    class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-2 text-center text-lg font-black text-slate-800 focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all appearance-none"
                     oninput="calcularEfectivoContado()">
             </div>
-
-            <div class="text-center">
-                <div class="text-[10px] font-bold text-slate-700 mb-1">$10.000</div>
+            <div class="flex flex-col">
+                <label class="text-[10px] font-bold text-slate-400 mb-1 ml-1 uppercase">$10.000</label>
                 <input type="number" min="0" id="billete-10000" placeholder="0"
-                    class="w-full bg-slate-50 border border-slate-200 rounded-lg py-2 px-2 text-center text-base font-semibold focus:ring-1 focus:ring-emerald-500 focus:border-emerald-400"
+                    class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-2 text-center text-lg font-black text-slate-800 focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all"
                     oninput="calcularEfectivoContado()">
             </div>
-
-            <div class="text-center">
-                <div class="text-[10px] font-bold text-slate-700 mb-1">$5.000</div>
+            <div class="flex flex-col">
+                <label class="text-[10px] font-bold text-slate-400 mb-1 ml-1 uppercase">$5.000</label>
                 <input type="number" min="0" id="billete-5000" placeholder="0"
-                    class="w-full bg-slate-50 border border-slate-200 rounded-lg py-2 px-2 text-center text-base font-semibold focus:ring-1 focus:ring-emerald-500 focus:border-emerald-400"
+                    class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-2 text-center text-lg font-black text-slate-800 focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all"
                     oninput="calcularEfectivoContado()">
             </div>
-
-            <div class="text-center">
-                <div class="text-[10px] font-bold text-slate-700 mb-1">$2.000</div>
+            <div class="flex flex-col">
+                <label class="text-[10px] font-bold text-slate-400 mb-1 ml-1 uppercase">$2.000</label>
                 <input type="number" min="0" id="billete-2000" placeholder="0"
-                    class="w-full bg-slate-50 border border-slate-200 rounded-lg py-2 px-2 text-center text-base font-semibold focus:ring-1 focus:ring-emerald-500 focus:border-emerald-400"
+                    class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-2 text-center text-lg font-black text-slate-800 focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all"
                     oninput="calcularEfectivoContado()">
             </div>
-
-            <div class="text-center">
-                <div class="text-[10px] font-bold text-slate-700 mb-1">$1.000</div>
+            <div class="flex flex-col">
+                <label class="text-[10px] font-bold text-slate-400 mb-1 ml-1 uppercase">$1.000</label>
                 <input type="number" min="0" id="billete-1000" placeholder="0"
-                    class="w-full bg-slate-50 border border-slate-200 rounded-lg py-2 px-2 text-center text-base font-semibold focus:ring-1 focus:ring-emerald-500 focus:border-emerald-400"
+                    class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-2 text-center text-lg font-black text-slate-800 focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all"
                     oninput="calcularEfectivoContado()">
             </div>
-
-            <div class="text-center">
-                <div class="text-[10px] font-bold text-slate-700 mb-1">$500</div>
+            <div class="flex flex-col">
+                <label class="text-[10px] font-bold text-slate-400 mb-1 ml-1 uppercase">$500</label>
                 <input type="number" min="0" id="moneda-500" placeholder="0"
-                    class="w-full bg-slate-50 border border-slate-200 rounded-lg py-2 px-2 text-center text-base font-semibold focus:ring-1 focus:ring-emerald-500 focus:border-emerald-400"
+                    class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-2 text-center text-lg font-black text-slate-800 focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all"
                     oninput="calcularEfectivoContado()">
             </div>
         </div>
 
-        <div class="bg-emerald-50/70 rounded-xl p-3.5 text-center border border-emerald-100">
-            <p class="text-[11px] font-medium text-emerald-700 mb-0.5">Total contado</p>
-            <p id="total-contado-efectivo" class="text-2xl font-black text-emerald-800 ">$0</p>
+        <div class="bg-emerald-50 rounded-2xl p-5 text-center shadow-lg shadow-emerald-900/20 border-b-4 border-emerald-500">
+            <p class="text-[10px] font-black text-slate-900 uppercase tracking-[0.2em] mb-1">Total en Efectivo Contado</p>
+            <p id="total-contado-efectivo" class="text-3xl font-black text-emerald-500 tracking-tighter">$0</p>
         </div>
 
-        <div id="diferencia-arqueo" class="mt-3 text-center text-[13px] font-medium min-h-[1.5rem]"></div>
+        <div id="diferencia-arqueo" class="mt-4 text-center text-[13px] font-bold uppercase tracking-wide min-h-[1.5rem]"></div>
     </div>
 
-    <div class="mb-4 px-2">
-        <h3 class="text-[11px] font-black text-slate-600 uppercase mb-2 tracking-wider"></h3>
-        <div id="lista-devoluciones-globales"
-            class="space-y-3 bg-white rounded-[2rem] shadow-sm border border-slate-100">
+    <div class="mb-8 w-full">
+        <div class="px-2 mb-4">
+            <h3 class="text-[12px] font-black text-slate-600  tracking-wider flex items-center">
+                <span class="w-2 h-2 bg-emerald-500 rounded-full mr-2"></span>
+                Detalle de Caja
+            </h3>
+        </div>
+        
+        <div id="lista-devoluciones-globales" class="space-y-4 w-full">
             </div>
     </div>
 
-    <button id="btn-fin-ruta" onclick="confirmarFinRuta()" disabled
-        class="w-full bg-slate-300 text-white font-black py-7 rounded-[2rem] shadow-xl text-lg uppercase">
-        Finalizar Ruta
-    </button>
+    <div class="px-2 pb-10">
+        <button id="btn-fin-ruta" onclick="confirmarFinRuta()" disabled
+            class="w-full bg-slate-300 text-white font-black py-6 rounded-[2rem] shadow-xl text-xl uppercase tracking-widest transition-all active:scale-95 disabled:opacity-50">
+            Finalizar Ruta
+        </button>
+    </div>
 </section>
-
 
 
 
@@ -2568,16 +2594,25 @@ function renderConfigurarRutas() {
 
     let html = `
     <div class="p-9 pb-20">
-        <div class="mb-6">
-            <h3 class="text-center  text-2xl font-black text-[16px] text-slate-900 leading-tight">Configuracion orden de Ruta</h3>
+       <div class="flex flex-col items-center justify-center text-center mb-8 pt-4 px-2">
+    
+    <div class="inline-flex items-center justify-center w-14 h-14 bg-indigo-50 text-indigo-600 rounded-full mb-3 shadow-sm border border-indigo-100">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-7 h-7">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 6.75V15m6-10.5v.75m.01 0a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM9 3a2.25 2.25 0 1 0 0 4.5A2.25 2.25 0 0 0 9 3Zm0 12a2.25 2.25 0 1 0 0 4.5A2.25 2.25 0 0 0 9 15Zm6-1.5a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM17.482 17.348l2.25-2.25m0 0-2.25-2.25m2.25 2.25H15" />
+        </svg>
+    </div>
 
-            <div>
-                <p class=" text-center text-slate-800 text-sm">Ordena los Pedidos de acuerdo a la Ruta mas Eficiente</p>
-            </div>
-            <div class="mt-4 text-center inline-block bg-blue-600 text-white px-3 py-1 rounded-lg text-[10px] font-black">
-                Horario: ${filtroHorarioActual}
-            </div>
-        </div>
+    <h3 class="text-xl font-black text-slate-900 uppercase tracking-tighter leading-tight">
+        Configuración orden de Ruta
+    </h3>
+    <p class="text-[11px] text-slate-500 leading-tight max-w-[240px] mt-1">
+        Ordena los Pedidos de acuerdo a la Ruta más Eficiente.
+    </p>
+
+    <div class="mt-4 inline-block bg-blue-600 text-white px-4 py-1.5 rounded-full text-[10px] font-black shadow-md shadow-blue-200 uppercase tracking-widest">
+        Horario: ${filtroHorarioActual}
+    </div>
+</div>
 
         <div id="lista-ordenar-pedidos" class="space-y-3">
             ${pedidosRuta.map((p, index) => {
@@ -2723,14 +2758,27 @@ function cambiarOrdenRuta(indexActual, direccion) {
     // --- CONSTRUCCIÓN DEL HTML ---
     
     // Header de Progreso (Pegajoso arriba)
-    let html = `
-    <div class="sticky top-0 z-20 bg-slate-50/90 backdrop-blur-md pb-4 pt-2">
+   let html = `
+    <div class="sticky top-0 z-20 bg-slate-50/90 backdrop-blur-md pb-6 pt-4 px-2">
+        
+        <div class="flex flex-col items-center justify-center text-center mb-6">
+            <div class="inline-flex items-center justify-center w-14 h-14 bg-orange-50 text-orange-600 rounded-full mb-3 shadow-sm border border-orange-100">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-7 h-7">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607ZM10.5 7.5v6m3-3h-6" />
+                </svg>
+            </div>
+            <h2 class="text-xl font-black text-slate-800 uppercase tracking-tighter">Picking</h2>
+            <p class="text-[11px] text-slate-500 leading-tight max-w-[220px]">
+                Busca, chequea y deposita en su totem cada articulo.
+            </p>
+        </div>
+
         <div class="flex justify-between items-end mb-2 px-1">
             <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Progreso de Recolección</span>
             <span id="picking-stats" class="text-sm font-black text-orange-600">0/0</span>
         </div>
-        <div class="w-full h-3 bg-slate-200 rounded-full overflow-hidden">
-            <div id="picking-bar" class="h-full bg-orange-500 transition-all duration-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]" style="width: 0%"></div>
+        <div class="w-full h-3 bg-slate-200 rounded-full overflow-hidden border border-slate-300/30">
+            <div id="picking-bar" class="h-full bg-orange-500 transition-all duration-700 ease-out shadow-[0_0_10px_rgba(249,115,22,0.4)]" style="width: 0%"></div>
         </div>
     </div>
     <div id="picking-container-scroll" class="space-y-6 pb-20">`;
@@ -2742,7 +2790,7 @@ function cambiarOrdenRuta(indexActual, direccion) {
         html += `
         <section class="bin-group">
             <div class="flex items-center gap-2 mb-4">
-                <div class="bg-orange-600 text-white px-3 py-1 rounded-lg text-[16px] font-black uppercase">
+                <div class="bg-orange-500 text-white px-3 py-1 rounded-lg text-[12px] font-black uppercase">
                     📍 ${bin}
                 </div>
                 <div class="h-[1px] flex-1 bg-blue-100"></div>
@@ -3870,19 +3918,35 @@ function renderVerificacionFinalRuta() {
         </div>`;
 
     // 3. BARRA DE PROGRESO (Encima de las devoluciones)
-   const progresoHTML = `
-<div id="cabecera-progreso-fija" class="px-[6px] mb-4 sticky top-0 z-50 bg-slate-50/90 backdrop-blur-sm py-2">
-    <div class="bg-white rounded-xl shadow-md border border-red-100 p-3">
-        <h2 class="text-[12px] font-black text-slate-800 uppercase mb-2">📦 Productos a Devolver</h2>
-        <div class="flex justify-between items-center mb-1">
-            <p id="txt-progreso-dev" class="text-[10px] font-bold text-red-500 uppercase">Iniciando verificación...</p>
-            <span id="porcentaje-dev" class="text-lg font-black text-red-600">0%</span>
+  const progresoHTML = `
+<div id="cabecera-progreso-fija" class="px-[6px] mb-4 sticky top-0 z-50 bg-slate-50/90 backdrop-blur-sm py-4">
+    <div class="bg-white rounded-2xl shadow-md border border-red-100 p-4">
+        
+        <div class="flex flex-col items-center justify-center text-center mb-5">
+            <div class="inline-flex items-center justify-center w-14 h-14 bg-red-50 text-red-600 rounded-full mb-3 shadow-sm border border-red-100">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-7 h-7">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
+                </svg>
+            </div>
+            <h2 class="text-lg font-black text-slate-800 uppercase tracking-tighter">Conteo final</h2>
+            <p class="text-[11px] text-slate-500 leading-tight">Verifica y marca las devoluciones de cada pedido.</p>
         </div>
-        <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
-            <div id="barra-dev-fill" class="bg-red-500 h-full w-0 transition-all duration-500"></div>
+
+        <div class="space-y-2">
+            <div class="flex justify-between items-end">
+                <p id="txt-progreso-dev" class="text-[10px] font-black text-red-500 uppercase tracking-widest">Estado del proceso</p>
+                <span id="porcentaje-dev" class="text-2xl font-black text-red-600 leading-none">0%</span>
+            </div>
+            
+            <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden border border-slate-200/50">
+                <div id="barra-dev-fill" class="bg-red-500 h-full w-0 transition-all duration-700 ease-out shadow-[0_0_10px_rgba(239,68,68,0.3)]"></div>
+            </div>
         </div>
-        <div id="mensaje-completado" class="hidden mt-2 text-center animate-bounce">
-            <p class="text-[11px] font-bold text-green-600 uppercase">✨ ¡Proceso completado con éxito! ✨</p>
+
+        <div id="mensaje-completado" class="hidden mt-4 text-center animate-bounce">
+            <p class="text-[11px] font-bold text-green-600 uppercase bg-green-50 py-1 rounded-lg">
+                ✨ ¡Proceso completado con éxito! ✨
+            </p>
         </div>
     </div>
 </div>`;
