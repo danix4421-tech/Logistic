@@ -5243,31 +5243,34 @@ function validarFilaAuditoria(input) {
     const card = input.closest('.audit-card');
     const statusIcon = card.querySelector('.status-icon');
     const stockSistema = parseInt(card.dataset.stockSistema);
-    const valorIngresado = input.value;
+    const valor = input.value;
 
-    if (valorIngresado === "") {
-        // Estado inicial (vacío)
-        card.classList.remove('border-emerald-500', 'border-amber-400', 'bg-emerald-50/30', 'bg-amber-50/30');
+    if (valor === "") {
+        card.classList.remove('border-emerald-500', 'bg-emerald-50/30', 'border-amber-400', 'bg-amber-50/30');
         statusIcon.className = "status-icon w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-400";
-    } else {
-        const stockReal = parseInt(valorIngresado);
+        return;
+    }
+
+    const stockReal = parseInt(valor);
+
+    if (stockReal === stockSistema) {
+        // ¡ÉXITO! El stock coincide
+        card.classList.add('border-emerald-500', 'bg-emerald-50/30');
+        card.classList.remove('border-amber-400', 'bg-amber-50/30');
+        statusIcon.className = "status-icon w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center text-white shadow-lg";
         
-        if (stockReal === stockSistema) {
-            // Coincide (Todo bien)
-            card.classList.add('border-emerald-500', 'bg-emerald-50/30');
-            card.classList.remove('border-amber-400', 'bg-amber-50/30');
-            statusIcon.className = "status-icon w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center text-white shadow-lg shadow-emerald-200";
-        } else {
-            // Discrepancia (Diferente)
-            card.classList.add('border-amber-400', 'bg-amber-50/30');
-            card.classList.remove('border-emerald-500', 'bg-emerald-50/30');
-            statusIcon.className = "status-icon w-8 h-8 rounded-full bg-amber-500 flex items-center justify-center text-white shadow-lg shadow-amber-200";
-        }
+        reproducirSonidoAuditoria('exito'); // <--- SONIDO BIEN
+    } else {
+        // ¡ERROR! Hay discrepancia
+        card.classList.add('border-amber-400', 'bg-amber-50/30');
+        card.classList.remove('border-emerald-500', 'bg-emerald-50/30');
+        statusIcon.className = "status-icon w-8 h-8 rounded-full bg-amber-500 flex items-center justify-center text-white shadow-lg";
+        
+        reproducirSonidoAuditoria('error'); // <--- SONIDO MAL
     }
     
     actualizarProgresoAuditoria();
 }
-
 
 
 
@@ -5448,7 +5451,34 @@ function filtrarPorRepisa(letra) {
 
 
 
+// Función para generar sonidos electrónicos rápidos
+function reproducirSonidoAuditoria(tipo) {
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const oscillator = audioCtx.createOscillator();
+    const gainNode = audioCtx.createGain();
 
+    oscillator.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+
+    if (tipo === 'exito') {
+        // Sonido agudo y corto (Bip alegre)
+        oscillator.type = 'sine';
+        oscillator.frequency.setValueAtTime(880, audioCtx.currentTime); // Nota La5
+        oscillator.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.1);
+        gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+        oscillator.start();
+        oscillator.stop(audioCtx.currentTime + 0.2);
+    } else if (tipo === 'error') {
+        // Sonido grave y doble (Bup-bup de alerta)
+        oscillator.type = 'sawtooth';
+        oscillator.frequency.setValueAtTime(150, audioCtx.currentTime);
+        gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.3);
+        oscillator.start();
+        oscillator.stop(audioCtx.currentTime + 0.3);
+    }
+}
 
 
 
