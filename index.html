@@ -205,36 +205,42 @@
                     <span class="text-lg">⚡</span>
                 </button>
 
+
+
                 <div class="relative group">
-                    <button
-                        class="w-9 h-9 flex items-center justify-center text-slate-400 hover:bg-slate-100 rounded-xl transition-all">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
-                            stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
-                        </svg>
-                    </button>
-                    <div
-                        class="absolute right-0 mt-1 w-40 bg-white border border-slate-200 rounded-xl shadow-xl py-1 hidden group-hover:block z-[60]">
-                        <button onclick="verHistorial()"
-                            class="w-full px-4 py-2 text-left text-xs font-semibold text-slate-600 hover:bg-slate-50 flex items-center gap-2">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke-width="2"
-                                    stroke-linecap="round" stroke-linejoin="round" />
-                            </svg>
-                            Historial
-                        </button>
-                        <button onclick="limpiarTodo()"
-                            class="w-full px-4 py-2 text-left text-xs font-semibold text-red-500 hover:bg-red-50 flex items-center gap-2">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path
-                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                            </svg>
-                            Limpiar Todo
-                        </button>
-                    </div>
-                </div>
+    <button class="w-9 h-9 flex items-center justify-center text-slate-400 hover:bg-slate-100 rounded-xl transition-all">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+        </svg>
+    </button>
+    <div class="absolute right-0 mt-1 w-48 bg-white border border-slate-200 rounded-xl shadow-xl py-1 hidden group-hover:block z-[60]">
+        
+        <button onclick="verHistorial()"
+            class="w-full px-4 py-2 text-left text-xs font-semibold text-slate-600 hover:bg-slate-50 flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            Historial
+        </button>
+
+        <button onclick="abrirSeccionInventario()"
+            class="w-full px-4 py-2 text-left text-xs font-semibold text-slate-600 hover:bg-slate-50 flex items-center gap-2 border-y border-slate-50">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.375m1.875-10.375h-3c-1.121 0-1.625.504-1.625 1.625v1.5c0 1.121.504 1.625 1.625 1.625h3c1.121 0 1.625-.504 1.625-1.625v-1.5c0-1.121-.504-1.625-1.625-1.625Z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.125c0-1.121.504-1.625 1.625-1.625h.375M3.75 6.125v13.125c0 1.121.504 1.625 1.625 1.625h13.125c1.121 0 1.625-.504 1.625-1.625V6.125c0-1.121-.504-1.625-1.625-1.625h-.375M3.75 6.125h.375m16.5 0h-.375m-1.5 0h-3m-8.25 0h-3m4.5 0v2.25" />
+            </svg>
+            Toma de Inventario
+        </button>
+
+        <button onclick="limpiarTodo()"
+            class="w-full px-4 py-2 text-left text-xs font-semibold text-red-500 hover:bg-red-50 flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            Limpiar Todo
+        </button>
+    </div>
+</div>
             </div>
         </div>
     </header>
@@ -253,17 +259,28 @@
        <div id="contenedor-formulario"
     class="hidden fixed inset-0 z-50 bg-white overflow-y-auto p-6 md:p-10 animate-in fade-in zoom-in duration-200">
     
-    <div class="max-w-4xl mx-auto">
-        <div class="flex justify-between items-center mb-8">
-            <div>
-                <h2 class="text-2xl font-black text-slate-800 tracking-tight">Nuevo Pedido</h2>
-                <p class="text-slate-400 text-sm">Completa la información para la ruta de entrega</p>
-            </div>
-            <button onclick="toggleMasivo()"
-                class="bg-slate-50 px-4 py-2 rounded-xl text-slate-500 font-bold text-xs uppercase hover:bg-blue-50 hover:text-blue-600 transition-all">
-                📦 Carga Masiva
-            </button>
+<div class="max-w-4xl mx-auto relative pt-4">
+    <div class="absolute top-0 right-0">
+        <button onclick="toggleMasivo()"
+            class="bg-slate-50 px-3 py-1.5 rounded-xl text-slate-500 font-black text-[10px] hover:bg-blue-50 hover:text-blue-600 transition-all border border-slate-100 shadow-sm">
+            📦 Carga Masiva
+        </button>
+    </div>
+
+    <div class="flex flex-col items-center justify-center text-center mb-8">
+        
+        <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-50 text-blue-600 rounded-full mb-4 shadow-sm border border-blue-100">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+            </svg>
         </div>
+
+        <div>
+            <h2 class="text-[20px] font-black text-slate-800 tracking-tighter">Nuevo Pedido</h2>
+            <p class="text-slate-400 text-[11px]">Completa la información para la ruta de entrega</p>
+        </div>
+    </div>
+</div>
 
         <div id="area-masiva"
             class="hidden mb-8 p-6 bg-blue-50 rounded-3xl border-2 border-dashed border-blue-200">
@@ -480,7 +497,7 @@
 
 
 
- <!-- CONFIGURACIN RUTA-->
+ <!-- CONFIGURACION DE RUTA-->
 <div id="step_config_ruta" class="step">
     </div>
 
@@ -510,7 +527,7 @@
                     <span class="text-3xl">📦</span>
                 </div>
                 <h3 class="text-[20px] font-black text-slate-800">Resumen de Carga</h3>
-                <p class="text-[11px] text-slate-400 px-2  mb-4">Reviza la cantidad de Pedidos y Carga el Furgon</p>
+                <p class="text-[11px] text-slate-400 text-sm px-2  mb-4">Reviza la cantidad de bolsas, y Carga el Furgon</p>
                 
             </div>
     
@@ -586,7 +603,7 @@
 
 
 
-    <!--rutas -->
+    <!--Resumen de rutas -->
 
     <section id="step2" class="step">
         <div class=" text-center mb-6 flex-shrink-0">
@@ -596,8 +613,8 @@
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
             </svg></span>
                 </div>
-                <h3 class="text-center text-[20px]  font-black text-slate-800">Resumen de Rutas</h3>
-                <p class="text-center text-[11px] text-slate-500 ">Empieza las Ruta de Entrega !Buena Suerte!</p>
+                <h3 class="text-center text-[20px] font-black text-slate-800">Resumen de Rutas</h3>
+                <p class="text-center text-[11px] text-slate-500">Empieza las Ruta de Entrega !Buena Suerte!</p>
             </div>
         <div id="next-delivery-info" class=" [2.5rem] p-2 text-white mb-6 stycky top-0 "></div>
         <h3 class="text-xs font-black text-slate-400 uppercase mb-4 ml-2">Próximas paradas</h3>
@@ -675,18 +692,18 @@ function toggleMenuSecundario() {
     <!-- Etapa4, pago-->
 
     <section id="step4" class="step mb-8 text-center">
-         <h3 class=" text-[20px] font-black text-slate-900  leading-tight px-2 mb-4">Validacion y Pago</h3>
+         <h3 class="text-[20px] font-black text-slate-900  leading-tight px-2 mb-4">Validacion y Pago</h3>
         <div class="inline-flex items-center justify-center w-16 h-16 bg-green-50 text-green-600 border rounded-full mp-10  mb-2">
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-8 h-8">
         <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
     </svg>
 </div>
         <h3 class="font-black text-[20px] text-slate-900  leading-tight px-2">Validacion y Pago</h3>
-        <p class="text-slate-800 text-[11px]  px-2">Valida la Entrega y Recibe el Pago</p>
+        <p class="text-slate-800 text-[11px]   px-2">Valida la Entrega y Recibe el Pago</p>
 
            
         <div class="mb-4 text-left">
-            <h3 class="text-[12px] text-slate-800 e mb-3 ml-2 tracking-widest"></h3>
+            <h3 class="text-[10px] text-slate-800 mp-6 mb-2 ml-2 tracking-widest"></h3>
             <div id="multi-venta-selector" class="space-y-3 mb-6"></div>
 
             <div class="bg-white rounded-[2.5rem] p-6 shadow-sm border border-slate-100">
@@ -787,7 +804,7 @@ function toggleMenuSecundario() {
         <h2 class="text-xs font-black tracking-widest text-slate-400 uppercase">Fin de Ruta</h2>
         <h3 class="text-[20px] font-black text-slate-800 tracking-tighter">Arqueo y Devoluciones</h3>
         <p class="text-[11px] text-slate-500 mt-1 max-w-[280px] mx-auto">
-            Confirma los montos, las ventas y las Devoluciones
+            Confirma los montos y que todos los productos devueltos han sido recuperados.
         </p>
     </div>
 
@@ -993,7 +1010,7 @@ function toggleMenuSecundario() {
                         <button onclick="setFiltroModelo('Z')" data-mod="Z" class="flex-shrink-0 px-5 py-2 text-xs font-bold rounded-full border border-slate-200 bg-white text-slate-600 hover:border-slate-400">Zap</button>
                         <button onclick="setFiltroModelo('D')" data-mod="D" class="flex-shrink-0 px-5 py-2 text-xs font-bold rounded-full border border-slate-200 bg-white text-slate-600 hover:border-slate-400">Dep</button>
                         <button onclick="setFiltroModelo('P')" data-mod="P" class="flex-shrink-0 px-5 py-2 text-xs font-bold rounded-full border border-slate-200 bg-white text-slate-600 hover:border-slate-400">Pan</button>
-                        <button onclick="setFiltroModelo('PF')" data-mod="PF" class="flex-shrink-0 px-5 py-2 text-xs font-bold rounded-full border border-slate-200 bg-white text-slate-600 hover:border-slate-400">Pf</button>
+                        <button onclick="setFiltroModelo('F')" data-mod="PF" class="flex-shrink-0 px-5 py-2 text-xs font-bold rounded-full border border-slate-200 bg-white text-slate-600 hover:border-slate-400">Pf</button>
                         <button onclick="setFiltroModelo('S')" data-mod="S" class="flex-shrink-0 px-5 py-2 text-xs font-bold rounded-full border border-slate-200 bg-white text-slate-600 hover:border-slate-400">San</button>
                         <button onclick="setFiltroModelo('C')" data-mod="C" class="flex-shrink-0 px-5 py-2 text-xs font-bold rounded-full border border-slate-200 bg-white text-slate-600 hover:border-slate-400">Ch</button>
                         <button onclick="setFiltroModelo('B')" data-mod="B" class="flex-shrink-0 px-5 py-2 text-xs font-bold rounded-full border border-slate-200 bg-white text-slate-600 hover:border-slate-400">Bn</button>
@@ -1049,6 +1066,7 @@ function toggleMenuSecundario() {
                         <th class="w-14 px-1 py-3 border-b text-center font-black text-emerald-700 bg-emerald-50/50">Dis</th>
                         <th class="col-hor w-12 px-2 py-3 border-b text-center">Hor</th>
                         <th class="col-pre w-12 px-2 py-3 border-b text-center">Pre</th>
+                        <th class="col-pre w-12 px-2 py-3 border-b text-center">Cos</th>
                     </tr>
                 </thead>
                 <tbody id="inventory-table-body" class="bg-white divide-y divide-slate-100">
@@ -1112,7 +1130,52 @@ function toggleMenuSecundario() {
 
 
 
+
+<!--nueva seccion toma de inventario-->
+<section id="step-inventario" class="step hidden p-4">
+    <div id="menu-estantes-inventario">
+        <div class="flex flex-col items-center justify-center text-center mb-8 pt-4">
+            <div class="inline-flex items-center justify-center w-14 h-14 bg-slate-100 text-slate-600 rounded-full mb-3 shadow-sm border border-slate-200">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-7 h-7">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H18a2.25 2.25 0 0 1-2.25-2.25v-2.25Z" />
+                </svg>
+            </div>
+            <h2 class="text-xl font-black text-slate-800 uppercase tracking-tighter">Selecciona Zona</h2>
+            <p class="text-[11px] text-slate-500 max-w-[200px]">Elige un estante para comenzar la auditoría.</p>
+        </div>
+        
+        <div id="lista-botones-estantes" class="grid grid-cols-2 gap-4 pb-20">
+            </div>
+    </div>
+
+    <div id="contenedor-auditoria-activa" class="hidden">
+        <div id="contenedor-inventario-dinamico"></div>
+        <button id="btn-guardar-inventario" onclick="finalizarControlInventario()" disabled
+            class="w-full mt-10 bg-slate-200 text-slate-400 font-black py-6 rounded-[2.5rem] uppercase tracking-widest shadow-xl transition-all">
+            Guardar Avance
+        </button>
+    </div>
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     </main>
+
+
+
+
+
 
 
 
@@ -1169,6 +1232,15 @@ function toggleMenuSecundario() {
 
 
 
+
+
+
+
+
+
+
+
+
     <!--boton flotante -->
 
 
@@ -1192,11 +1264,25 @@ function toggleMenuSecundario() {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     <script>
         //--- CONFIGURACIÓN DE LINKS DE GOOGLE SHEETS ---
         const URL_PRODUCTOS_CSV = "";
         const URL_PEDIDOS_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQxmMtrLlKEH1uQUNmUvQxXUmFJQNQc46rwfOpKMNzJytrGDRxyMjo_S2DhQIDJmXTv1o6G2fvZQZgi/pub?gid=271238087&single=true&output=csv";
-         const URL_SHEETS = "https://script.google.com/macros/s/AKfycbwMVN9i_Dzbc3LEAP4nCHdEPPW4ShGvxrCwnt0DYtVovocOzN6KMrKViGnITXdOWzNA/exec";
+         const URL_SHEETS = "https://script.google.com/macros/s/AKfycbx8Hr5H5WDRdmO_0-bAEFDQFSjKJp513rrcg72cPnCv7L_LpqA8KRITOhc-BksuWr2L/exec";
 
         var cobradoEfectivo = 0;
         let pedidos = JSON.parse(localStorage.getItem('z_pedidos')) || [];
@@ -1216,7 +1302,7 @@ function toggleMenuSecundario() {
         let showMasSalidas = false;  // false = orden normal, true = más vendidos primero
         let totalEfectivoGlobal = 0;
 
-
+        let estanteSeleccionado = null;
 
           //NUEVA 
         // Al cargar la página o al iniciar
@@ -1353,7 +1439,8 @@ fetchInventory();
                 disponibles: parseInt(cols[9]) || 0,
                 foto: (cols[10] || '').trim(),
                 precio: parseInt(cols[11]) || 0,
-                horma: (cols[12] || 'N').trim().toUpperCase()
+                horma: (cols[12] || 'N').trim().toUpperCase(),
+                costo: parseInt(cols[13]) || 0
             };
         }).filter(item => item && item.codigo);
 
@@ -1477,16 +1564,19 @@ function buscarEnInventario(codigo) {
 
 
 
-       function retroceder() {
+
+
+
+function retroceder() {
     if (currentStep === 0.4) nextStep(0); 
     else if (currentStep === 0.5) nextStep(0.4); 
     else if (currentStep === 1) nextStep(0.5);
     else if (currentStep === 2) nextStep(1);
     else if (currentStep === 3) nextStep(2);
     else if (currentStep === 4) nextStep(3);
-    // ELIMINADO EL PASO 5 AQUÍ
-    else if (currentStep === 6) nextStep(2); // Salta del arqueo de vuelta a la lista
+    else if (currentStep === 6) nextStep(2); 
     else if (currentStep === 'inventory') nextStep(0);
+    else if (currentStep === 'auditoria') nextStep(0); // <--- NUEVA LÍNEA
     else if (currentStep === 7) cerrarHistorial();
 }
 
@@ -1494,83 +1584,82 @@ function buscarEnInventario(codigo) {
      
 
 
-        function nextStep(n) {
-            currentStep = n;
-            save();
 
-            // Ocultar todas las secciones
-            document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
 
-            // Determinar el ID de la sección según el tipo de n
-            let stepId;
-    // --- AGREGAR ESTA CONDICIÓN ---
+       function nextStep(n) {
+    currentStep = n;
+    save();
+
+    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+
+    let stepId;
     if (n === 0.4) {
         stepId = 'step_config_ruta'; 
     } else if (n === 0.5) {
         stepId = 'step_picking';
+    } else if (n === 'auditoria') { // <--- NUEVA CONDICIÓN
+        stepId = 'step-inventario'; 
     } else if (typeof n === 'string') {
         stepId = `step_${n}`;
     } else {
         stepId = `step${n}`;
     }
 
-            const stepEl = document.getElementById(stepId);
-            if (stepEl) {
-                stepEl.classList.add('active');
-            } else {
-                console.error(`No se encontró la sección con ID: ${stepId}`);
-                // Fallback: volver al inicio si falla
-                currentStep = 0;
-                document.getElementById('step0').classList.add('active');
-            }
-
-            // Visibilidad del header (mostrar en inicio e inventario)
-            const header = document.getElementById('main-header');
-            header.style.display = (n === 0 || n === 'inventory') ? 'block' : 'none';
-
-            // Botones de navegación (volver y home)
-            const backBtn = document.getElementById('global-back-btn');
-            const homeBtn = document.getElementById('btn-inicio-home');
-
-            if (n === 0) {
-                backBtn.classList.add('hidden');
-                if (homeBtn) homeBtn.classList.add('hidden');
-            } else {
-                backBtn.classList.remove('hidden');
-                if (homeBtn) homeBtn.classList.remove('hidden');
-            }
-
-            // Render específico según la sección
-            if (n === 0) renderStep0();
-            if (n === 0.4) renderConfigurarRutas(); // <--- Llamada a la nueva función
-            if (n === 0.5) renderPicking();
-            if (n === 1) renderChecklistCarga(); // Si tienes esta función
-            if (n === 2) renderStep2();
-            if (n === 3) renderStep3();
-            if (n === 4) renderVistaUnificada();
-            
-            if (n === 6) renderVerificacionFinalRuta();
-
-// BUSCA ESTO EN TU FUNCIÓN nextStep:
-if (n === 'inventory') {
-    // Si ya tenemos los datos cargados (que deberían estarlo por el paso 2)
-    if (inventoryDataGlobal && inventoryDataGlobal.length > 0) {
-        renderInventory(inventoryDataGlobal); // Solo dibujamos la tabla
+    const stepEl = document.getElementById(stepId);
+    if (stepEl) {
+        stepEl.classList.add('active');
     } else {
-        fetchInventory(); // Solo si por algún error no cargaron al inicio
+        console.error(`No se encontró la sección con ID: ${stepId}`);
+        currentStep = 0;
+        document.getElementById('step0').classList.add('active');
     }
+
+    // Visibilidad del header (mostrar en inicio, inventario y auditoría)
+    const header = document.getElementById('main-header');
+    header.style.display = (n === 0 || n === 'inventory' || n === 'auditoria') ? 'block' : 'none';
+
+    const backBtn = document.getElementById('global-back-btn');
+    const homeBtn = document.getElementById('btn-inicio-home');
+
+    if (n === 0) {
+        backBtn.classList.add('hidden');
+        if (homeBtn) homeBtn.classList.add('hidden');
+    } else {
+        backBtn.classList.remove('hidden');
+        if (homeBtn) homeBtn.classList.remove('hidden');
+    }
+
+    // --- LLAMADAS A RENDER ---
+    if (n === 0) renderStep0();
+    if (n === 0.4) renderConfigurarRutas();
+    if (n === 0.5) renderPicking();
+    if (n === 1) renderChecklistCarga();
+    if (n === 2) renderStep2();
+    if (n === 3) renderStep3();
+    if (n === 4) renderVistaUnificada();
+    if (n === 6) renderVerificacionFinalRuta();
+    
+    // Nueva sección de Auditoría
+    if (n === 'auditoria') {
+    renderMenuEstantes(); // En lugar de renderInventarioControl directo
 }
 
-// ACTUALIZACIÓN DEL CARRITO:
-    // Llamamos a tu función para que cuente las filas actuales
-    actualizarContadorCarrito();
-
-
-
-            actualizarBotonFlotante(n);
-            actualizarVisibilidadCarrito(n); // El nuevo del carrito de la galería
-            window.scrollTo(0, 0);
+    if (n === 'inventory') {
+        if (inventoryDataGlobal && inventoryDataGlobal.length > 0) {
+            renderInventory(inventoryDataGlobal);
+        } else {
+            fetchInventory();
         }
+    }
+
+    actualizarContadorCarrito();
+    actualizarBotonFlotante(n);
+    actualizarVisibilidadCarrito(n);
+    window.scrollTo(0, 0);
+}
+
+
+
 
         // Función auxiliar para el botón Home
         function irAlInicio() {
@@ -1578,6 +1667,9 @@ if (n === 'inventory') {
                 nextStep(0);
             }
         }
+
+
+
 
 
 
@@ -2009,6 +2101,7 @@ function actualizarVisibilidadCarrito(n) {
             <td class="px-3 py-2 text-xs hidden ">${item.foto}</td>
             <td class="px-3 py-2 text-xs">${item.horma}</td>
             <td class="px-3 py-2 text-xs">${item.precio}</td>
+            <td class="px-3 py-2 text-xs">${item.costo}</td>
         `;
                 tableBody.appendChild(row);
             });
@@ -3834,6 +3927,7 @@ function confirmarFinRuta() {
                     cliente: datos.cliente || "Consumidor Final",
                     direccion: datos.direccion || "No definida",
                     telefono: datos.telefono || "N/A",
+                    horario: datos.horario || "N/A",
                     metodoPago: datos.metodoPago,
                     estado: datos.estado
                 })
@@ -5099,6 +5193,262 @@ function filtrarPorHorario(horario) {
 
 
 
+//Nueva seccion toma de inventario
+
+
+
+
+function actualizarProgresoAuditoria() {
+    const inputs = document.querySelectorAll('.input-audit-real');
+    const total = inputs.length;
+    const completados = Array.from(inputs).filter(i => i.value !== "").length;
+
+    const porcentaje = total > 0 ? (completados / total) * 100 : 0;
+    document.getElementById('audit-bar').style.width = `${porcentaje}%`;
+    document.getElementById('audit-stats').innerText = `${completados} / ${total}`;
+
+    const btn = document.getElementById('btn-guardar-inventario');
+    if (completados === total && total > 0) {
+        btn.disabled = false;
+        btn.classList.replace('bg-slate-200', 'bg-emerald-600');
+        btn.classList.replace('text-slate-400', 'text-white');
+    } else {
+        btn.disabled = true;
+        btn.classList.replace('bg-emerald-600', 'bg-slate-200');
+        btn.classList.replace('text-white', 'text-slate-400');
+    }
+}
+
+
+
+
+
+
+
+
+function finalizarControlInventario() {
+    playSound('success');
+    alert("✅ Inventario verificado con éxito.");
+    // Aquí podrías enviar un correo o guardar un log de auditoría
+}
+
+
+function abrirSeccionInventario() {
+    // Cerramos el menú desplegable si estuviera abierto (opcional)
+    nextStep('auditoria');
+}
+
+
+function validarFilaAuditoria(input) {
+    const card = input.closest('.audit-card');
+    const statusIcon = card.querySelector('.status-icon');
+    const stockSistema = parseInt(card.dataset.stockSistema);
+    const valorIngresado = input.value;
+
+    if (valorIngresado === "") {
+        // Estado inicial (vacío)
+        card.classList.remove('border-emerald-500', 'border-amber-400', 'bg-emerald-50/30', 'bg-amber-50/30');
+        statusIcon.className = "status-icon w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-400";
+    } else {
+        const stockReal = parseInt(valorIngresado);
+        
+        if (stockReal === stockSistema) {
+            // Coincide (Todo bien)
+            card.classList.add('border-emerald-500', 'bg-emerald-50/30');
+            card.classList.remove('border-amber-400', 'bg-amber-50/30');
+            statusIcon.className = "status-icon w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center text-white shadow-lg shadow-emerald-200";
+        } else {
+            // Discrepancia (Diferente)
+            card.classList.add('border-amber-400', 'bg-amber-50/30');
+            card.classList.remove('border-emerald-500', 'bg-emerald-50/30');
+            statusIcon.className = "status-icon w-8 h-8 rounded-full bg-amber-500 flex items-center justify-center text-white shadow-lg shadow-amber-200";
+        }
+    }
+    
+    actualizarProgresoAuditoria();
+}
+
+
+
+
+// Variable para saber qué estante estamos auditando
+
+
+function renderMenuEstantes() {
+    document.getElementById('menu-estantes-inventario').classList.remove('hidden');
+    document.getElementById('contenedor-auditoria-activa').classList.add('hidden');
+
+    // 1. Extraer solo el NÚMERO del Estante (asumiendo formato "1-A" o "1 A")
+    const estantesNumeros = [...new Set(inventoryDataGlobal.map(item => {
+        const match = item.bin.match(/\d+/); // Busca el primer número que encuentre
+        return match ? match[0] : "S/N";
+    }))].sort((a, b) => a - b);
+
+    const contenedor = document.getElementById('lista-botones-estantes');
+    contenedor.innerHTML = estantesNumeros.map(num => `
+        <button onclick="iniciarAuditoriaEstante('${num}')" 
+            class="bg-white p-8 rounded-[2.5rem] border-2 border-slate-100 shadow-sm flex flex-col items-center justify-center gap-2 active:scale-95 transition-all">
+            <span class="text-xs font-black text-slate-400 uppercase">Estante</span>
+            <span class="text-4xl font-black text-slate-800">${num}</span>
+            <div class="bg-blue-50 text-blue-600 px-3 py-1 rounded-full text-[9px] font-black uppercase mt-2">
+                ${inventoryDataGlobal.filter(i => i.bin.startsWith(num)).length} SKU
+            </div>
+        </button>
+    `).join('');
+}
+
+
+
+
+
+
+
+
+
+
+function iniciarAuditoriaEstante(num) {
+    console.log("Iniciando auditoría para Estante:", num);
+    estanteSeleccionado = num;
+    
+    // 1. Cambiar visibilidad de contenedores
+    document.getElementById('menu-estantes-inventario').classList.add('hidden');
+    document.getElementById('contenedor-auditoria-activa').classList.remove('hidden');
+    
+    // 2. Filtrar productos que pertenecen a este estante (Número)
+    // Buscamos que el BIN empiece con ese número
+    const datosFiltrados = inventoryDataGlobal.filter(i => {
+        const binLimpio = i.bin.trim();
+        return binLimpio.startsWith(num);
+    });
+
+    if (datosFiltrados.length === 0) {
+        alert("No hay productos registrados en el Estante " + num);
+        renderMenuEstantes();
+        return;
+    }
+
+    // 3. Renderizar la lista
+    renderInventarioControl(datosFiltrados, num);
+}
+
+
+
+
+//Nueva seccion toma de inventario
+function renderInventarioControl(datos, numEstante) {
+    // 1. Agrupar por Repisa (Letra) para crear los botones del filtro
+    const agrupadoPorRepisa = datos.reduce((acc, item) => {
+        const match = item.bin.match(/[a-zA-Z]+/);
+        const repisa = match ? match[0].toUpperCase() : 'S/R';
+        if (!acc[repisa]) acc[repisa] = [];
+        acc[repisa].push(item);
+        return acc;
+    }, {});
+
+    const repisasOrdenadas = Object.keys(agrupadoPorRepisa).sort();
+
+    let html = `
+    <div class="sticky top-0 z-30 bg-slate-50/95 backdrop-blur-md pb-4 pt-2 px-1">
+        <div class="flex items-center justify-between mb-4">
+            <button onclick="renderMenuEstantes()" class="text-[10px] font-black text-blue-600 uppercase flex items-center gap-1 bg-blue-50 px-3 py-1 rounded-full">
+                ← Estantes
+            </button>
+            <h2 class="text-lg font-black text-slate-800 uppercase">Estante ${numEstante}</h2>
+            <div id="audit-stats" class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md">0/${datos.length}</div>
+        </div>
+
+        <div class="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
+            <button onclick="filtrarPorRepisa('TODAS')" 
+                class="btn-repisa active-repisa flex-shrink-0 px-4 py-2 rounded-xl border-2 border-slate-800 bg-slate-800 text-white text-xs font-black transition-all" 
+                data-repisa="TODAS">
+                TODAS
+            </button>
+            ${repisasOrdenadas.map(letra => `
+                <button onclick="filtrarPorRepisa('${letra}')" 
+                    class="btn-repisa flex-shrink-0 px-5 py-2 rounded-xl border-2 border-slate-200 bg-white text-slate-400 text-xs font-black transition-all" 
+                    data-repisa="${letra}">
+                    ${letra}
+                </button>
+            `).join('')}
+        </div>
+        
+        <div class="w-full h-1 bg-slate-200 rounded-full mt-2 overflow-hidden">
+            <div id="audit-bar" class="h-full bg-emerald-500 transition-all duration-500" style="width: 0%"></div>
+        </div>
+    </div>
+
+    <div id="lista-productos-auditoria" class="space-y-10 mt-6 pb-20">`;
+
+    // Renderizado inicial de todas las secciones
+    repisasOrdenadas.forEach(letra => {
+        html += `
+        <div class="repisa-section" data-repisa-id="${letra}">
+            <div class="flex items-center gap-3 mb-4 px-2">
+                <div class="w-10 h-10 bg-slate-800 text-white rounded-2xl flex items-center justify-center font-black text-xl shadow-lg">${letra}</div>
+                <div class="flex-1 h-[2px] bg-slate-200/50"></div>
+                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Repisa ${letra}</span>
+            </div>
+            <div class="grid grid-cols-1 gap-4">
+                ${agrupadoPorRepisa[letra].map(item => `
+                    <div class="audit-card bg-white rounded-[2rem] p-4 border-2 border-slate-100 shadow-sm transition-all duration-300" 
+                         data-codigo="${item.codigo}" data-stock-sistema="${item.stock}">
+                        <div class="flex items-center gap-3">
+                            <div class="relative flex-shrink-0 w-16 h-16 bg-slate-50 rounded-2xl overflow-hidden border border-slate-100">
+                                ${item.foto ? `<img src="${item.foto}" class="w-full h-full object-cover">` : `<div class="w-full h-full flex items-center justify-center text-xl">📦</div>`}
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="text-[9px] font-black text-slate-400 uppercase">${item.codigo} | T:${item.talla}</div>
+                                <div class="text-[11px] font-bold text-slate-500 uppercase mb-1 leading-none">Sistema: ${item.stock} un.</div>
+                                <div class="flex items-center gap-2">
+                                    <input type="number" placeholder="Real" oninput="validarFilaAuditoria(this)"
+                                           class="input-audit-real w-full bg-slate-50 border-2 border-slate-200 rounded-xl py-2 px-3 text-center font-black text-slate-800 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition-all">
+                                    <div class="status-icon w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-400">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        </div>`;
+    });
+
+    html += `</div>`;
+    document.getElementById('contenedor-inventario-dinamico').innerHTML = html;
+    actualizarProgresoAuditoria();
+}
+
+
+function filtrarPorRepisa(letra) {
+    // 1. Actualizar estilos de los botones
+    document.querySelectorAll('.btn-repisa').forEach(btn => {
+        if (btn.dataset.repisa === letra) {
+            btn.classList.add('bg-slate-800', 'text-white', 'border-slate-800');
+            btn.classList.remove('bg-white', 'text-slate-400', 'border-slate-200');
+        } else {
+            btn.classList.remove('bg-slate-800', 'text-white', 'border-slate-800');
+            btn.classList.add('bg-white', 'text-slate-400', 'border-slate-200');
+        }
+    });
+
+    // 2. Mostrar/Ocultar secciones
+    const secciones = document.querySelectorAll('.repisa-section');
+    secciones.forEach(sec => {
+        if (letra === 'TODAS' || sec.dataset.repisaId === letra) {
+            sec.classList.remove('hidden');
+        } else {
+            sec.classList.add('hidden');
+        }
+    });
+    
+    window.scrollTo(0, 0); // Volver arriba al filtrar
+}
+
+
+
+
+
 
 
 
@@ -5106,7 +5456,7 @@ function filtrarPorHorario(horario) {
 //actualizaciones :
 
 
-//eliminar seccion devoluciones, y arqueo final
+//nueva seccion toma de inventario
 
 
     </script>
@@ -5119,15 +5469,3 @@ function filtrarPorHorario(horario) {
 
 
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
