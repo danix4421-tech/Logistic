@@ -2679,7 +2679,7 @@ function renderConfigurarRutas() {
         contenedor.innerHTML = `
             <div class="p-10 text-center">
                 <p class="text-slate-500 font-bold">No hay pedidos pendientes para: ${filtroHorarioActual}</p>
-                <button onclick="nextStep(0)" class="mt-4 bg-slate-800 text-white px-6 py-3 rounded-2xl font-black uppercase text-xs">Volver al Inicio</button>
+                <button onclick="nextStep(0)" class="mt-4 bg-slate-800 text-white px-6 py-3 rounded-2xl font-black text-xs">Volver al Inicio</button>
             </div>`;
         return;
     }
@@ -2701,7 +2701,7 @@ function renderConfigurarRutas() {
                 Ordena los Pedidos de acuerdo a la Ruta más Eficiente.
             </p>
 
-            <div class="mt-4 inline-block bg-blue-600 text-white px-4 py-1.5 rounded-full text-[10px] font-black shadow-md shadow-blue-200 uppercase tracking-widest">
+            <div class="mt-4 inline-block bg-blue-600 text-white px-4 py-1.5 rounded-full text-[10px] font-black shadow-md shadow-blue-200 tracking-widest">
                 Horario: ${filtroHorarioActual}
             </div>
         </div>
@@ -2718,9 +2718,9 @@ function renderConfigurarRutas() {
                     </div>
                     
                     <div class="flex-1 min-w-0">
-                        <div class="text-[14px] font-black text-slate-800 truncate uppercase">${p.cliente || 'Sin Nombre'}</div>
+                        <div class="text-[14px] font-black text-slate-800 truncate">${p.cliente || 'Sin Nombre'}</div>
                         <div class="text-[10px] text-slate-400 truncate tracking-tighter">${p.direccion}</div>
-                        <div class="text-[9px] font-bold text-blue-500 uppercase mt-0.5">${p.items.length} Items seleccionados</div>
+                        <div class="text-[9px] font-bold text-blue-500 mt-0.5">${p.items.length} ${p.items.length === 1 ? 'caja' : 'cajas'}</div>
                     </div>
 
                     <div class="flex flex-col gap-1 shrink-0">
@@ -2809,6 +2809,12 @@ function cambiarOrdenRuta(indexActual, direccion) {
  function renderPicking() {
     let todosItems = [];
     
+    // Objeto de colores (mismo que usas en Inventario)
+    const coloresRepisa = {
+        'A': 'blue-500', 'B': 'indigo-500', 'C': 'emerald-500', 'D': 'amber-500',
+        'E': 'purple-500', 'F': 'rose-500', 'G': 'cyan-500', 'H': 'orange-500'
+    };
+
     // 1. Filtrado de pedidos
     let pendientes = pedidos.filter(p => p.estado === 'pendiente');
     if (filtroHorarioActual !== 'Todos') {
@@ -2856,11 +2862,8 @@ function cambiarOrdenRuta(indexActual, direccion) {
     );
 
     // --- CONSTRUCCIÓN DEL HTML ---
-    
-    // Header de Progreso (Pegajoso arriba)
-   let html = `
+    let html = `
     <div class="sticky top-0 z-20 bg-slate-50/90 backdrop-blur-md pb-6 pt-4 px-2">
-        
         <div class="flex flex-col items-center justify-center text-center mb-6">
             <div class="inline-flex items-center justify-center w-14 h-14 bg-orange-50 text-orange-600 rounded-full mb-3 shadow-sm border border-orange-100">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-7 h-7">
@@ -2887,13 +2890,18 @@ function cambiarOrdenRuta(indexActual, direccion) {
     binsOrdenados.forEach((bin) => {
         const itemsEnBin = agrupado[bin];
         
+        // IDENTIFICAR LETRA DE REPISA PARA EL COLOR
+        const match = bin.match(/[a-zA-Z]+/);
+        const letraRepisa = match ? match[0].toUpperCase() : 'S/R';
+        const colorClase = coloresRepisa[letraRepisa] || 'slate-500';
+
         html += `
         <section class="bin-group">
-            <div class="flex items-center gap-2 mb-4">
-                <div class="bg-orange-500 text-white px-3 py-1 rounded-lg text-[12px] font-black uppercase">
-                    📍 ${bin}
+            <div class="flex items-center gap-2 mb-4 px-2">
+                <div class="bg-${colorClase} text-white px-3 py-1 rounded-lg text-[12px] font-black uppercase shadow-sm">
+                    ${bin}
                 </div>
-                <div class="h-[1px] flex-1 bg-blue-100"></div>
+                <div class="h-[1px] flex-1 bg-slate-200"></div>
             </div>
             
             <div class="space-y-3">
@@ -2913,7 +2921,9 @@ function cambiarOrdenRuta(indexActual, direccion) {
                             </div>
 
                             <div class="flex-1 min-w-0">
-                                <div class="text-xl font-black text-slate-800 leading-none">x${it.cantidad}</div>
+                                <div class="text-[12px] font-black text-blue-500 leading-none">
+                                    ${it.cantidad} ${it.cantidad === 1 ? 'Caja' : 'Cajas'}
+                                </div>
                                 <div class="text-[11px] font-bold text-slate-500 uppercase mt-1 truncate">${it.desc}</div>
                                 
                                 <div class="flex gap-1 mt-2">
@@ -2938,6 +2948,8 @@ function cambiarOrdenRuta(indexActual, direccion) {
     // Inicializar visualmente
     actualizarEnfoquePicking(true);
 }
+
+
 
 function actualizarEnfoquePicking(isFirstLoad = false) {
     if (!isFirstLoad) playSound('scanner');
@@ -3056,11 +3068,9 @@ function actualizarEnfoquePicking(isFirstLoad = false) {
 
                 
             </div>
-            <div class=" text-2xl font-black text-blue-600 bg-slate-50 px-2 py-1 rounded-lg border border-slate-100 whitespace-nowrap">
-            ${totalProductos}
+            <div class=" text-[12px] font-black text-blue-600 bg-slate-50 px-2 py-1 rounded-lg border border-slate-100 whitespace-nowrap">
+            ${totalProductos} ${totalProductos === 1 ? 'caja' : 'cajas'}
             </div>
-
-            <div class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter text-center">Uni</div>
 
         </label>`;
     }).join('') || '<p class="text-center py-10 text-slate-400 italic">No hay pedidos en este horario para cargar</p>';
@@ -3371,10 +3381,10 @@ document.addEventListener('click', function(e) {
                     </div>
 
                     <div class="leading-tight">
-                        <span id="label-${idx}" class="font-black uppercase text-[10px] text-slate-900">
+                        <span id="label-${idx}" class="font-black text-[10px] text-slate-900">
                             ${it.desc || it.nombre}
                         </span>
-                        <p id="status-${idx}" class="text-[9px] font-bold text-slate-500 tracking-widest uppercase">
+                        <p id="status-${idx}" class="text-[9px] text-slate-500 tracking-widest">
                             ${it.estado === 'pendiente' ? 'Pendiente' : it.estado}
                         </p>
                     </div>
@@ -3395,7 +3405,7 @@ document.addEventListener('click', function(e) {
             </div>
 
             <div class="flex justify-between items-center mt-2 pt-2 border-t border-slate-100">
-                 <span class="text-[9px] text-slate-400 font-bold uppercase">Precio Sugerido</span>
+                 <span class="text-[9px] text-slate-400 ">Precio Sugerido</span>
                  <div class="flex items-center gap-1 bg-white px-2 py-1 rounded-lg border border-slate-200">
                     <span class="font-bold text-slate-400 text-[10px]">$</span>
                     <input type="number" 
@@ -5200,25 +5210,38 @@ function filtrarPorHorario(horario) {
 
 function actualizarProgresoAuditoria() {
     const inputs = document.querySelectorAll('.input-audit-real');
-    const total = inputs.length;
-    const completados = Array.from(inputs).filter(i => i.value !== "").length;
+    const displayStats = document.getElementById('audit-stats');
+    const progressBar = document.getElementById('audit-bar');
+    
+    // Obtenemos el total del estante desde el texto del header o una variable global
+    // Para este ejemplo, lo extraeremos del propio texto del display (0 / 100 -> el 100)
+    const totalUnidades = parseInt(displayStats.textContent.split('/')[1]) || 0;
 
-    const porcentaje = total > 0 ? (completados / total) * 100 : 0;
-    document.getElementById('audit-bar').style.width = `${porcentaje}%`;
-    document.getElementById('audit-stats').innerText = `${completados} / ${total}`;
+    let sumaUnidadesContadas = 0;
 
-    const btn = document.getElementById('btn-guardar-inventario');
-    if (completados === total && total > 0) {
-        btn.disabled = false;
-        btn.classList.replace('bg-slate-200', 'bg-emerald-600');
-        btn.classList.replace('text-slate-400', 'text-white');
+    inputs.forEach(input => {
+        const valor = parseInt(input.value);
+        if (!isNaN(valor)) {
+            sumaUnidadesContadas += valor;
+        }
+    });
+
+    // Calcular porcentaje (máximo 100%)
+    const porcentaje = totalUnidades > 0 ? Math.min((sumaUnidadesContadas / totalUnidades) * 100, 100) : 0;
+
+    // Actualizar Interfaz
+    displayStats.textContent = `${sumaUnidadesContadas} / ${totalUnidades} CAJAS CONTADAS`;
+    progressBar.style.width = `${porcentaje}%`;
+
+    // Bonus: Cambiar color si se pasa del total (opcional)
+    if (sumaUnidadesContadas > totalUnidades) {
+        displayStats.classList.replace('text-emerald-600', 'text-rose-600');
+        progressBar.classList.replace('bg-emerald-500', 'bg-rose-500');
     } else {
-        btn.disabled = true;
-        btn.classList.replace('bg-emerald-600', 'bg-slate-200');
-        btn.classList.replace('text-white', 'text-slate-400');
+        displayStats.classList.replace('text-rose-600', 'text-emerald-600');
+        progressBar.classList.replace('bg-rose-500', 'bg-emerald-500');
     }
 }
-
 
 
 
@@ -5288,6 +5311,10 @@ function renderMenuEstantes() {
 
     const progreso = JSON.parse(localStorage.getItem('progreso_auditoria') || '{}');
     
+    // --- 1. CÁLCULO TOTAL GENERAL (Discreto) ---
+    const totalGralSistema = inventoryDataGlobal.reduce((acc, item) => acc + (parseInt(item.stock) || 0), 0);
+    const totalGralContado = Object.values(progreso).reduce((acc, val) => acc + (parseInt(val) || 0), 0);
+
     // Obtener números únicos de estantes
     const estantesNumeros = [...new Set(inventoryDataGlobal.map(item => {
         const match = item.bin.match(/\d+/);
@@ -5295,17 +5322,17 @@ function renderMenuEstantes() {
     }))].sort((a, b) => a - b);
 
     const contenedor = document.getElementById('lista-botones-estantes');
-    contenedor.innerHTML = estantesNumeros.map(num => {
+    
+    // Generar el HTML de los botones
+    const botonesHTML = estantesNumeros.map(num => {
         const productosEstante = inventoryDataGlobal.filter(i => i.bin.trim().startsWith(num));
         
-        // --- CÁLCULO DE UNIDADES ---
         let unidadesSistema = 0;
         let unidadesContadas = 0;
         let skusAuditados = 0;
 
         productosEstante.forEach(item => {
             unidadesSistema += parseInt(item.stock || 0);
-            
             const valorGuardado = progreso[item.codigo];
             if (valorGuardado !== undefined && valorGuardado !== "") {
                 unidadesContadas += parseInt(valorGuardado);
@@ -5320,26 +5347,40 @@ function renderMenuEstantes() {
         <button onclick="iniciarAuditoriaEstante('${num}')" 
             class="relative bg-white p-5 rounded-[2.5rem] border-2 ${estaCompletado ? 'border-emerald-500 bg-emerald-50/30' : 'border-slate-100'} shadow-sm flex flex-col items-center justify-center active:scale-95 transition-all">
             
-          
-            
             <span class="text-[9px] font-black ${estaCompletado ? 'text-emerald-600' : 'text-slate-400'} uppercase tracking-widest">Estante</span>
             <span class="text-4xl font-black ${estaCompletado ? 'text-emerald-700' : 'text-slate-800'} mb-1">${num}</span>
             
-            <div class="grid grid-cols-1 gap-1 w-full mt-1 border-t border-slate-50 pt-2">
-                <div class="flex justify-between items-center px-2">
-                    
-                </div>
-                <div
-                </div>
-            </div>
-
+            <div class="mt-2 flex flex-col items-center">
+                <span class="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">
+                    ${unidadesContadas} / ${unidadesSistema} cajas
+                </span>
                
             </div>
+
+            ${estaCompletado ? `
+                <div class="absolute -top-2 -right-2 bg-emerald-500 text-white p-1 rounded-full shadow-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+            ` : ''}
         </button>
         `;
     }).join('');
-}
 
+    // --- 2. RENDERIZAR TODO JUNTO ---
+    // Agregamos un pequeño encabezado para el total general arriba de los botones
+    const headerTotal = `
+        <div class="col-span-full mb-4 px-4 py-2 bg-slate-100/50 rounded-2xl flex justify-between items-center border border-slate-200/50">
+            <span class="text-[10px] font-black text-slate-500 tracking-widest">Resumen General</span>
+            <div class="text-right">
+                <span class="text-[11px] font-black text-blue-500">${totalGralContado} / ${totalGralSistema} Cajas</span>
+            </div>
+        </div>
+    `;
+
+    contenedor.innerHTML = headerTotal + botonesHTML;
+}
 
 
 
@@ -5385,6 +5426,11 @@ function renderInventarioControl(datos, numEstante) {
     // 1. Cálculo del total de unidades que debería haber en todo el estante
     const totalUnidadesEstante = datos.reduce((acc, item) => acc + (parseInt(item.stock) || 0), 0);
 
+
+    // Cálculo de unidades ya contadas previamente
+    const unidadesYaContadas = Object.values(progresoGuardado).reduce((acc, val) => acc + (parseInt(val) || 0), 0);
+    const porcentajeInicial = totalUnidadesEstante > 0 ? (unidadesYaContadas / totalUnidadesEstante) * 100 : 0;
+
     const coloresRepisa = {
         'A': 'blue-500', 'B': 'indigo-500', 'C': 'emerald-500', 'D': 'amber-500',
         'E': 'purple-500', 'F': 'rose-500', 'G': 'cyan-500', 'H': 'orange-500'
@@ -5420,7 +5466,7 @@ function renderInventarioControl(datos, numEstante) {
             <div class="flex items-center justify-center gap-2 mb-1">
                 <h2 class="text-[22px] font-black text-slate-800 leading-none">Estante ${numEstante}</h2>
                 <span class="bg-blue-600 text-white text-[12px] px-2 py-0.5 rounded-lg font-black shadow-sm">
-                    ${totalUnidadesEstante} un.
+                    ${totalUnidadesEstante} cajas
                 </span>
             </div>
 
@@ -5435,13 +5481,18 @@ function renderInventarioControl(datos, numEstante) {
                 Limpiar Estante
             </button>
 
-            <div id="audit-stats" class="text-[10px] font-black text-emerald-600 mt-4 tracking-widest uppercase">
-                0 / ${totalUnidadesEstante} UNIDADES CONTADAS
-            </div>
-            <div class="w-full h-2 bg-slate-200 rounded-full mt-1 overflow-hidden border border-white shadow-inner">
-                <div id="audit-bar" class="h-full bg-emerald-500 transition-all duration-700 ease-out" style="width: 0%"></div>
-            </div>
-        </div>
+          
+    <div id="audit-stats" class="text-[10px] font-black text-emerald-600 mt-4 tracking-widest">
+    ${unidadesYaContadas} / ${totalUnidadesEstante} Cajas contadas
+</div>
+<div class="w-full h-2 bg-slate-200 rounded-full mt-1 overflow-hidden border border-white shadow-inner">
+    <div id="audit-bar" class="h-full bg-emerald-500 transition-all duration-700 ease-out" 
+         style="width: ${porcentajeInicial}%"></div>
+</div>
+
+
+   
+</div>
 
         <div class="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
             <button onclick="filtrarPorRepisa('TODAS')" 
@@ -5480,7 +5531,7 @@ function renderInventarioControl(datos, numEstante) {
                     <div class="flex items-center gap-2">
                         <span class="text-[11px] font-black text-slate-700 uppercase">Repisa ${letra}</span>
                         <span class="bg-slate-100 text-slate-600 text-[9px] px-2 py-0.5 rounded-full font-bold border border-slate-200">
-                            ${totalUnidadesRepisa} un.
+                            ${totalUnidadesRepisa} cajas
                         </span>
                     </div>
                     
@@ -5513,7 +5564,9 @@ function renderInventarioControl(datos, numEstante) {
                             </div>
                             <div class="flex-1 min-w-0">
                                 <div class="text-[11px] font-black text-slate-900 uppercase truncate">${item.codigo}</div>
-                                <div class="text-[11px] font-bold text-blue-500 leading-none">${item.stock} un.</div>
+                               <div class="text-[10px] font-bold text-blue-500 leading-none">
+                                 ${item.stock} ${item.stock === 1 ? 'caja' : 'cajas'}
+                                </div>
                             </div>
                             <div class="flex items-center gap-2 flex-shrink-0">
                                 <input type="number" 
@@ -5539,6 +5592,19 @@ function renderInventarioControl(datos, numEstante) {
     // IMPORTANTE: Asegúrate de que esta función sume valores ingresados vs totalUnidadesEstante
     actualizarProgresoAuditoria(); 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 function filtrarPorRepisa(letra) {
     // 1. Actualizar estilos de los botones con colores dinámicos
