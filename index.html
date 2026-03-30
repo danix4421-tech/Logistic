@@ -124,6 +124,51 @@
         .spinner { width: 14px; height: 14px; border: 2px solid #555; border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
         .hidden { display: none !important; }
+
+
+
+       .shelf-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 800;
+    color: white;
+}
+
+/* Estilo del botón pequeño */
+.btn-transfer {
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 3px;
+    width: 20px;
+    height: 20px;
+    font-size: 10px; /* Emoji más pequeño */
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s;
+    padding: 0;
+}
+
+.btn-transfer:hover {
+    background: white;
+    color: black;
+}
+
+
+
+
+
+
+
+
+
+
+
     </style>
 </head>
 <body onclick="initAudioContext()">
@@ -183,111 +228,120 @@
         }
 
         function render() {
-            const container = document.getElementById('warehouse');
-            container.innerHTML = '';
-            const rackNums = [...new Set(inventoryData.map(i => i.bin.match(/\d+/)?.[0]))].filter(Boolean).sort((a,b)=>a-b);
-            const shelfLetters = ['H', 'G', 'F', 'E', 'D', 'C', 'B', 'A']; 
+    const container = document.getElementById('warehouse');
+    container.innerHTML = '';
+    const rackNums = [...new Set(inventoryData.map(i => i.bin.match(/\d+/)?.[0]))].filter(Boolean).sort((a,b)=>a-b);
+    const shelfLetters = ['H', 'G', 'F', 'E', 'D', 'C', 'B', 'A']; 
 
-            rackNums.forEach(r => {
-                const rackEl = document.createElement('div');
-                rackEl.className = 'rack';
-                rackEl.dataset.rackId = r;
-                // data-base guarda el nombre original para sumarle el conteo después
-                rackEl.innerHTML = `<div class="rack-title" data-base="ESTANTE ${r}">ESTANTE ${r}</div>`;
+    rackNums.forEach(r => {
+        const rackEl = document.createElement('div');
+        rackEl.className = 'rack';
+        rackEl.dataset.rackId = r;
+        rackEl.innerHTML = `<div class="rack-title" data-base="ESTANTE ${r}">ESTANTE ${r}</div>`;
 
-                shelfLetters.forEach(s => {
-                    const shelfId = `${r}${s}`;
-                    const shelfItems = inventoryData.filter(i => i.bin === shelfId);
-                    const shelfEl = document.createElement('div');
-                    shelfEl.className = `shelf shelf-node-${s}`;
-                    shelfEl.dataset.letter = s;
+        shelfLetters.forEach(s => {
+            const shelfId = `${r}${s}`;
+            const shelfItems = inventoryData.filter(i => i.bin === shelfId);
+            const shelfEl = document.createElement('div');
+            shelfEl.className = `shelf shelf-node-${s}`;
+            shelfEl.dataset.letter = s;
 
-                    const gridEl = document.createElement('div');
-                    gridEl.className = "box-grid";
-                    gridEl.dataset.shelf = shelfId;
+            const gridEl = document.createElement('div');
+            gridEl.className = "box-grid";
+            gridEl.dataset.shelf = shelfId;
 
-                    shelfItems.forEach(item => {
-                        const box = document.createElement('div');
-                        box.className = 'box';
-                        box.dataset.search = `${item.id} ${item.codigo}`.toLowerCase();
-                        box.dataset.unique = item.id;
-                        box.dataset.estado = item.estado;
-                        
-                        box.innerHTML = `
-                            <div class="check-zone"></div>
-                            <div class="box-label">${item.id}</div>
-                            <div class="tooltip">
-                                ${item.img ? `<img src="${item.img}">` : ''}
-                                <b>ID: ${item.id}</b><br>
-                                <small>${item.codigo}</small><hr>
-                                Costo: $${item.costo}<br>
-                                Precio: $${item.precio}
-                            </div>
-                        `;
-                        box.querySelector('.check-zone').onclick = (e) => {
-                            e.stopPropagation(); box.classList.toggle('is-checked');
-                            playBeep(box.classList.contains('is-checked') ? 900 : 500, 0.1, 0.1);
-                        };
-                        gridEl.appendChild(box);
-                    });
-
-                    const shelfTitle = document.createElement('div');
-                    shelfTitle.className = 'shelf-title';
-                    shelfTitle.dataset.base = `Repisa ${s}`;
-                    shelfTitle.textContent = `Repisa ${s}`;
-
-                    shelfEl.appendChild(shelfTitle);
-                    shelfEl.appendChild(gridEl);
-                    rackEl.appendChild(shelfEl);
-                });
-                container.appendChild(rackEl);
+            shelfItems.forEach(item => {
+                const box = document.createElement('div');
+                box.className = 'box';
+                box.dataset.search = `${item.id} ${item.codigo}`.toLowerCase();
+                box.dataset.unique = item.id;
+                box.dataset.estado = item.estado;
+                
+                box.innerHTML = `
+                    <div class="check-zone"></div>
+                    <div class="box-label">${item.id}</div>
+                    <div class="tooltip">
+                        ${item.img ? `<img src="${item.img}">` : ''}
+                        <b>ID: ${item.id}</b><br>
+                        <small>${item.codigo}</small><hr>
+                        Costo: $${item.costo}<br>
+                        Precio: $${item.precio}
+                    </div>
+                `;
+                box.querySelector('.check-zone').onclick = (e) => {
+                    e.stopPropagation(); box.classList.toggle('is-checked');
+                    playBeep(box.classList.contains('is-checked') ? 900 : 500, 0.1, 0.1);
+                };
+                gridEl.appendChild(box);
             });
-            initSortable();
-            applyFilters();
-        }
 
+            // TITULO CON BOTÓN DE TRANSFERENCIA
+           // --- Busca esta parte en tu función render() ---
+const shelfTitle = document.createElement('div');
+shelfTitle.className = 'shelf-title';
+shelfTitle.dataset.base = `Repisa ${s}`;
+
+// Estructura: Texto para cantidades + Botón pequeño
+shelfTitle.innerHTML = `
+    <span class="title-text">${shelfTitle.dataset.base}</span>
+    <button class="btn-transfer" onclick="transferBox('${shelfId}')" title="Traer caja">🚚</button>
+`;
+
+            shelfEl.appendChild(shelfTitle);
+            shelfEl.appendChild(gridEl);
+            rackEl.appendChild(shelfEl);
+        });
+        container.appendChild(rackEl);
+    });
+    initSortable();
+    applyFilters();
+}
         function applyFilters() {
-            const rV = document.getElementById('filterRack').value;
-            const sV = document.getElementById('filterShelf').value;
-            const stV = document.getElementById('filterStatus').value;
-            const search = document.getElementById('searchId').value.toLowerCase();
+    const rV = document.getElementById('filterRack').value;
+    const sV = document.getElementById('filterShelf').value;
+    const stV = document.getElementById('filterStatus').value;
+    const search = document.getElementById('searchId').value.toLowerCase();
 
-            document.querySelectorAll('.rack').forEach(rack => {
-                const rId = rack.dataset.rackId;
-                const showR = (rV === 'all' || rV === rId);
-                let rCount = 0;
+    document.querySelectorAll('.rack').forEach(rack => {
+        const rId = rack.dataset.rackId;
+        const showR = (rV === 'all' || rV === rId);
+        let rCount = 0;
 
-                rack.querySelectorAll('.shelf').forEach(shelf => {
-                    const sL = shelf.dataset.letter;
-                    const showS = (sV === 'all' || sV === sL);
-                    let sCount = 0;
+        rack.querySelectorAll('.shelf').forEach(shelf => {
+            const sL = shelf.dataset.letter;
+            const showS = (sV === 'all' || sV === sL);
+            let sCount = 0;
 
-                    shelf.querySelectorAll('.box').forEach(box => {
-                        const mS = box.dataset.search.includes(search);
-                        const mSt = (stV === 'all' || box.dataset.estado === stV);
-                        
-                        if (mSt && showS && showR && (search === "" || mS)) {
-                            box.style.display = "flex";
-                            box.style.opacity = "1";
-                            sCount++;
-                            rCount++;
-                        } else {
-                            box.style.display = "none";
-                        }
-                    });
-
-                    // Actualizar Título Repisa
-                    const sT = shelf.querySelector('.shelf-title');
-                    sT.textContent = `${sT.dataset.base} (${sCount})`;
-                    shelf.classList.toggle('hidden', sCount === 0 && search !== "");
-                });
-
-                // Actualizar Título Estante
-                const rT = rack.querySelector('.rack-title');
-                rT.textContent = `${rT.dataset.base} (${rCount})`;
-                rack.classList.toggle('hidden', !showR || (rCount === 0 && search !== ""));
+            shelf.querySelectorAll('.box').forEach(box => {
+                const mS = box.dataset.search.includes(search);
+                const mSt = (stV === 'all' || box.dataset.estado === stV);
+                
+                if (mSt && showS && showR && (search === "" || mS)) {
+                    box.style.display = "flex";
+                    box.style.opacity = "1";
+                    sCount++;
+                    rCount++;
+                } else {
+                    box.style.display = "none";
+                }
             });
-        }
+
+            // --- CORRECCIÓN AQUÍ ---
+            const sT = shelf.querySelector('.shelf-title');
+            const txtSpan = sT.querySelector('.title-text');
+            if (txtSpan) {
+                txtSpan.textContent = `${sT.dataset.base} (${sCount})`;
+            }
+            // -----------------------
+            
+            shelf.classList.toggle('hidden', sCount === 0 && search !== "");
+        });
+
+        const rT = rack.querySelector('.rack-title');
+        rT.textContent = `${rT.dataset.base} (${rCount})`;
+        rack.classList.toggle('hidden', !showR || (rCount === 0 && search !== ""));
+    });
+}
 
        function initSortable() {
     const toast = document.getElementById('sync-toast');
@@ -389,6 +443,63 @@ window.addEventListener('load', function() {
     document.body.style.overscrollBehaviorY = 'none';
     document.documentElement.style.overscrollBehaviorY = 'none';
 });
+
+async function transferBox(targetBin) {
+    const boxId = prompt(`Mover caja a ${targetBin}\nIngrese el ID de la caja:`);
+    
+    if (!boxId) return;
+
+}
+
+
+async function transferBox(targetBin) {
+    const boxId = prompt(`Mover caja a la ubicación ${targetBin}\nIngrese el ID exacto de la caja:`);
+    
+    if (!boxId) return;
+
+    // Buscamos la caja ignorando espacios
+    const item = inventoryData.find(i => i.id.toString().trim() === boxId.trim());
+
+    if (!item) {
+        alert("❌ Error: El ID '" + boxId + "' no existe en el sistema.");
+        return;
+    }
+
+    if (item.bin === targetBin) {
+        alert("📍 La caja ya está en esta repisa.");
+        return;
+    }
+
+    if (confirm(`¿Mover ID ${item.id} de la ubicación ${item.bin} a la ${targetBin}?`)) {
+        const toast = document.getElementById('sync-toast');
+        toast.style.display = 'flex';
+        document.getElementById('sync-text').textContent = "Sincronizando...";
+
+        try {
+            // Envío a Google Sheets
+            await fetch(APPS_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                body: JSON.stringify({ id: item.id, newBin: targetBin })
+            });
+
+            // Actualización local
+            item.bin = targetBin;
+            render(); // Esto refresca la vista y los contadores
+
+            document.getElementById('sync-text').textContent = "¡Movido!";
+            setTimeout(() => { toast.style.display = 'none'; }, 1000);
+
+        } catch (e) {
+            alert("Error de conexión al mover.");
+            toast.style.display = 'none';
+        }
+    }
+}
+
+
+
+
     </script>
 </body>
 </html>
