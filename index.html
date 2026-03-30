@@ -3,47 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Z-Logistics Pro - Inventario Completo</title>
+    <title>Z-Logistics Pro - Inventario</title>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <style>
         :root {
             --shelf-color: #1e272e;
-            --box-width: 58px; --box-height: 42px;
+            --box-width: 54px; --box-height: 40px;
             --bg-a: #2196f3; --bg-b: #f44336; --bg-c: #4caf50; --bg-d: #ff9800;
             --bg-e: #9c27b0; --bg-f: #e91e63; --bg-g: #00bcd4; --bg-h: #607d8b;
             --check-color: #27ae60;
         }
 
-        body { font-family: 'Segoe UI', sans-serif; background-color: #cbd5e0; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background-color: #cbd5e0; margin: 0; padding: 0; }
         
+        /* Controles Adaptables */
         .controls { 
-            background: white; padding: 10px; box-shadow: 0 2px 15px rgba(0,0,0,0.1);
-            display: flex; gap: 8px; align-items: center; position: sticky; 
-            top: 0; width: 100%; z-index: 2000; box-sizing: border-box; 
-            flex-wrap: wrap; justify-content: center;
+            background: #ffffff; padding: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 8px; position: sticky; top: 0; width: 100%; z-index: 2000; box-sizing: border-box;
         }
 
-        select, input, button { padding: 8px; border-radius: 6px; border: 1px solid #ccc; font-size: 13px; }
+        select, input, button { 
+            padding: 10px; border-radius: 8px; border: 1px solid #cbd5e0; 
+            font-size: 14px; width: 100%; box-sizing: border-box; outline: none;
+        }
 
-        #warehouse { display: flex; gap: 30px; padding: 30px; overflow-x: auto; align-items: flex-start; }
+        button { background: #1e272e; color: white; cursor: pointer; font-weight: bold; }
+
+        /* Contenedor Almacén */
+        #warehouse { 
+            display: flex; gap: 20px; padding: 20px; 
+            overflow-x: auto; align-items: flex-start; scroll-behavior: smooth;
+        }
 
         .rack { 
-            background: #e2e8f0; border: 8px solid var(--shelf-color); 
-            border-radius: 4px; width: 560px; flex-shrink: 0; box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            background: #e2e8f0; border: 6px solid var(--shelf-color); 
+            border-radius: 8px; min-width: 300px; max-width: 95vw;
+            flex-shrink: 0; box-shadow: 0 10px 25px rgba(0,0,0,0.15);
         }
 
-        .rack-title { background: var(--shelf-color); color: white; text-align: center; padding: 10px; font-weight: 800; }
+        .rack-title { background: var(--shelf-color); color: white; text-align: center; padding: 12px; font-weight: 800; font-size: 1.1em; }
 
         .shelf { display: flex; flex-direction: column-reverse; background: #f8fafc; border-bottom: 2px solid #cbd5e0; }
 
         .box-grid { 
-            display: flex; flex-wrap: wrap-reverse; gap: 6px; padding: 15px 10px;
-            min-height: 50px; align-content: flex-start;
+            display: flex; flex-wrap: wrap-reverse; gap: 5px; padding: 12px 8px;
+            min-height: 45px; align-content: flex-start; justify-content: center;
         }
 
-        .shelf-title { font-size: 11px; font-weight: 800; color: white; text-align: center; padding: 6px; }
+        .shelf-title { font-size: 11px; font-weight: 800; color: white; text-align: center; padding: 5px; }
         
-        /* Colores de base */
+        /* Colores por Letra */
         .shelf-node-A .shelf-title { background-color: var(--bg-a); }
         .shelf-node-B .shelf-title { background-color: var(--bg-b); }
         .shelf-node-C .shelf-title { background-color: var(--bg-c); }
@@ -55,27 +65,28 @@
 
         /* CAJA Y TOOLTIP */
         .box { 
-            width: var(--box-width); height: var(--box-height); border-radius: 3px; 
+            width: var(--box-width); height: var(--box-height); border-radius: 4px; 
             border: 1px solid #8d6e63; background: linear-gradient(135deg, #d2b48c 0%, #c19a6b 100%);
             display: flex; align-items: center; justify-content: center; position: relative; cursor: grab;
         }
-        .box:active { cursor: grabbing; transform: scale(1.1); z-index: 100; }
-        .box-label { font-size: 11px; font-weight: 900; color: #3e2723; pointer-events: none; }
+        .box:active { cursor: grabbing; transform: scale(1.05); }
+        .box-label { font-size: 10px; font-weight: 900; color: #3e2723; pointer-events: none; }
 
         .tooltip { 
-            visibility: hidden; width: 140px; background: #1a1a1a; color: #fff; padding: 8px;
-            border-radius: 6px; position: absolute; bottom: 120%; left: 50%; transform: translateX(-50%);
-            z-index: 9999; font-size: 10px; pointer-events: none; text-align: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            visibility: hidden; width: 160px; background: #1a1a1a; color: #fff; padding: 10px;
+            border-radius: 8px; position: absolute; bottom: 125%; left: 50%; transform: translateX(-50%);
+            z-index: 9999; font-size: 11px; pointer-events: none; text-align: left;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4); border: 1px solid #444;
         }
-        .tooltip b { color: #ff9800; display: block; margin-bottom: 3px; }
-        .tooltip img { width: 100%; margin-top: 5px; background: white; border-radius: 4px; }
+        .tooltip b { color: #ff9800; display: block; margin-bottom: 4px; border-bottom: 1px solid #444; padding-bottom: 2px; }
+        .tooltip .info-row { display: flex; justify-content: space-between; margin-bottom: 2px; }
+        .tooltip img { width: 70px; height: 70px; object-fit: cover; margin: 8px auto 0 auto; display: block; background: white; border-radius: 4px; }
         .box:hover .tooltip { visibility: visible; }
 
-        /* CHECKBOX */
-        .audit-checkbox { position: absolute; top: 0; right: 0; width: 25px; height: 25px; cursor: pointer; opacity: 0; z-index: 20; }
+        /* CHECKBOX AUDITORÍA */
+        .audit-checkbox { position: absolute; top: 0; left: 0; width: 100%; height: 100%; cursor: pointer; opacity: 0; z-index: 20; }
         .audit-check-container {
-            position: absolute; top: 2px; right: 2px; width: 16px; height: 16px;
+            position: absolute; top: 2px; right: 2px; width: 15px; height: 15px;
             display: flex; align-items: center; justify-content: center;
             background: var(--check-color); color: white; font-size: 9px;
             border-radius: 50%; border: 1.5px solid white; opacity: 0; z-index: 15; pointer-events: none;
@@ -84,24 +95,33 @@
 
         #sync-toast {
             position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-            background: #2d3436; color: white; padding: 10px 20px; border-radius: 50px;
-            font-size: 13px; display: none; align-items: center; gap: 10px; z-index: 5000;
+            background: #2d3436; color: white; padding: 12px 24px; border-radius: 50px;
+            font-size: 14px; display: none; align-items: center; gap: 10px; z-index: 5000;
         }
-        .spinner { width: 14px; height: 14px; border: 2px solid #555; border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite; }
+        .spinner { width: 16px; height: 16px; border: 2px solid #555; border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
         .hidden { display: none !important; }
+
+        /* Ajustes para Móvil */
+        @media (max-width: 600px) {
+            #warehouse { padding: 10px; gap: 15px; }
+            .rack { min-width: 280px; }
+            .controls { grid-template-columns: 1fr 1fr; }
+            #searchId { grid-column: span 2; }
+        }
     </style>
 </head>
 <body>
 
     <div class="controls">
-        <select id="filterRack" onchange="applyFilters()"><option value="all">Estantes</option></select>
-        <select id="filterStatus" onchange="applyFilters()"><option value="all">Estados</option></select>
-        <input type="text" id="searchId" placeholder="🔍 Buscar ID..." oninput="applyFilters()">
-        <button onclick="location.reload()">🔄</button>
+        <select id="filterRack" onchange="applyFilters()"><option value="all">Todos los Estantes</option></select>
+        <select id="filterShelf" onchange="applyFilters()"><option value="all">Todas las Repisas</option></select>
+        <select id="filterStatus" onchange="applyFilters()"><option value="all">Todos los Estados</option></select>
+        <input type="text" id="searchId" placeholder="🔍 Buscar ID o Código..." oninput="applyFilters()">
+        <button onclick="location.reload()">REFRESCAR</button>
     </div>
 
-    <div id="warehouse">Cargando almacén...</div>
+    <div id="warehouse">Cargando inventario...</div>
     <div id="sync-toast"><div class="spinner"></div><span id="sync-text">Sincronizando...</span></div>
 
     <script>
@@ -115,9 +135,8 @@
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
             osc.connect(gain); gain.connect(audioCtx.destination);
-            osc.frequency.value = freq; osc.type = 'sine';
+            osc.frequency.value = freq; 
             gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
             osc.start(); osc.stop(audioCtx.currentTime + duration);
         }
 
@@ -132,8 +151,10 @@
                     const c = row.split(sep).map(cell => cell.trim());
                     return { 
                         id: c[1] || "S/N", 
+                        codigoInterno: c[0] || "N/A", // Supuesto: Columna 0 es código interno
                         estado: c[3] || "N/A", 
-                        bin: c[4] || "", 
+                        bin: (c[4] || "").toUpperCase(), 
+                        costo: c[9] || "0", // Supuesto: Columna 9 es costo
                         precio: c[10] || "0", 
                         foto: c[13] || "" 
                     };
@@ -141,25 +162,33 @@
 
                 populateFilters();
                 render();
-            } catch (e) { console.error(e); }
+            } catch (e) { 
+                console.error(e);
+                document.getElementById('warehouse').innerText = "Error al cargar datos.";
+            }
         }
 
         function render() {
             const container = document.getElementById('warehouse');
             container.innerHTML = '';
+            
             const rackNums = [...new Set(inventoryData.map(i => i.bin.match(/\d+/)?.[0]))].filter(Boolean).sort((a,b)=>a-b);
             const shelfLetters = ['H', 'G', 'F', 'E', 'D', 'C', 'B', 'A']; 
 
             rackNums.forEach(r => {
                 const rackEl = document.createElement('div');
                 rackEl.className = `rack rack-node-${r}`;
+                rackEl.dataset.rackId = r;
                 rackEl.innerHTML = `<div class="rack-title">ESTANTE ${r}</div>`;
 
                 shelfLetters.forEach(s => {
                     const shelfId = `${r}${s}`;
-                    const shelfItems = inventoryData.filter(i => i.bin.toUpperCase() === shelfId);
+                    const shelfItems = inventoryData.filter(i => i.bin === shelfId);
+                    
                     const shelfEl = document.createElement('div');
                     shelfEl.className = `shelf shelf-node-${s}`;
+                    shelfEl.dataset.letter = s;
+
                     const gridEl = document.createElement('div');
                     gridEl.className = "box-grid";
                     gridEl.dataset.shelf = shelfId;
@@ -167,7 +196,7 @@
                     shelfItems.forEach(item => {
                         const box = document.createElement('div');
                         box.className = 'box';
-                        box.dataset.id = item.id.toLowerCase();
+                        box.dataset.search = `${item.id} ${item.codigoInterno}`.toLowerCase();
                         box.dataset.unique = item.id;
                         box.dataset.estado = item.estado;
                         box.innerHTML = `
@@ -176,8 +205,11 @@
                             <div class="box-label">${item.id}</div>
                             <div class="tooltip">
                                 <b>ID: ${item.id}</b>
-                                <span>$${item.precio} — ${item.estado}</span>
-                                ${item.foto ? `<img src="${item.foto}" alt="F">` : ''}
+                                <div class="info-row"><span>Cod:</span> <span>${item.codigoInterno}</span></div>
+                                <div class="info-row"><span>Estado:</span> <span>${item.estado}</span></div>
+                                <div class="info-row"><span>Costo:</span> <span>$${item.costo}</span></div>
+                                <div class="info-row"><span>Precio:</span> <span>$${item.precio}</span></div>
+                                ${item.foto ? `<img src="${item.foto}" alt="Foto">` : ''}
                             </div>
                         `;
                         
@@ -204,7 +236,7 @@
             const toast = document.getElementById('sync-toast');
             document.querySelectorAll('.box-grid').forEach(grid => {
                 new Sortable(grid, {
-                    animation: 100, group: 'shared', filter: '.audit-checkbox',
+                    animation: 150, group: 'shared', filter: '.audit-checkbox',
                     onEnd: async function (evt) {
                         if (evt.from === evt.to && evt.oldIndex === evt.newIndex) return;
                         playBeep(440, 0.05);
@@ -212,15 +244,14 @@
                         const boxId = evt.item.dataset.unique;
                         const newBin = evt.to.dataset.shelf;
                         toast.style.display = 'flex';
-                        document.getElementById('sync-text').innerText = `Guardando ${boxId}...`;
+                        document.getElementById('sync-text').innerText = `Moviendo ${boxId} a ${newBin}...`;
 
                         try {
                             await fetch(APPS_SCRIPT_URL, {
                                 method: 'POST', mode: 'no-cors',
                                 body: JSON.stringify({ id: boxId, newBin: newBin })
                             });
-                            document.getElementById('sync-text').innerText = "¡OK!";
-                            applyFilters();
+                            document.getElementById('sync-text').innerText = "¡Guardado!";
                             setTimeout(() => { toast.style.display = 'none'; }, 1000);
                         } catch (e) { console.error(e); }
                     }
@@ -230,48 +261,67 @@
 
         function applyFilters() {
             const rackVal = document.getElementById('filterRack').value;
+            const shelfVal = document.getElementById('filterShelf').value;
             const statusVal = document.getElementById('filterStatus').value;
             const searchVal = document.getElementById('searchId').value.toLowerCase();
 
             document.querySelectorAll('.rack').forEach(rack => {
-                const rId = rack.className.match(/rack-node-(\d+)/)[1];
+                const rId = rack.dataset.rackId;
                 const showRack = (rackVal === 'all' || rackVal === rId);
-                rack.classList.toggle('hidden', !showRack);
+                
+                let rackVisibleItems = 0;
 
-                let rackCount = 0;
-                if (showRack) {
-                    rack.querySelectorAll('.shelf').forEach(shelf => {
-                        let shelfCount = 0;
-                        shelf.querySelectorAll('.box').forEach(box => {
-                            const matchSearch = box.dataset.id.includes(searchVal);
-                            const matchStatus = (statusVal === 'all' || box.dataset.estado === statusVal);
-                            
-                            if (matchStatus) {
-                                box.style.display = "flex";
-                                const isFound = searchVal === "" || matchSearch;
-                                box.style.opacity = isFound ? "1" : "0.1";
-                                if(isFound) { shelfCount++; rackCount++; }
-                            } else { box.style.display = "none"; }
-                        });
-                        const sTitle = shelf.querySelector('.shelf-title');
-                        sTitle.textContent = `${sTitle.dataset.base} (${shelfCount})`;
+                rack.querySelectorAll('.shelf').forEach(shelf => {
+                    const sLetter = shelf.dataset.letter;
+                    const showShelf = (shelfVal === 'all' || shelfVal === sLetter);
+                    
+                    let shelfVisibleItems = 0;
+                    shelf.querySelectorAll('.box').forEach(box => {
+                        const matchSearch = box.dataset.search.includes(searchVal);
+                        const matchStatus = (statusVal === 'all' || box.dataset.estado === statusVal);
+                        
+                        if (matchStatus && showShelf && showRack) {
+                            box.style.display = "flex";
+                            const isFound = searchVal === "" || matchSearch;
+                            box.style.opacity = isFound ? "1" : "0.1";
+                            if(isFound) { shelfVisibleItems++; rackVisibleItems++; }
+                        } else {
+                            box.style.display = "none";
+                        }
                     });
-                }
-                rack.querySelector('.rack-title').textContent = `ESTANTE ${rId} (${rackCount})`;
+
+                    // Ocultar repisa si no hay matches y estamos filtrando
+                    shelf.classList.toggle('hidden', shelfVisibleItems === 0 && searchVal !== "");
+                    const sTitle = shelf.querySelector('.shelf-title');
+                    sTitle.textContent = `${sTitle.dataset.base} (${shelfVisibleItems})`;
+                });
+
+                rack.classList.toggle('hidden', !showRack || (rackVisibleItems === 0 && searchVal !== ""));
+                rack.querySelector('.rack-title').textContent = `ESTANTE ${rId} (${rackVisibleItems})`;
             });
         }
 
         function populateFilters() {
             const racks = [...new Set(inventoryData.map(i => i.bin.match(/\d+/)?.[0]))].filter(Boolean).sort((a,b)=>a-b);
+            const shelves = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
             const statuses = [...new Set(inventoryData.map(i => i.estado))].filter(Boolean).sort();
             
+            const rSelect = document.getElementById('filterRack');
             racks.forEach(r => {
                 let opt = document.createElement('option'); opt.value = r; opt.textContent = `Estante ${r}`;
-                document.getElementById('filterRack').appendChild(opt);
+                rSelect.appendChild(opt);
             });
+
+            const sSelect = document.getElementById('filterShelf');
+            shelves.forEach(s => {
+                let opt = document.createElement('option'); opt.value = s; opt.textContent = `Repisa ${s}`;
+                sSelect.appendChild(opt);
+            });
+
+            const stSelect = document.getElementById('filterStatus');
             statuses.forEach(s => {
                 let opt = document.createElement('option'); opt.value = s; opt.textContent = s;
-                document.getElementById('filterStatus').appendChild(opt);
+                stSelect.appendChild(opt);
             });
         }
 
