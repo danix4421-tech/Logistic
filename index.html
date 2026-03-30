@@ -2,58 +2,68 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Z-Logistics Pro - Inventario</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Z-Logistics Pro V4 - Filtros Dinámicos</title>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <style>
         :root {
             --shelf-color: #1e272e;
-            --box-width: 54px; --box-height: 40px;
+            --box-width: 62px; --box-height: 48px;
             --bg-a: #2196f3; --bg-b: #f44336; --bg-c: #4caf50; --bg-d: #ff9800;
             --bg-e: #9c27b0; --bg-f: #e91e63; --bg-g: #00bcd4; --bg-h: #607d8b;
             --check-color: #27ae60;
         }
 
-        body { font-family: 'Segoe UI', system-ui, sans-serif; background-color: #cbd5e0; margin: 0; padding: 0; }
-        
-        /* Controles Adaptables */
-        .controls { 
-            background: #ffffff; padding: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 8px; position: sticky; top: 0; width: 100%; z-index: 2000; box-sizing: border-box;
+        body { 
+            font-family: 'Segoe UI', system-ui, sans-serif; 
+            background-color: #cbd5e0; margin: 0; padding: 0; 
+            touch-action: manipulation;
         }
 
-        select, input, button { 
-            padding: 10px; border-radius: 8px; border: 1px solid #cbd5e0; 
-            font-size: 14px; width: 100%; box-sizing: border-box; outline: none;
+        /* MENU */
+        #controlPanel {
+            position: fixed; top: 0; left: 0; width: 100%; 
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2); z-index: 3000;
+            transform: translateY(-100%); transition: transform 0.3s ease;
+            padding: 15px; box-sizing: border-box;
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px;
+        }
+        #controlPanel.active { transform: translateY(0); }
+
+        .toggle-menu {
+            position: fixed; top: 15px; right: 15px; width: 45px; height: 45px; 
+            background: var(--shelf-color); color: white; border-radius: 50%; 
+            display: flex; align-items: center; justify-content: center;
+            z-index: 3001; cursor: pointer; border: 2px solid white; font-size: 18px;
         }
 
-        button { background: #1e272e; color: white; cursor: pointer; font-weight: bold; }
+        select, input, button { padding: 10px; border-radius: 6px; border: 1px solid #ccc; font-size: 14px; width: 100%; }
+        button { background: #2d3436; color: white; border: none; font-weight: bold; cursor: pointer;}
+        .btn-clear { background: #d63031; }
 
-        /* Contenedor Almacén */
         #warehouse { 
-            display: flex; gap: 20px; padding: 20px; 
-            overflow-x: auto; align-items: flex-start; scroll-behavior: smooth;
+            display: flex; flex-direction: column; align-items: center;
+            gap: 40px; padding: 80px 10px 40px 10px; 
         }
 
         .rack { 
             background: #e2e8f0; border: 6px solid var(--shelf-color); 
-            border-radius: 8px; min-width: 300px; max-width: 95vw;
-            flex-shrink: 0; box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            width: 100%; max-width: 450px; box-sizing: border-box;
         }
 
-        .rack-title { background: var(--shelf-color); color: white; text-align: center; padding: 12px; font-weight: 800; font-size: 1.1em; }
-
+        .rack-title { background: var(--shelf-color); color: white; text-align: center; padding: 10px; font-weight: 800; font-size: 14px; }
         .shelf { display: flex; flex-direction: column-reverse; background: #f8fafc; border-bottom: 2px solid #cbd5e0; }
-
+        
         .box-grid { 
-            display: flex; flex-wrap: wrap-reverse; gap: 5px; padding: 12px 8px;
-            min-height: 45px; align-content: flex-start; justify-content: center;
+            display: flex; flex-wrap: wrap-reverse; gap: 8px; padding: 12px; 
+            min-height: 60px; justify-content: center; align-content: flex-start;
         }
 
         .shelf-title { font-size: 11px; font-weight: 800; color: white; text-align: center; padding: 5px; }
         
-        /* Colores por Letra */
+        /* Colores Repisas */
         .shelf-node-A .shelf-title { background-color: var(--bg-a); }
         .shelf-node-B .shelf-title { background-color: var(--bg-b); }
         .shelf-node-C .shelf-title { background-color: var(--bg-c); }
@@ -63,82 +73,82 @@
         .shelf-node-G .shelf-title { background-color: var(--bg-g); }
         .shelf-node-H .shelf-title { background-color: var(--bg-h); }
 
-        /* CAJA Y TOOLTIP */
         .box { 
-            width: var(--box-width); height: var(--box-height); border-radius: 4px; 
+            width: var(--box-width); height: var(--box-height); border-radius: 6px; 
             border: 1px solid #8d6e63; background: linear-gradient(135deg, #d2b48c 0%, #c19a6b 100%);
-            display: flex; align-items: center; justify-content: center; position: relative; cursor: grab;
+            display: flex; align-items: center; justify-content: center; position: relative;
+            cursor: grab; user-select: none; touch-action: none;
         }
-        .box:active { cursor: grabbing; transform: scale(1.05); }
-        .box-label { font-size: 10px; font-weight: 900; color: #3e2723; pointer-events: none; }
+        
+        .box.is-checked { border-color: #27ae60; background: #e8f5e9; }
+        .box.is-checked .box-label { color: #27ae60; }
 
+        .box-label { font-size: 11px; font-weight: 900; color: #3e2723; pointer-events: none; }
+
+        .check-zone {
+            position: absolute; top: -5px; right: -5px; width: 22px; height: 22px;
+            background: white; border: 2px solid #cbd5e0; border-radius: 50%;
+            z-index: 50; cursor: pointer; display: flex; align-items: center; justify-content: center;
+        }
+        .check-zone::after { content: ''; width: 10px; height: 10px; background: #ccc; border-radius: 50%; }
+        .box.is-checked .check-zone { border-color: var(--check-color); background: var(--check-color); }
+        .box.is-checked .check-zone::after { background: white; transform: scale(1.2); }
+
+        /* TOOLTIP */
         .tooltip { 
-            visibility: hidden; width: 160px; background: #1a1a1a; color: #fff; padding: 10px;
-            border-radius: 8px; position: absolute; bottom: 125%; left: 50%; transform: translateX(-50%);
-            z-index: 9999; font-size: 11px; pointer-events: none; text-align: left;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.4); border: 1px solid #444;
+            visibility: hidden; width: 140px; background: rgba(0, 0, 0, 0.9); 
+            backdrop-filter: blur(5px); color: #fff; padding: 10px; border-radius: 8px; 
+            position: absolute; bottom: 115%; left: 50%; transform: translateX(-50%);
+            z-index: 9999; font-size: 11px; pointer-events: none; border: 1px solid rgba(255,255,255,0.2);
         }
-        .tooltip b { color: #ff9800; display: block; margin-bottom: 4px; border-bottom: 1px solid #444; padding-bottom: 2px; }
-        .tooltip .info-row { display: flex; justify-content: space-between; margin-bottom: 2px; }
-        .tooltip img { width: 70px; height: 70px; object-fit: cover; margin: 8px auto 0 auto; display: block; background: white; border-radius: 4px; }
+        .tooltip img { width: 100%; height: auto; border-radius: 4px; margin-bottom: 5px; }
         .box:hover .tooltip { visibility: visible; }
-
-        /* CHECKBOX AUDITORÍA */
-        .audit-checkbox { position: absolute; top: 0; left: 0; width: 100%; height: 100%; cursor: pointer; opacity: 0; z-index: 20; }
-        .audit-check-container {
-            position: absolute; top: 2px; right: 2px; width: 15px; height: 15px;
-            display: flex; align-items: center; justify-content: center;
-            background: var(--check-color); color: white; font-size: 9px;
-            border-radius: 50%; border: 1.5px solid white; opacity: 0; z-index: 15; pointer-events: none;
-        }
-        .audit-checkbox:checked + .audit-check-container { opacity: 1; }
+        
 
         #sync-toast {
             position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-            background: #2d3436; color: white; padding: 12px 24px; border-radius: 50px;
-            font-size: 14px; display: none; align-items: center; gap: 10px; z-index: 5000;
+            background: #2d3436; color: white; padding: 10px 20px; border-radius: 50px;
+            font-size: 13px; display: none; align-items: center; gap: 10px; z-index: 5000;
         }
-        .spinner { width: 16px; height: 16px; border: 2px solid #555; border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite; }
+        .spinner { width: 14px; height: 14px; border: 2px solid #555; border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
         .hidden { display: none !important; }
-
-        /* Ajustes para Móvil */
-        @media (max-width: 600px) {
-            #warehouse { padding: 10px; gap: 15px; }
-            .rack { min-width: 280px; }
-            .controls { grid-template-columns: 1fr 1fr; }
-            #searchId { grid-column: span 2; }
-        }
     </style>
 </head>
-<body>
+<body onclick="initAudioContext()">
 
-    <div class="controls">
-        <select id="filterRack" onchange="applyFilters()"><option value="all">Todos los Estantes</option></select>
-        <select id="filterShelf" onchange="applyFilters()"><option value="all">Todas las Repisas</option></select>
-        <select id="filterStatus" onchange="applyFilters()"><option value="all">Todos los Estados</option></select>
-        <input type="text" id="searchId" placeholder="🔍 Buscar ID o Código..." oninput="applyFilters()">
-        <button onclick="location.reload()">REFRESCAR</button>
+    <div class="toggle-menu" onclick="toggleMenu()">⚙️</div>
+
+    <div id="controlPanel">
+        <select id="filterRack" onchange="applyFilters()"><option value="all">Estantes</option></select>
+        <select id="filterShelf" onchange="applyFilters()"><option value="all">Repisas</option></select>
+        <select id="filterStatus" onchange="applyFilters()"><option value="all">Estados</option></select>
+        <input type="text" id="searchId" placeholder="🔍 Buscar ID..." oninput="applyFilters()">
+        <button onclick="location.reload()">🔄 Actualizar</button>
+        <button class="btn-clear" onclick="clearChecks()">Limpiar ✓</button>
     </div>
 
-    <div id="warehouse">Cargando inventario...</div>
-    <div id="sync-toast"><div class="spinner"></div><span id="sync-text">Sincronizando...</span></div>
+    <div id="warehouse">Cargando almacén...</div>
+    <div id="sync-toast"><div class="spinner"></div><span id="sync-text">Guardando...</span></div>
 
     <script>
         const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQxmMtrLlKEH1uQUNmUvQxXUmFJQNQc46rwfOpKMNzJytrGDRxyMjo_S2DhQIDJmXTv1o6G2fvZQZgi/pub?gid=1046628345&single=true&output=csv';
         const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwOdOZcJUyonVOTuTDr33TyDohlfYj9z-2-hLs4VSEm-MwGei7mh6cAnbQu2ejchQ5B/exec';
         
         let inventoryData = [];
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        let audioCtx = null;
 
-        function playBeep(freq, duration) {
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain); gain.connect(audioCtx.destination);
-            osc.frequency.value = freq; 
-            gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
-            osc.start(); osc.stop(audioCtx.currentTime + duration);
+        function initAudioContext() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+        function playBeep(freq, vol, dur) {
+            if (!audioCtx) return;
+            const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+            o.connect(g); g.connect(audioCtx.destination);
+            o.frequency.value = freq; g.gain.setValueAtTime(vol, audioCtx.currentTime);
+            g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + dur);
+            o.start(); o.stop(audioCtx.currentTime + dur);
         }
+
+        function toggleMenu() { document.getElementById('controlPanel').classList.toggle('active'); }
 
         async function init() {
             try {
@@ -150,41 +160,33 @@
                 inventoryData = rows.slice(1).map(row => {
                     const c = row.split(sep).map(cell => cell.trim());
                     return { 
-                        id: c[1] || "S/N", 
-                        codigoInterno: c[0] || "N/A", // Supuesto: Columna 0 es código interno
-                        estado: c[3] || "N/A", 
-                        bin: (c[4] || "").toUpperCase(), 
-                        costo: c[9] || "0", // Supuesto: Columna 9 es costo
-                        precio: c[10] || "0", 
-                        foto: c[13] || "" 
+                        codigo: c[2] || "N/A", id: c[1] || "S/N", 
+                        precio: c[10] || "0", estado: c[3] || "N/A", 
+                        bin: (c[4] || "").toUpperCase(), costo: c[9] || "0", img: c[13] || "" 
                     };
                 }).filter(i => i.bin !== "");
 
                 populateFilters();
                 render();
-            } catch (e) { 
-                console.error(e);
-                document.getElementById('warehouse').innerText = "Error al cargar datos.";
-            }
+            } catch (e) { console.error(e); }
         }
 
         function render() {
             const container = document.getElementById('warehouse');
             container.innerHTML = '';
-            
             const rackNums = [...new Set(inventoryData.map(i => i.bin.match(/\d+/)?.[0]))].filter(Boolean).sort((a,b)=>a-b);
             const shelfLetters = ['H', 'G', 'F', 'E', 'D', 'C', 'B', 'A']; 
 
             rackNums.forEach(r => {
                 const rackEl = document.createElement('div');
-                rackEl.className = `rack rack-node-${r}`;
+                rackEl.className = 'rack';
                 rackEl.dataset.rackId = r;
-                rackEl.innerHTML = `<div class="rack-title">ESTANTE ${r}</div>`;
+                // data-base guarda el nombre original para sumarle el conteo después
+                rackEl.innerHTML = `<div class="rack-title" data-base="ESTANTE ${r}">ESTANTE ${r}</div>`;
 
                 shelfLetters.forEach(s => {
                     const shelfId = `${r}${s}`;
                     const shelfItems = inventoryData.filter(i => i.bin === shelfId);
-                    
                     const shelfEl = document.createElement('div');
                     shelfEl.className = `shelf shelf-node-${s}`;
                     shelfEl.dataset.letter = s;
@@ -196,132 +198,131 @@
                     shelfItems.forEach(item => {
                         const box = document.createElement('div');
                         box.className = 'box';
-                        box.dataset.search = `${item.id} ${item.codigoInterno}`.toLowerCase();
+                        box.dataset.search = `${item.id} ${item.codigo}`.toLowerCase();
                         box.dataset.unique = item.id;
                         box.dataset.estado = item.estado;
+                        
                         box.innerHTML = `
-                            <input type="checkbox" class="audit-checkbox">
-                            <div class="audit-check-container">✓</div>
+                            <div class="check-zone"></div>
                             <div class="box-label">${item.id}</div>
                             <div class="tooltip">
-                                <b>ID: ${item.id}</b>
-                                <div class="info-row"><span>Cod:</span> <span>${item.codigoInterno}</span></div>
-                                <div class="info-row"><span>Estado:</span> <span>${item.estado}</span></div>
-                                <div class="info-row"><span>Costo:</span> <span>$${item.costo}</span></div>
-                                <div class="info-row"><span>Precio:</span> <span>$${item.precio}</span></div>
-                                ${item.foto ? `<img src="${item.foto}" alt="Foto">` : ''}
+                                ${item.img ? `<img src="${item.img}">` : ''}
+                                <b>ID: ${item.id}</b><br>
+                                <small>${item.codigo}</small><hr>
+                                Costo: $${item.costo}<br>
+                                Precio: $${item.precio}
                             </div>
                         `;
-                        
-                        box.querySelector('.audit-checkbox').addEventListener('change', () => {
-                            playBeep(880, 0.1); 
-                            if(navigator.vibrate) navigator.vibrate(10);
-                        });
-
+                        box.querySelector('.check-zone').onclick = (e) => {
+                            e.stopPropagation(); box.classList.toggle('is-checked');
+                            playBeep(box.classList.contains('is-checked') ? 900 : 500, 0.1, 0.1);
+                        };
                         gridEl.appendChild(box);
                     });
 
-                    shelfEl.innerHTML = `<div class="shelf-title" data-base="Repisa ${s}">Repisa ${s}</div>`;
+                    const shelfTitle = document.createElement('div');
+                    shelfTitle.className = 'shelf-title';
+                    shelfTitle.dataset.base = `Repisa ${s}`;
+                    shelfTitle.textContent = `Repisa ${s}`;
+
+                    shelfEl.appendChild(shelfTitle);
                     shelfEl.appendChild(gridEl);
                     rackEl.appendChild(shelfEl);
                 });
                 container.appendChild(rackEl);
             });
-
             initSortable();
             applyFilters();
+        }
+
+        function applyFilters() {
+            const rV = document.getElementById('filterRack').value;
+            const sV = document.getElementById('filterShelf').value;
+            const stV = document.getElementById('filterStatus').value;
+            const search = document.getElementById('searchId').value.toLowerCase();
+
+            document.querySelectorAll('.rack').forEach(rack => {
+                const rId = rack.dataset.rackId;
+                const showR = (rV === 'all' || rV === rId);
+                let rCount = 0;
+
+                rack.querySelectorAll('.shelf').forEach(shelf => {
+                    const sL = shelf.dataset.letter;
+                    const showS = (sV === 'all' || sV === sL);
+                    let sCount = 0;
+
+                    shelf.querySelectorAll('.box').forEach(box => {
+                        const mS = box.dataset.search.includes(search);
+                        const mSt = (stV === 'all' || box.dataset.estado === stV);
+                        
+                        if (mSt && showS && showR && (search === "" || mS)) {
+                            box.style.display = "flex";
+                            box.style.opacity = "1";
+                            sCount++;
+                            rCount++;
+                        } else {
+                            box.style.display = "none";
+                        }
+                    });
+
+                    // Actualizar Título Repisa
+                    const sT = shelf.querySelector('.shelf-title');
+                    sT.textContent = `${sT.dataset.base} (${sCount})`;
+                    shelf.classList.toggle('hidden', sCount === 0 && search !== "");
+                });
+
+                // Actualizar Título Estante
+                const rT = rack.querySelector('.rack-title');
+                rT.textContent = `${rT.dataset.base} (${rCount})`;
+                rack.classList.toggle('hidden', !showR || (rCount === 0 && search !== ""));
+            });
         }
 
         function initSortable() {
             const toast = document.getElementById('sync-toast');
             document.querySelectorAll('.box-grid').forEach(grid => {
                 new Sortable(grid, {
-                    animation: 150, group: 'shared', filter: '.audit-checkbox',
+                    animation: 250, group: 'shared', 
+                    filter: '.check-zone', preventOnFilter: true,
                     onEnd: async function (evt) {
                         if (evt.from === evt.to && evt.oldIndex === evt.newIndex) return;
-                        playBeep(440, 0.05);
-                        
                         const boxId = evt.item.dataset.unique;
                         const newBin = evt.to.dataset.shelf;
                         toast.style.display = 'flex';
-                        document.getElementById('sync-text').innerText = `Moviendo ${boxId} a ${newBin}...`;
-
                         try {
                             await fetch(APPS_SCRIPT_URL, {
                                 method: 'POST', mode: 'no-cors',
                                 body: JSON.stringify({ id: boxId, newBin: newBin })
                             });
-                            document.getElementById('sync-text').innerText = "¡Guardado!";
-                            setTimeout(() => { toast.style.display = 'none'; }, 1000);
+                            // Re-aplicar filtros para actualizar sumas tras mover
+                            applyFilters();
+                            setTimeout(() => { toast.style.display = 'none'; }, 800);
                         } catch (e) { console.error(e); }
                     }
                 });
             });
         }
 
-        function applyFilters() {
-            const rackVal = document.getElementById('filterRack').value;
-            const shelfVal = document.getElementById('filterShelf').value;
-            const statusVal = document.getElementById('filterStatus').value;
-            const searchVal = document.getElementById('searchId').value.toLowerCase();
-
-            document.querySelectorAll('.rack').forEach(rack => {
-                const rId = rack.dataset.rackId;
-                const showRack = (rackVal === 'all' || rackVal === rId);
-                
-                let rackVisibleItems = 0;
-
-                rack.querySelectorAll('.shelf').forEach(shelf => {
-                    const sLetter = shelf.dataset.letter;
-                    const showShelf = (shelfVal === 'all' || shelfVal === sLetter);
-                    
-                    let shelfVisibleItems = 0;
-                    shelf.querySelectorAll('.box').forEach(box => {
-                        const matchSearch = box.dataset.search.includes(searchVal);
-                        const matchStatus = (statusVal === 'all' || box.dataset.estado === statusVal);
-                        
-                        if (matchStatus && showShelf && showRack) {
-                            box.style.display = "flex";
-                            const isFound = searchVal === "" || matchSearch;
-                            box.style.opacity = isFound ? "1" : "0.1";
-                            if(isFound) { shelfVisibleItems++; rackVisibleItems++; }
-                        } else {
-                            box.style.display = "none";
-                        }
-                    });
-
-                    // Ocultar repisa si no hay matches y estamos filtrando
-                    shelf.classList.toggle('hidden', shelfVisibleItems === 0 && searchVal !== "");
-                    const sTitle = shelf.querySelector('.shelf-title');
-                    sTitle.textContent = `${sTitle.dataset.base} (${shelfVisibleItems})`;
-                });
-
-                rack.classList.toggle('hidden', !showRack || (rackVisibleItems === 0 && searchVal !== ""));
-                rack.querySelector('.rack-title').textContent = `ESTANTE ${rId} (${rackVisibleItems})`;
-            });
+        function clearChecks() {
+            if(confirm("¿Limpiar todos los marcados?")) {
+                document.querySelectorAll('.box').forEach(b => b.classList.remove('is-checked'));
+            }
         }
 
         function populateFilters() {
-            const racks = [...new Set(inventoryData.map(i => i.bin.match(/\d+/)?.[0]))].filter(Boolean).sort((a,b)=>a-b);
-            const shelves = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
-            const statuses = [...new Set(inventoryData.map(i => i.estado))].filter(Boolean).sort();
-            
-            const rSelect = document.getElementById('filterRack');
-            racks.forEach(r => {
-                let opt = document.createElement('option'); opt.value = r; opt.textContent = `Estante ${r}`;
-                rSelect.appendChild(opt);
+            const rs = [...new Set(inventoryData.map(i => i.bin.match(/\d+/)?.[0]))].filter(Boolean).sort((a,b)=>a-b);
+            const sts = [...new Set(inventoryData.map(i => i.estado))].filter(Boolean).sort();
+            rs.forEach(r => {
+                let o = document.createElement('option'); o.value = r; o.textContent = `Estante ${r}`;
+                document.getElementById('filterRack').appendChild(o);
             });
-
-            const sSelect = document.getElementById('filterShelf');
-            shelves.forEach(s => {
-                let opt = document.createElement('option'); opt.value = s; opt.textContent = `Repisa ${s}`;
-                sSelect.appendChild(opt);
+            ['A','B','C','D','E','F','G','H'].forEach(s => {
+                let o = document.createElement('option'); o.value = s; o.textContent = `Repisa ${s}`;
+                document.getElementById('filterShelf').appendChild(o);
             });
-
-            const stSelect = document.getElementById('filterStatus');
-            statuses.forEach(s => {
-                let opt = document.createElement('option'); opt.value = s; opt.textContent = s;
-                stSelect.appendChild(opt);
+            sts.forEach(s => {
+                let o = document.createElement('option'); o.value = s; o.textContent = s;
+                document.getElementById('filterStatus').appendChild(o);
             });
         }
 
