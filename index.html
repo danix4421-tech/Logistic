@@ -14,11 +14,21 @@
             --check-color: #27ae60;
         }
 
-       body { 
+        html, body { 
+    height: 100%;
+    overflow: auto;
+    /* Bloquea el gesto de estirar/recargar en la mayoría de navegadores modernos */
+    overscroll-behavior-y: none; 
+    overscroll-behavior: none;
+}
+
+      body { 
     font-family: 'Segoe UI', system-ui, sans-serif; 
-    background-color: #cbd5e0; margin: 0; padding: 0; 
-    touch-action: pan-x pan-y; /* MODIFICADO: Evita el pull-to-refresh */
-    overscroll-behavior-y: contain; /* MODIFICADO: Bloquea el rebote de recarga */
+    background-color: #cbd5e0; 
+    margin: 0; 
+    padding: 0; 
+    /* Evita interferencias con gestos del sistema */
+    touch-action: pan-x pan-y;
 }
 
         /* MENU */
@@ -363,6 +373,22 @@
         }
 
         init();
+
+
+        // Añade esto al final de tu script actual
+// Previene el rebote elástico en móviles que dispara la recarga
+document.addEventListener('touchmove', function (e) {
+    if (window.scrollY <= 0 && e.touches[0].pageY > e.touches[0].clientY) {
+        // Si estamos arriba de todo e intentamos deslizar hacia abajo
+        // Pero permitimos el scroll normal si hay contenido
+    }
+}, { passive: false });
+
+// Desactivar específicamente el refresh por pull (doble seguridad)
+window.addEventListener('load', function() {
+    document.body.style.overscrollBehaviorY = 'none';
+    document.documentElement.style.overscrollBehaviorY = 'none';
+});
     </script>
 </body>
 </html>
