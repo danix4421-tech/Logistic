@@ -14,11 +14,12 @@
             --check-color: #27ae60;
         }
 
-        body { 
-            font-family: 'Segoe UI', system-ui, sans-serif; 
-            background-color: #cbd5e0; margin: 0; padding: 0; 
-            touch-action: manipulation;
-        }
+       body { 
+    font-family: 'Segoe UI', system-ui, sans-serif; 
+    background-color: #cbd5e0; margin: 0; padding: 0; 
+    touch-action: pan-x pan-y; /* MODIFICADO: Evita el pull-to-refresh */
+    overscroll-behavior-y: contain; /* MODIFICADO: Bloquea el rebote de recarga */
+}
 
         /* MENU */
         #controlPanel {
@@ -278,30 +279,65 @@
             });
         }
 
-        function initSortable() {
-            const toast = document.getElementById('sync-toast');
-            document.querySelectorAll('.box-grid').forEach(grid => {
-                new Sortable(grid, {
-                    animation: 250, group: 'shared', 
-                    filter: '.check-zone', preventOnFilter: true,
-                    onEnd: async function (evt) {
-                        if (evt.from === evt.to && evt.oldIndex === evt.newIndex) return;
-                        const boxId = evt.item.dataset.unique;
-                        const newBin = evt.to.dataset.shelf;
-                        toast.style.display = 'flex';
-                        try {
-                            await fetch(APPS_SCRIPT_URL, {
-                                method: 'POST', mode: 'no-cors',
-                                body: JSON.stringify({ id: boxId, newBin: newBin })
-                            });
-                            // Re-aplicar filtros para actualizar sumas tras mover
-                            applyFilters();
-                            setTimeout(() => { toast.style.display = 'none'; }, 800);
-                        } catch (e) { console.error(e); }
+       function initSortable() {
+    const toast = document.getElementById('sync-toast');
+    document.querySelectorAll('.box-grid').forEach(grid => {
+        new Sortable(grid, {
+            animation: 250, 
+            group: 'shared', 
+            filter: '.check-zone', 
+            preventOnFilter: true,
+            onEnd: async function (evt) {
+                // 1. Si no hubo cambio de posición ni de contenedor, no hacer nada
+                if (evt.from === evt.to && evt.oldIndex === evt.newIndex) return;
+
+                const boxId = evt.item.dataset.unique;
+                const oldBin = evt.from.dataset.shelf; // Ubicación original
+                const newBin = evt.to.dataset.shelf;   // Ubicación nueva
+
+                // 2. LÓGICA OPTIMIZADA: Solo preguntar si cambió de Repisa/Estante
+                if (oldBin !== newBin) {
+                    const confirmar = confirm(`¿Cambiar ID ${boxId} de la ${oldBin} a la ${newBin}?`);
+                    
+                    if (!confirmar) {
+                        // Si cancela, devolvemos la caja a su lugar de origen
+                        evt.from.insertBefore(evt.item, evt.from.children[evt.oldIndex]);
+                        return;
                     }
-                });
-            });
-        }
+                } 
+                // Si oldBin === newBin, el código sigue directo sin preguntar (reordenamiento interno)
+
+                // 3. Proceso de Guardado
+                toast.style.display = 'flex';
+                document.getElementById('sync-text').textContent = "Sincronizando...";
+
+                try {
+                    await fetch(APPS_SCRIPT_URL, {
+                        method: 'POST', 
+                        mode: 'no-cors',
+                        body: JSON.stringify({ id: boxId, newBin: newBin })
+                    });
+
+                    // Actualizar datos locales para los contadores (numéricos en los títulos)
+                    const item = inventoryData.find(i => i.id === boxId);
+                    if (item) item.bin = newBin;
+
+                    applyFilters(); // Refresca los contadores (12) -> (13)
+                    
+                    document.getElementById('sync-text').textContent = "¡Listo!";
+                    setTimeout(() => { toast.style.display = 'none'; }, 800);
+                    
+                    if(navigator.vibrate) navigator.vibrate(30);
+
+                } catch (e) { 
+                    console.error("Error:", e);
+                    alert("Error crítico al guardar. Revisa tu conexión.");
+                    toast.style.display = 'none';
+                }
+            }
+        });
+    });
+}
 
         function clearChecks() {
             if(confirm("¿Limpiar todos los marcados?")) {
