@@ -325,14 +325,25 @@ function initSortable() {
             animation: 150,
             onAdd: async function (evt) {
                 const boxId = evt.item.dataset.unique;
-                const newSlotAddress = evt.to.dataset.address; // Ej: "1C-5"
-                const newBin = evt.to.dataset.targetShelf;     // Ej: "1C"
+                const oldBin = evt.from.dataset.targetShelf; // De donde viene
+                const newBin = evt.to.dataset.targetShelf;   // A donde va
+                const newSlotAddress = evt.to.dataset.address;
 
-                // 1. GUARDAR LOCALMENTE LA UBICACIÓN EXACTA
+                // --- VERIFICACIÓN DE SEGURIDAD ---
+                if (oldBin !== newBin) {
+                    const confirmacion = confirm(`⚠️ SEGURIDAD: ¿Mover ID ${boxId} de la repisa ${oldBin} a la ${newBin}?`);
+                    
+                    if (!confirmacion) {
+                        // Si cancela, devolvemos la caja al slot original
+                        evt.from.appendChild(evt.item);
+                        return;
+                    }
+                }
+                // ---------------------------------
+
+                // Si acepta o es la misma repisa, procedemos a guardar
                 savePosition(boxId, newSlotAddress);
-
-                // 2. SINCRONIZAR CON GOOGLE SHEETS (Bin general)
-                showToast(`Ubicación ${newSlotAddress} guardada`);
+                showToast(`Ubicación ${newSlotAddress} actualizada`);
                 
                 try {
                     await fetch(APPS_SCRIPT_URL, {
@@ -346,6 +357,7 @@ function initSortable() {
                     setTimeout(hideToast, 1000);
                 } catch (e) {
                     console.error("Error sincronizando");
+                    alert("Error de conexión al guardar en la nube");
                 }
             }
         });
@@ -400,6 +412,13 @@ function initSortable() {
 
     const item = inventoryData.find(i => i.id.toString().trim() === boxId.trim());
     if (!item) { alert("ID no encontrado en el inventario"); return; }
+
+        // Verificación explícita si la repisa es diferente
+    if (item.bin === targetBin) {
+        alert("La caja ya se encuentra en esta repisa.");
+        return;
+    }
+
 
     if (confirm(`¿Mover ID ${item.id} a la repisa ${targetBin}?`)) {
         showToast("Buscando espacio...");
