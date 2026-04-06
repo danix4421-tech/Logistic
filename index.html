@@ -2,79 +2,120 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Z-Logistics Pro V4 - Filtros Dinámicos</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Z-Logistics Pro V4 - Slot Edition</title>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <style>
         :root {
             --shelf-color: #1e272e;
-            --box-width: 62px; --box-height: 48px;
+            --box-size: 55px; /* Tamaño optimizado para ancho 340px */
             --bg-a: #2196f3; --bg-b: #f44336; --bg-c: #4caf50; --bg-d: #ff9800;
             --bg-e: #9c27b0; --bg-f: #e91e63; --bg-g: #00bcd4; --bg-h: #607d8b;
             --check-color: #27ae60;
         }
 
         html, body { 
-    height: 100%;
-    overflow: auto;
-    /* Bloquea el gesto de estirar/recargar en la mayoría de navegadores modernos */
-    overscroll-behavior-y: none; 
-    overscroll-behavior: none;
-}
+            height: 100%; margin: 0; padding: 0;
+            background-color: #ffffff; 
+            touch-action: pan-x pan-y;
+            zoom: 1.1; /* Tu escala preferida */
+        }
 
-      body { 
-    font-family: 'Segoe UI', system-ui, sans-serif; 
-    background-color: #cbd5e0; 
-    margin: 0; 
-    padding: 0; 
-    /* Evita interferencias con gestos del sistema */
-    touch-action: pan-x pan-y;
-}
-
-        /* MENU */
+        /* PANEL DE CONTROL */
         #controlPanel {
             position: fixed; top: 0; left: 0; width: 100%; 
             background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
             box-shadow: 0 4px 20px rgba(0,0,0,0.2); z-index: 3000;
             transform: translateY(-100%); transition: transform 0.3s ease;
             padding: 15px; box-sizing: border-box;
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
         }
         #controlPanel.active { transform: translateY(0); }
 
         .toggle-menu {
             position: fixed; top: 15px; right: 15px; width: 45px; height: 45px; 
-            background: var(--shelf-color); color: white; border-radius: 50%; 
+            background: #1e272e; color: white; border-radius: 12px; 
             display: flex; align-items: center; justify-content: center;
-            z-index: 3001; cursor: pointer; border: 2px solid white; font-size: 18px;
+            z-index: 3001; cursor: pointer; font-size: 20px;
         }
 
         select, input, button { padding: 10px; border-radius: 6px; border: 1px solid #ccc; font-size: 14px; width: 100%; }
-        button { background: #2d3436; color: white; border: none; font-weight: bold; cursor: pointer;}
-        .btn-clear { background: #d63031; }
+        button { background: #2d3436; color: white; border: none; font-weight: bold; }
 
+        /* ALMACÉN */
         #warehouse { 
             display: flex; flex-direction: column; align-items: center;
-            gap: 40px; padding: 80px 10px 40px 10px; 
+            gap: 30px; padding: 80px 10px 40px 10px; 
         }
 
         .rack { 
-            background: #e2e8f0; border: 6px solid var(--shelf-color); 
-            border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            width: 100%; max-width: 450px; box-sizing: border-box;
+            background: rgba(150, 150, 150, 0.137); border: 2px solid #cfcece; 
+            border-radius: 10px; width: 100%; max-width: 360px; overflow: hidden;
         }
 
-        .rack-title { background: var(--shelf-color); color: white; text-align: center; padding: 10px; font-weight: 800; font-size: 14px; }
+        .rack-title { background: var(--shelf-color); color: white; text-align: center; padding: 8px; font-weight: 800; font-size: 13px; }
         .shelf { display: flex; flex-direction: column-reverse; background: #f8fafc; border-bottom: 2px solid #cbd5e0; }
-        
+
+        /* REJILLA DE SLOTS */
         .box-grid { 
-            display: flex; flex-wrap: wrap-reverse; gap: 8px; padding: 12px; 
-            min-height: 60px; justify-content: center; align-content: flex-start;
+            display: grid;
+            grid-template-columns: repeat(6, var(--box-size)); /* 5 espacios por fila */
+            gap: 5px; padding: 2px; 
+            justify-content: flex-start; /* No se centran */
         }
 
-        .shelf-title { font-size: 11px; font-weight: 800; color: white; text-align: center; padding: 5px; }
+        .shelf-title { 
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 4px 10px; font-size: 11px; font-weight: 800; color: white;
+        }
+
+        /* EL "HUECO" O SLOT */
+        .slot {
+            width: var(--box-size); height: var(--box-size);
+            background: rgba(150, 150, 150, 0.137); border: 1px dashed rgba(211, 32, 32, 0.1);
+            border-radius: 4px; position: relative;
+        }
+
+        /* LA CAJA */
+        .box { 
+            width: 100%; height: 100%; border-radius: 4px; 
+            background: linear-gradient(135deg, #979797 0%, #c9c9c9 100%);
+            display: flex; align-items: center; justify-content: center; 
+            position: relative; cursor: grab; touch-action: none; z-index: 10;
+        }
         
-        /* Colores Repisas */
+        .box.is-checked { border: 2px solid var(--check-color); background: #e8f5e9; }
+
+        .box-thumb { 
+            max-width: 85%; max-height: 85%; 
+            object-fit: contain; pointer-events: none; 
+        }
+
+        .box-label { 
+            position: absolute; top: 1px; right: 2px; z-index: 20;
+            font-size: 9px; font-weight: 900; color: white; 
+            background: rgba(0,0,0,0.6); padding: 0 2px; border-radius: 2px;
+        }
+
+        .check-zone {
+            position: absolute; bottom: 2px; left: 2px; width: 14px; height: 14px;
+            background: white; border: 1px solid #ccc; border-radius: 50%;
+            z-index: 50; cursor: pointer;
+        }
+        .box.is-checked .check-zone { background: var(--check-color); border-color: white; }
+
+        /* TOOLTIP / TITULO AL PASAR EL MOUSE O TOCAR */
+        .box::after {
+            content: attr(data-title);
+            position: absolute; bottom: 110%; left: 50%; transform: translateX(-50%);
+            background: rgba(0,0,0,0.9); color: rgb(255, 255, 255); padding: 4px 8px;
+            border-radius: 4px; font-size: 9px; white-space: nowrap;
+            visibility: hidden; opacity: 0; transition: opacity 0.2s;
+            z-index: 1000; pointer-events: none; border: 1px solid rgba(255,255,255,0.2);
+        }
+        .box:hover::after, .box:active::after { visibility: visible; opacity: 2; }
+
+        /* COLORES REPISAS */
         .shelf-node-A .shelf-title { background-color: var(--bg-a); }
         .shelf-node-B .shelf-title { background-color: var(--bg-b); }
         .shelf-node-C .shelf-title { background-color: var(--bg-c); }
@@ -84,37 +125,7 @@
         .shelf-node-G .shelf-title { background-color: var(--bg-g); }
         .shelf-node-H .shelf-title { background-color: var(--bg-h); }
 
-        .box { 
-            width: var(--box-width); height: var(--box-height); border-radius: 6px; 
-            border: 1px solid #8d6e63; background: linear-gradient(135deg, #d2b48c 0%, #c19a6b 100%);
-            display: flex; align-items: center; justify-content: center; position: relative;
-            cursor: grab; user-select: none; touch-action: none;
-        }
-        
-        .box.is-checked { border-color: #27ae60; background: #e8f5e9; }
-        .box.is-checked .box-label { color: #27ae60; }
-
-        .box-label { font-size: 11px; font-weight: 900; color: #3e2723; pointer-events: none; }
-
-        .check-zone {
-            position: absolute; top: -5px; right: -5px; width: 22px; height: 22px;
-            background: white; border: 2px solid #cbd5e0; border-radius: 50%;
-            z-index: 50; cursor: pointer; display: flex; align-items: center; justify-content: center;
-        }
-        .check-zone::after { content: ''; width: 10px; height: 10px; background: #ccc; border-radius: 50%; }
-        .box.is-checked .check-zone { border-color: var(--check-color); background: var(--check-color); }
-        .box.is-checked .check-zone::after { background: white; transform: scale(1.2); }
-
-        /* TOOLTIP */
-        .tooltip { 
-            visibility: hidden; width: 140px; background: rgba(0, 0, 0, 0.9); 
-            backdrop-filter: blur(5px); color: #fff; padding: 10px; border-radius: 8px; 
-            position: absolute; bottom: 115%; left: 50%; transform: translateX(-50%);
-            z-index: 9999; font-size: 11px; pointer-events: none; border: 1px solid rgba(255,255,255,0.2);
-        }
-        .tooltip img { width: 100%; height: auto; border-radius: 4px; margin-bottom: 5px; }
-        .box:hover .tooltip { visibility: visible; }
-        
+        .btn-transfer { background: rgba(255,255,255,0.2); color: white; border: 1px solid white; border-radius: 4px; width: 22px; height: 22px; font-size: 10px; cursor: pointer; }
 
         #sync-toast {
             position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
@@ -124,68 +135,22 @@
         .spinner { width: 14px; height: 14px; border: 2px solid #555; border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
         .hidden { display: none !important; }
-
-
-
-       .shelf-title {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 4px 10px;
-    font-size: 11px;
-    font-weight: 800;
-    color: white;
-}
-
-/* Estilo del botón pequeño */
-.btn-transfer {
-    background: rgba(255, 255, 255, 0.15);
-    color: white;
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    border-radius: 3px;
-    width: 20px;
-    height: 20px;
-    font-size: 10px; /* Emoji más pequeño */
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: 0.2s;
-    padding: 0;
-}
-
-.btn-transfer:hover {
-    background: white;
-    color: black;
-}
-
-
-
-
-
-
-
-
-
-
-
     </style>
 </head>
 <body onclick="initAudioContext()">
 
-    <div class="toggle-menu" onclick="toggleMenu()">⚙️</div>
+    <div class="toggle-menu" onclick="toggleMenu()">🛠️</div>
 
     <div id="controlPanel">
         <select id="filterRack" onchange="applyFilters()"><option value="all">Estantes</option></select>
-        <select id="filterShelf" onchange="applyFilters()"><option value="all">Repisas</option></select>
         <select id="filterStatus" onchange="applyFilters()"><option value="all">Estados</option></select>
-        <input type="text" id="searchId" placeholder="🔍 Buscar ID..." oninput="applyFilters()">
+        <input type="text" id="searchId" placeholder="🔍 Buscar ID..." oninput="applyFilters()" style="grid-column: span 2;">
         <button onclick="location.reload()">🔄 Actualizar</button>
-        <button class="btn-clear" onclick="clearChecks()">Limpiar ✓</button>
+        <button style="background:#d63031;" onclick="clearChecks()">Limpiar ✓</button>
     </div>
 
     <div id="warehouse">Cargando almacén...</div>
-    <div id="sync-toast"><div class="spinner"></div><span id="sync-text">Guardando...</span></div>
+    <div id="sync-toast"><div class="spinner"></div><span id="sync-text">Sincronizando...</span></div>
 
     <script>
         const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQxmMtrLlKEH1uQUNmUvQxXUmFJQNQc46rwfOpKMNzJytrGDRxyMjo_S2DhQIDJmXTv1o6G2fvZQZgi/pub?gid=1046628345&single=true&output=csv';
@@ -193,6 +158,7 @@
         
         let inventoryData = [];
         let audioCtx = null;
+        const SLOTS_PER_SHELF = 24; // Número de huecos visibles por repisa
 
         function initAudioContext() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
         function playBeep(freq, vol, dur) {
@@ -204,21 +170,35 @@
             o.start(); o.stop(audioCtx.currentTime + dur);
         }
 
+
+
+
+        // Cargar el mapa de posiciones guardado: { "ID_CAJA": "UBICACION_EXACTA" }
+let positionMap = JSON.parse(localStorage.getItem('z_logistics_positions')) || {};
+
+function savePosition(boxId, slotId) {
+    positionMap[boxId] = slotId;
+    localStorage.setItem('z_logistics_positions', JSON.stringify(positionMap));
+}
+
+function getSavedSlot(boxId) {
+    return positionMap[boxId] || null;
+}
+
         function toggleMenu() { document.getElementById('controlPanel').classList.toggle('active'); }
 
         async function init() {
             try {
                 const response = await fetch(SHEET_CSV_URL);
-                let data = await response.text();
+                const data = await response.text();
                 const rows = data.replace(/'/g, "").split(/\r?\n/).filter(r => r.trim() !== "");
                 const sep = rows[0].includes(';') ? ';' : ',';
 
                 inventoryData = rows.slice(1).map(row => {
                     const c = row.split(sep).map(cell => cell.trim());
                     return { 
-                        codigo: c[2] || "N/A", id: c[1] || "S/N", 
-                        precio: c[10] || "0", estado: c[3] || "N/A", 
-                        bin: (c[4] || "").toUpperCase(), costo: c[9] || "0", img: c[13] || "" 
+                        id: c[1] || "S/N", codigo: c[2] || "N/A", estado: c[3] || "N/A", 
+                        bin: (c[4] || "").toUpperCase(), costo: c[9] || "0", precio: c[10] || "0", img: c[13] || "" 
                     };
                 }).filter(i => i.bin !== "");
 
@@ -227,7 +207,7 @@
             } catch (e) { console.error(e); }
         }
 
-        function render() {
+       function render() {
     const container = document.getElementById('warehouse');
     container.innerHTML = '';
     const rackNums = [...new Set(inventoryData.map(i => i.bin.match(/\d+/)?.[0]))].filter(Boolean).sort((a,b)=>a-b);
@@ -241,51 +221,56 @@
 
         shelfLetters.forEach(s => {
             const shelfId = `${r}${s}`;
-            const shelfItems = inventoryData.filter(i => i.bin === shelfId);
+            
+            // Obtener todas las cajas que pertenecen a esta repisa (ej: 1C)
+            let shelfItems = inventoryData.filter(i => i.bin === shelfId);
+
             const shelfEl = document.createElement('div');
             shelfEl.className = `shelf shelf-node-${s}`;
-            shelfEl.dataset.letter = s;
 
             const gridEl = document.createElement('div');
             gridEl.className = "box-grid";
-            gridEl.dataset.shelf = shelfId;
 
-            shelfItems.forEach(item => {
-                const box = document.createElement('div');
-                box.className = 'box';
-                box.dataset.search = `${item.id} ${item.codigo}`.toLowerCase();
-                box.dataset.unique = item.id;
-                box.dataset.estado = item.estado;
-                
-                box.innerHTML = `
-                    <div class="check-zone"></div>
-                    <div class="box-label">${item.id}</div>
-                    <div class="tooltip">
-                        ${item.img ? `<img src="${item.img}">` : ''}
-                        <b>ID: ${item.id}</b><br>
-                        <small>${item.codigo}</small><hr>
-                        Costo: $${item.costo}<br>
-                        Precio: $${item.precio}
-                    </div>
-                `;
-                box.querySelector('.check-zone').onclick = (e) => {
-                    e.stopPropagation(); box.classList.toggle('is-checked');
-                    playBeep(box.classList.contains('is-checked') ? 900 : 500, 0.1, 0.1);
-                };
-                gridEl.appendChild(box);
-            });
+            for (let i = 1; i <= SLOTS_PER_SHELF; i++) {
+                const exactAddress = `${shelfId}-${i}`;
+                const slot = document.createElement('div');
+                slot.className = 'slot';
+                slot.dataset.address = exactAddress;
+                slot.dataset.targetShelf = shelfId;
 
-            // TITULO CON BOTÓN DE TRANSFERENCIA
-           // --- Busca esta parte en tu función render() ---
-const shelfTitle = document.createElement('div');
-shelfTitle.className = 'shelf-title';
-shelfTitle.dataset.base = `Repisa ${s}`;
+                // 1. ¿Hay alguna caja que tenga ESTA dirección grabada?
+                let itemToPlace = shelfItems.find(item => positionMap[item.id] === exactAddress);
 
-// Estructura: Texto para cantidades + Botón pequeño
-shelfTitle.innerHTML = `
-    <span class="title-text">${shelfTitle.dataset.base}</span>
-    <button class="btn-transfer" onclick="transferBox('${shelfId}')" title="Traer caja">🚚</button>
-`;
+                // 2. Si no hay, pero hay cajas de esta repisa sin ninguna dirección grabada, tomamos una
+                if (!itemToPlace) {
+                    itemToPlace = shelfItems.find(item => !positionMap[item.id]);
+                    if (itemToPlace) {
+                        // Opcional: auto-guardar para que ya no sea "huérfana"
+                        savePosition(itemToPlace.id, exactAddress);
+                    }
+                }
+
+                if (itemToPlace) {
+                    const box = createBoxElement(itemToPlace);
+                    slot.appendChild(box);
+                    // Sacar de la lista temporal para no repetir la caja en otro slot
+                    shelfItems = shelfItems.filter(item => item.id !== itemToPlace.id);
+                }
+
+                gridEl.appendChild(slot);
+            }
+
+            const shelfTitle = document.createElement('div');
+            shelfTitle.className = 'shelf-title';
+
+            // ESTA LÍNEA ES LA QUE FALTA:
+            shelfTitle.dataset.base = `Repisa ${s}`;
+
+            const currentCount = inventoryData.filter(i => i.bin === shelfId).length;
+            shelfTitle.innerHTML = `
+                <span class="title-text">Repisa ${s} (${currentCount})</span>
+                <button class="btn-transfer" onclick="transferBox('${shelfId}')">🚚</button>
+            `;
 
             shelfEl.appendChild(shelfTitle);
             shelfEl.appendChild(gridEl);
@@ -296,210 +281,186 @@ shelfTitle.innerHTML = `
     initSortable();
     applyFilters();
 }
-        function applyFilters() {
-    const rV = document.getElementById('filterRack').value;
-    const sV = document.getElementById('filterShelf').value;
-    const stV = document.getElementById('filterStatus').value;
-    const search = document.getElementById('searchId').value.toLowerCase();
-
-    document.querySelectorAll('.rack').forEach(rack => {
-        const rId = rack.dataset.rackId;
-        const showR = (rV === 'all' || rV === rId);
-        let rCount = 0;
-
-        rack.querySelectorAll('.shelf').forEach(shelf => {
-            const sL = shelf.dataset.letter;
-            const showS = (sV === 'all' || sV === sL);
-            let sCount = 0;
-
-            shelf.querySelectorAll('.box').forEach(box => {
-                const mS = box.dataset.search.includes(search);
-                const mSt = (stV === 'all' || box.dataset.estado === stV);
-                
-                if (mSt && showS && showR && (search === "" || mS)) {
-                    box.style.display = "flex";
-                    box.style.opacity = "1";
-                    sCount++;
-                    rCount++;
-                } else {
-                    box.style.display = "none";
-                }
-            });
-
-            // --- CORRECCIÓN AQUÍ ---
-            const sT = shelf.querySelector('.shelf-title');
-            const txtSpan = sT.querySelector('.title-text');
-            if (txtSpan) {
-                txtSpan.textContent = `${sT.dataset.base} (${sCount})`;
-            }
-            // -----------------------
+        function createBoxElement(item) {
+            const box = document.createElement('div');
+            box.className = 'box';
+            box.dataset.unique = item.id;
+            box.dataset.search = `${item.id} ${item.codigo}`.toLowerCase();
+            box.dataset.estado = item.estado;
+            // ATRIBUTO DATA-TITLE PARA EL TOOLTIP
+            box.setAttribute('data-title', `${item.codigo}`);
             
-            shelf.classList.toggle('hidden', sCount === 0 && search !== "");
-        });
+            box.innerHTML = `
+                <div class="box-label">${item.id}</div>
+                <div class="check-zone"></div>
+                ${item.img ? `<img src="${item.img}" class="box-thumb">` : '📦'}
+            `;
 
-        const rT = rack.querySelector('.rack-title');
-        rT.textContent = `${rT.dataset.base} (${rCount})`;
-        rack.classList.toggle('hidden', !showR || (rCount === 0 && search !== ""));
-    });
+            box.querySelector('.check-zone').onclick = (e) => {
+                e.stopPropagation();
+                box.classList.toggle('is-checked');
+                playBeep(box.classList.contains('is-checked') ? 900 : 500, 0.1, 0.1);
+            };
+            return box;
+        }
+
+        // Función nueva para guardar el orden actual de una repisa
+function saveShelfOrder(shelfId) {
+    const shelfEl = document.querySelector(`.shelf-node-${shelfId.slice(-1)}[data-letter="${shelfId.slice(-1)}"]`);
+    // Buscamos dentro del estante correcto
+    const parentRack = document.querySelector(`.rack[data-rack-id="${shelfId.replace(/[^\d]/g, '')}"]`);
+    if(!parentRack) return;
+    
+    const shelfNode = parentRack.querySelector(`.shelf-node-${shelfId.slice(-1)}`);
+    const boxes = shelfNode.querySelectorAll('.box');
+    const order = Array.from(boxes).map(box => box.dataset.unique.toString());
+    
+    localStorage.setItem(`order_${shelfId}`, JSON.stringify(order));
 }
 
-       function initSortable() {
-    const toast = document.getElementById('sync-toast');
-    document.querySelectorAll('.box-grid').forEach(grid => {
-        new Sortable(grid, {
-            animation: 250, 
-            group: 'shared', 
-            filter: '.check-zone', 
-            preventOnFilter: true,
-            onEnd: async function (evt) {
-                // 1. Si no hubo cambio de posición ni de contenedor, no hacer nada
-                if (evt.from === evt.to && evt.oldIndex === evt.newIndex) return;
-
+function initSortable() {
+    document.querySelectorAll('.slot').forEach(slot => {
+        new Sortable(slot, {
+            group: 'shared',
+            animation: 150,
+            onAdd: async function (evt) {
                 const boxId = evt.item.dataset.unique;
-                const oldBin = evt.from.dataset.shelf; // Ubicación original
-                const newBin = evt.to.dataset.shelf;   // Ubicación nueva
+                const newSlotAddress = evt.to.dataset.address; // Ej: "1C-5"
+                const newBin = evt.to.dataset.targetShelf;     // Ej: "1C"
 
-                // 2. LÓGICA OPTIMIZADA: Solo preguntar si cambió de Repisa/Estante
-                if (oldBin !== newBin) {
-                    const confirmar = confirm(`¿Cambiar ID ${boxId} de la ${oldBin} a la ${newBin}?`);
-                    
-                    if (!confirmar) {
-                        // Si cancela, devolvemos la caja a su lugar de origen
-                        evt.from.insertBefore(evt.item, evt.from.children[evt.oldIndex]);
-                        return;
-                    }
-                } 
-                // Si oldBin === newBin, el código sigue directo sin preguntar (reordenamiento interno)
+                // 1. GUARDAR LOCALMENTE LA UBICACIÓN EXACTA
+                savePosition(boxId, newSlotAddress);
 
-                // 3. Proceso de Guardado
-                toast.style.display = 'flex';
-                document.getElementById('sync-text').textContent = "Sincronizando...";
-
+                // 2. SINCRONIZAR CON GOOGLE SHEETS (Bin general)
+                showToast(`Ubicación ${newSlotAddress} guardada`);
+                
                 try {
                     await fetch(APPS_SCRIPT_URL, {
-                        method: 'POST', 
-                        mode: 'no-cors',
+                        method: 'POST', mode: 'no-cors',
                         body: JSON.stringify({ id: boxId, newBin: newBin })
                     });
-
-                    // Actualizar datos locales para los contadores (numéricos en los títulos)
+                    
                     const item = inventoryData.find(i => i.id === boxId);
                     if (item) item.bin = newBin;
 
-                    applyFilters(); // Refresca los contadores (12) -> (13)
-                    
-                    document.getElementById('sync-text').textContent = "¡Listo!";
-                    setTimeout(() => { toast.style.display = 'none'; }, 800);
-                    
-                    if(navigator.vibrate) navigator.vibrate(30);
-
-                } catch (e) { 
-                    console.error("Error:", e);
-                    alert("Error crítico al guardar. Revisa tu conexión.");
-                    toast.style.display = 'none';
+                    setTimeout(hideToast, 1000);
+                } catch (e) {
+                    console.error("Error sincronizando");
                 }
             }
         });
     });
 }
+        function applyFilters() {
+            const rV = document.getElementById('filterRack').value;
+            const stV = document.getElementById('filterStatus').value;
+            const search = document.getElementById('searchId').value.toLowerCase();
 
-        function clearChecks() {
-            if(confirm("¿Limpiar todos los marcados?")) {
-                document.querySelectorAll('.box').forEach(b => b.classList.remove('is-checked'));
+            document.querySelectorAll('.rack').forEach(rack => {
+                const rId = rack.dataset.rackId;
+                const showR = (rV === 'all' || rV === rId);
+                let rCount = 0;
+
+                rack.querySelectorAll('.shelf').forEach(shelf => {
+                    let sCount = 0;
+                    shelf.querySelectorAll('.slot').forEach(slot => {
+                        const box = slot.querySelector('.box');
+                        if (!box) {
+                            // Si el slot está vacío y hay búsqueda, lo ocultamos para compactar
+                            slot.style.display = (search !== "") ? "none" : "block";
+                            return;
+                        }
+
+                        const mS = box.dataset.search.includes(search);
+                        const mSt = (stV === 'all' || box.dataset.estado === stV);
+                        
+                        if (mSt && showR && (search === "" || mS)) {
+                            slot.style.display = "block";
+                            box.style.opacity = "1";
+                            sCount++; rCount++;
+                        } else {
+                            slot.style.display = "none";
+                        }
+                    });
+
+                    const txtSpan = shelf.querySelector('.title-text');
+                    if (txtSpan) txtSpan.textContent = `${shelf.querySelector('.shelf-title').dataset.base} (${sCount})`;
+                    shelf.classList.toggle('hidden', sCount === 0 && search !== "");
+                });
+
+                const rT = rack.querySelector('.rack-title');
+                rT.textContent = `${rT.dataset.base} (${rCount})`;
+                rack.classList.toggle('hidden', !showR || (rCount === 0 && search !== ""));
+            });
+        }
+
+      async function transferBox(targetBin) {
+    const boxId = prompt(`Mover caja a la repisa ${targetBin}\nIngrese ID de la caja:`);
+    if (!boxId) return;
+
+    const item = inventoryData.find(i => i.id.toString().trim() === boxId.trim());
+    if (!item) { alert("ID no encontrado en el inventario"); return; }
+
+    if (confirm(`¿Mover ID ${item.id} a la repisa ${targetBin}?`)) {
+        showToast("Buscando espacio...");
+
+        // 1. Encontrar el primer slot vacío en la repisa de destino
+        const occupiedSlots = Object.values(positionMap); // Todas las direcciones ocupadas
+        let firstFreeSlot = null;
+
+        for (let i = 1; i <= SLOTS_PER_SHELF; i++) {
+            const potentialAddress = `${targetBin}-${i}`;
+            if (!occupiedSlots.includes(potentialAddress)) {
+                firstFreeSlot = potentialAddress;
+                break;
             }
         }
 
-        function populateFilters() {
-            const rs = [...new Set(inventoryData.map(i => i.bin.match(/\d+/)?.[0]))].filter(Boolean).sort((a,b)=>a-b);
-            const sts = [...new Set(inventoryData.map(i => i.estado))].filter(Boolean).sort();
-            rs.forEach(r => {
-                let o = document.createElement('option'); o.value = r; o.textContent = `Estante ${r}`;
-                document.getElementById('filterRack').appendChild(o);
-            });
-            ['A','B','C','D','E','F','G','H'].forEach(s => {
-                let o = document.createElement('option'); o.value = s; o.textContent = `Repisa ${s}`;
-                document.getElementById('filterShelf').appendChild(o);
-            });
-            sts.forEach(s => {
-                let o = document.createElement('option'); o.value = s; o.textContent = s;
-                document.getElementById('filterStatus').appendChild(o);
-            });
+        if (!firstFreeSlot) {
+            alert("La repisa está llena (máximo 24 slots)");
+            hideToast();
+            return;
         }
 
-        init();
-
-
-        // Añade esto al final de tu script actual
-// Previene el rebote elástico en móviles que dispara la recarga
-document.addEventListener('touchmove', function (e) {
-    if (window.scrollY <= 0 && e.touches[0].pageY > e.touches[0].clientY) {
-        // Si estamos arriba de todo e intentamos deslizar hacia abajo
-        // Pero permitimos el scroll normal si hay contenido
-    }
-}, { passive: false });
-
-// Desactivar específicamente el refresh por pull (doble seguridad)
-window.addEventListener('load', function() {
-    document.body.style.overscrollBehaviorY = 'none';
-    document.documentElement.style.overscrollBehaviorY = 'none';
-});
-
-async function transferBox(targetBin) {
-    const boxId = prompt(`Mover caja a ${targetBin}\nIngrese el ID de la caja:`);
-    
-    if (!boxId) return;
-
-}
-
-
-async function transferBox(targetBin) {
-    const boxId = prompt(`Mover caja a la ubicación ${targetBin}\nIngrese el ID exacto de la caja:`);
-    
-    if (!boxId) return;
-
-    // Buscamos la caja ignorando espacios
-    const item = inventoryData.find(i => i.id.toString().trim() === boxId.trim());
-
-    if (!item) {
-        alert("❌ Error: El ID '" + boxId + "' no existe en el sistema.");
-        return;
-    }
-
-    if (item.bin === targetBin) {
-        alert("📍 La caja ya está en esta repisa.");
-        return;
-    }
-
-    if (confirm(`¿Mover ID ${item.id} de la ubicación ${item.bin} a la ${targetBin}?`)) {
-        const toast = document.getElementById('sync-toast');
-        toast.style.display = 'flex';
-        document.getElementById('sync-text').textContent = "Sincronizando...";
-
         try {
-            // Envío a Google Sheets
+            // 2. Sincronizar con Google Sheets (el Bin general)
             await fetch(APPS_SCRIPT_URL, {
-                method: 'POST',
-                mode: 'no-cors',
+                method: 'POST', mode: 'no-cors',
                 body: JSON.stringify({ id: item.id, newBin: targetBin })
             });
 
-            // Actualización local
+            // 3. Guardar la nueva posición exacta localmente
+            savePosition(item.id, firstFreeSlot);
+            
+            // 4. Actualizar datos en memoria y refrescar
             item.bin = targetBin;
-            render(); // Esto refresca la vista y los contadores
+            render(); 
 
-            document.getElementById('sync-text').textContent = "¡Movido!";
-            setTimeout(() => { toast.style.display = 'none'; }, 1000);
-
+            showToast(`¡Movido a ${firstFreeSlot}!`);
+            setTimeout(hideToast, 1500);
         } catch (e) {
-            alert("Error de conexión al mover.");
-            toast.style.display = 'none';
+            alert("Error al transferir");
+            hideToast();
         }
     }
 }
 
+        function populateFilters() {
+            const rackSelect = document.getElementById('filterRack');
+            const statusSelect = document.getElementById('filterStatus');
+            const rs = [...new Set(inventoryData.map(i => i.bin.match(/\d+/)?.[0]))].filter(Boolean).sort((a,b)=>a-b);
+            const sts = [...new Set(inventoryData.map(i => i.estado))].filter(Boolean).sort();
 
+            rs.forEach(r => rackSelect.innerHTML += `<option value="${r}">Estante ${r}</option>`);
+            sts.forEach(s => statusSelect.innerHTML += `<option value="${s}">${s}</option>`);
+            if (sts.includes("Disponible")) statusSelect.value = "Disponible";
+        }
 
+        function clearChecks() { if(confirm("¿Limpiar marcados?")) document.querySelectorAll('.box.is-checked').forEach(b => b.classList.remove('is-checked')); }
+        function showToast(txt) { const t = document.getElementById('sync-toast'); t.style.display = 'flex'; document.getElementById('sync-text').textContent = txt; }
+        function hideToast() { document.getElementById('sync-toast').style.display = 'none'; }
 
+        init();
     </script>
 </body>
 </html>
