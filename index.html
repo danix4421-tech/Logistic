@@ -50,7 +50,7 @@
 
         .rack { 
             background: rgba(150, 150, 150, 0.137); border: 2px solid #cfcece; 
-            border-radius: 10px; width: 100%; max-width: 340px; overflow: hidden;
+            border-radius: 10px; width: 100%; max-width: 300px; overflow: hidden;
         }
 
         .rack-title { background: var(--shelf-color); color: white; text-align: center; padding: 8px; font-weight: 800; font-size: 13px; }
@@ -64,10 +64,32 @@
             justify-content: flex-start; /* No se centran */
         }
 
-        .shelf-title { 
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 4px 10px; font-size: 11px; font-weight: 800; color: white;
-        }
+      /* Contenedor principal de la cabecera de la repisa */
+.shelf-title { 
+    display: grid;
+    /* Creamos 3 columnas: 
+       1ra (vacía para equilibrar), 2da (título), 3ra (botón) */
+    grid-template-columns: 1fr auto 1fr; 
+    align-items: center;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 800;
+    /* El fondo de la barra ahora es neutro o transparente */
+    background: #2d3436; 
+    color: rgb(255, 255, 255); /* Texto del título siempre amarillo */
+    border-left: 4px solid white; /* Tu borde lateral izquierdo */
+}
+
+/* El elemento que envuelve el texto del título */
+.shelf-title span {
+    grid-column: 2; /* Forzamos a que siempre esté en la columna central */
+    padding: 2px 15px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    }
+
+
+
 
         /* EL "HUECO" O SLOT */
         .slot {
@@ -79,7 +101,7 @@
         /* LA CAJA */
         .box { 
             width: 100%; height: 100%; border-radius: 4px; 
-            background: linear-gradient(135deg, #979797 0%, #c9c9c9 100%);
+            background: linear-gradient(135deg, #707070 0%, #c9c9c9 100%);
             display: flex; align-items: center; justify-content: center; 
             position: relative; cursor: grab; touch-action: none; z-index: 10;
         }
@@ -96,6 +118,37 @@
             font-size: 9px; font-weight: 900; color: white; 
             background: rgba(0,0,0,0.6); padding: 0 2px; border-radius: 2px;
         }
+
+        .box-talla {
+    position: absolute;
+    bottom: 2px;   /* Pegado abajo */
+    right: 3px;    /* Pegado a la derecha */
+    z-index: 25;
+    
+    /* Estilo visual Minecraft */
+    font-family: 'Courier New', Courier, monospace; /* Fuente mono para toque retro */
+    font-size: 9px;
+    font-weight: bold;
+    color: #ffffff;
+    background: rgba(0,0,0,0.6); padding: 0 2px; border-radius: 2px;
+    
+   
+    
+    pointer-events: none; /* Para que no interfiera con el click */
+}
+
+/* Ajuste opcional: si la caja es muy pequeña, reducimos el tamaño */
+@media (max-width: 400px) {
+    .box-talla {
+        font-size: 10px;
+        text-shadow: 1.5px 1.5px 0px #373737;
+    }
+}
+
+
+
+
+
 
         .check-zone {
             position: absolute; bottom: 2px; left: 2px; width: 14px; height: 14px;
@@ -115,18 +168,29 @@
         }
         .box:hover::after, .box:active::after { visibility: visible; opacity: 2; }
 
-        /* COLORES REPISAS */
-        .shelf-node-A .shelf-title { background-color: var(--bg-a); }
-        .shelf-node-B .shelf-title { background-color: var(--bg-b); }
-        .shelf-node-C .shelf-title { background-color: var(--bg-c); }
-        .shelf-node-D .shelf-title { background-color: var(--bg-d); }
-        .shelf-node-E .shelf-title { background-color: var(--bg-e); }
-        .shelf-node-F .shelf-title { background-color: var(--bg-f); }
-        .shelf-node-G .shelf-title { background-color: var(--bg-g); }
-        .shelf-node-H .shelf-title { background-color: var(--bg-h); }
+      /* COLORES DINÁMICOS: Ahora afectan al SPAN (fondo del título) */
+.shelf-node-A .shelf-title span { background-color: var(--bg-a); }
+.shelf-node-B .shelf-title span { background-color: var(--bg-b); }
+.shelf-node-C .shelf-title span { background-color: var(--bg-c); }
+.shelf-node-D .shelf-title span { background-color: var(--bg-d); }
+.shelf-node-E .shelf-title span { background-color: var(--bg-e); }
+.shelf-node-F .shelf-title span { background-color: var(--bg-f); }
+.shelf-node-G .shelf-title span { background-color: var(--bg-g); }
+.shelf-node-H .shelf-title span { background-color: var(--bg-h); }
 
-        .btn-transfer { background: rgba(255,255,255,0.2); color: white; border: 1px solid white; border-radius: 4px; width: 22px; height: 22px; font-size: 10px; cursor: pointer; }
-
+       /* El botón siempre a la derecha */
+.btn-transfer { 
+    grid-column: 3;
+    justify-self: end; /* Lo pega al extremo derecho */
+    background: rgba(255,255,255,0.2); 
+    color: white; 
+    border: 1px solid white; 
+    border-radius: 4px; 
+    width: 22px; 
+    height: 22px; 
+    font-size: 10px; 
+    cursor: pointer; 
+}
         #sync-toast {
             position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
             background: #2d3436; color: white; padding: 10px 20px; border-radius: 50px;
@@ -198,7 +262,8 @@ function getSavedSlot(boxId) {
                     const c = row.split(sep).map(cell => cell.trim());
                     return { 
                         id: c[1] || "S/N", codigo: c[2] || "N/A", estado: c[3] || "N/A", 
-                        bin: (c[4] || "").toUpperCase(), costo: c[9] || "0", precio: c[10] || "0", img: c[13] || "" 
+                        bin: (c[4] || "").toUpperCase(), costo: c[9] || "0", precio: c[10] || "0", img: c[13] || "" ,
+                        talla: c[8] || "N/A"
                     };
                 }).filter(i => i.bin !== "");
 
@@ -264,7 +329,7 @@ function getSavedSlot(boxId) {
             shelfTitle.className = 'shelf-title';
 
             // ESTA LÍNEA ES LA QUE FALTA:
-            shelfTitle.dataset.base = `Repisa ${s}`;
+            shelfTitle.dataset.base = `${r}${s}`;
 
             const currentCount = inventoryData.filter(i => i.bin === shelfId).length;
             shelfTitle.innerHTML = `
@@ -292,6 +357,8 @@ function getSavedSlot(boxId) {
             
             box.innerHTML = `
                 <div class="box-label">${item.id}</div>
+                <div class="box-talla">${item.talla || ''}</div>
+
                 <div class="check-zone"></div>
                 ${item.img ? `<img src="${item.img}" class="box-thumb">` : '📦'}
             `;
