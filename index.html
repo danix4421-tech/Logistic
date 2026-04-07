@@ -12,6 +12,7 @@
             --bg-a: #2196f3; --bg-b: #f44336; --bg-c: #4caf50; --bg-d: #ff9800;
             --bg-e: #9c27b0; --bg-f: #e91e63; --bg-g: #00bcd4; --bg-h: #607d8b;
             --check-color: #27ae60;
+            --edit-accent: #f1c40f;
         }
 
         html, body { 
@@ -20,6 +21,28 @@
             touch-action: pan-x pan-y;
             zoom: 1.1;
         }
+
+
+        /* --- Ajuste para los números de Slot --- */
+.slot::after {
+    content: attr(data-slot-number);
+    position: absolute; top: 2px; left: 3px;
+    font-size: 8px; color: #bbb; font-weight: bold;
+    pointer-events: none;
+    display: none; /* Oculto por defecto */
+}
+
+/* Mostrar números SOLO en modo edición y SOLO si el slot está vacío */
+body.edit-mode .slot:not(:has(.box))::after {
+    display: block;
+}
+
+        /* --- ESTILOS MODO EDICIÓN --- */
+        body:not(.edit-mode) .btn-transfer { display: none !important; }
+        body:not(.edit-mode) .box { cursor: default !important; }
+        body.edit-mode .rack { border: 2px solid var(--edit-accent); }
+        
+        #btnToggleEdit.active { background: var(--edit-accent); color: #000; }
 
         #controlPanel {
             position: fixed; top: 0; left: 0; width: 100%; 
@@ -39,7 +62,7 @@
         }
 
         select, input, button { padding: 10px; border-radius: 6px; border: 1px solid #ccc; font-size: 14px; width: 100%; }
-        button { background: #2d3436; color: white; border: none; font-weight: bold; }
+        button { background: #2d3436; color: white; border: none; font-weight: bold; cursor: pointer; }
 
         #warehouse { 
             display: flex; flex-direction: column; align-items: center;
@@ -49,6 +72,7 @@
         .rack { 
             background: rgba(150, 150, 150, 0.137); border: 2px solid #cfcece; 
             border-radius: 10px; width: 100%; max-width: 300px; overflow: hidden;
+            transition: border 0.3s;
         }
 
         .rack-title { background: var(--shelf-color); color: white; text-align: center; padding: 8px; font-weight: 800; font-size: 13px; }
@@ -160,6 +184,50 @@
         .spinner { width: 14px; height: 14px; border: 2px solid #555; border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
         .hidden { display: none !important; }
+
+
+        /* --- MEJORAS VISUALES DE ARRASTRE --- */
+
+/* La caja "fantasma" que se queda en el sitio original mientras arrastras */
+.sortable-ghost {
+    opacity: 0.4;
+    background: #dfe6e9 !important;
+    border: 2px dashed #636e72 !important;
+}
+
+/* La caja que llevas bajo el dedo/ratón */
+.sortable-drag {
+    opacity: 0.9;
+    transform: rotate(5deg) scale(1.1); /* Efecto de que la estás levantando */
+    box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+    cursor: grabbing;
+}
+
+/* El slot que está a punto de recibir la caja */
+.slot.sortable-chosen {
+    background: rgba(46, 204, 113, 0.2);
+    border: 2px solid var(--check-color);
+}
+
+/* Animación de éxito al soltar */
+@keyframes dropSuccess {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); background-color: #27ae60; }
+    100% { transform: scale(1); }
+}
+
+.drop-animate {
+    animation: dropSuccess 0.4s ease-out;
+}
+
+/* Estilo para slots ocupados (opcional, visual) */
+.slot:has(.box) {
+    border: 1px solid rgba(0,0,0,0.05);
+    background: white;
+}
+
+
+
     </style>
 </head>
 <body onclick="initAudioContext()">
@@ -167,6 +235,7 @@
     <div class="toggle-menu" onclick="toggleMenu()">🛠️</div>
 
     <div id="controlPanel">
+        <button id="btnToggleEdit" onclick="toggleEditMode()" style="grid-column: span 2;">🔒 Modo Lectura</button>
         <select id="filterRack" onchange="applyFilters()"><option value="all">Estantes</option></select>
         <select id="filterStatus" onchange="applyFilters()"><option value="all">Estados</option></select>
         <input type="text" id="searchId" placeholder="🔍 Buscar ID..." oninput="applyFilters()" style="grid-column: span 2;">
@@ -185,6 +254,8 @@
         let audioCtx = null;
         const SLOTS_PER_SHELF = 30; 
         let positionMap = JSON.parse(localStorage.getItem('z_logistics_positions')) || {};
+        let isEditMode = false;
+        let sortableInstances = [];
 
         function initAudioContext() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
         function playBeep(freq, vol, dur) {
@@ -203,6 +274,27 @@
 
         function toggleMenu() { document.getElementById('controlPanel').classList.toggle('active'); }
 
+        // --- FUNCIÓN PARA CAMBIAR MODO ---
+        function toggleEditMode() {
+            isEditMode = !isEditMode;
+            const btn = document.getElementById('btnToggleEdit');
+            
+            if (isEditMode) {
+                document.body.classList.add('edit-mode');
+                btn.classList.add('active');
+                btn.innerHTML = '🔓 Modo Edición (Activo)';
+                playBeep(800, 0.1, 0.2);
+            } else {
+                document.body.classList.remove('edit-mode');
+                btn.classList.remove('active');
+                btn.innerHTML = '🔒 Modo Lectura';
+                playBeep(400, 0.1, 0.2);
+            }
+
+            // Actualizar instancias de Sortable
+            sortableInstances.forEach(s => s.option('disabled', !isEditMode));
+        }
+
         async function init() {
             try {
                 const response = await fetch(SHEET_CSV_URL);
@@ -216,17 +308,14 @@
                         id: c[1] || "S/N", codigo: c[2] || "N/A", estado: c[3] || "N/A", 
                         bin: (c[4] || "").toUpperCase(), costo: c[9] || "0", precio: c[10] || "0", img: c[13] || "" ,
                         talla: c[8] || "N/A",
-                        orden: c[32] || "" // La columna de la posición exacta
+                        orden: c[32] || "" 
                     };
-
-                    // CRUCIAL: Si el Excel trae una posición, actualizar el mapa local inmediatamente
                     if (item.orden && item.orden.includes('-')) {
                         positionMap[item.id] = item.orden;
                     }
                     return item;
                 }).filter(i => i.bin !== "");
 
-                // Guardar el mapa actualizado desde el Excel al storage local
                 localStorage.setItem('z_logistics_positions', JSON.stringify(positionMap));
 
                 populateFilters();
@@ -237,8 +326,6 @@
         function render() {
             const container = document.getElementById('warehouse');
             container.innerHTML = '';
-            
-            // Refrescar el mapa de posiciones local
             positionMap = JSON.parse(localStorage.getItem('z_logistics_positions')) || {};
 
             const rackNums = [...new Set(inventoryData.map(i => i.bin.match(/\d+/)?.[0]))].filter(Boolean).sort((a,b)=>a-b);
@@ -268,10 +355,8 @@
                         slot.dataset.targetShelf = shelfId;
                         slot.setAttribute('data-slot-number', i);
 
-                        // Buscar caja que corresponda a este slot según nuestro mapa (que ya fue sincronizado con Excel)
                         let itemToPlace = shelfItems.find(item => positionMap[item.id] === exactAddress);
 
-                        // Si no hay nada asignado a este número, pero hay cajas "sueltas" en esta repisa
                         if (!itemToPlace) {
                             itemToPlace = shelfItems.find(item => !positionMap[item.id] || !positionMap[item.id].startsWith(shelfId));
                             if (itemToPlace) {
@@ -282,10 +367,8 @@
                         if (itemToPlace) {
                             const box = createBoxElement(itemToPlace);
                             slot.appendChild(box);
-                            // Quitar de la lista temporal para que no se repita en otro slot
                             shelfItems = shelfItems.filter(item => item.id !== itemToPlace.id);
                         }
-
                         gridEl.appendChild(slot);
                     }
 
@@ -332,39 +415,51 @@
             return box;
         }
 
-        function initSortable() {
+       function initSortable() {
+    sortableInstances.forEach(s => s.destroy());
+    sortableInstances = [];
+
     document.querySelectorAll('.slot').forEach(slot => {
-        new Sortable(slot, {
-            group: 'shared',
-            animation: 150,
+        const s = new Sortable(slot, {
+            // CONFIGURACIÓN DE GRUPO INTELIGENTE
+            group: {
+                name: 'shared',
+                // Solo permite soltar si el slot está vacío (evita el desplazamiento)
+                put: function (to) {
+                    return to.el.children.length < 1;
+                }
+            },
+            sort: false,      // <--- CRUCIAL: Evita que las cajas se desplacen al pasar por encima
+            animation: 250,
+            easing: "cubic-bezier(1, 0, 0, 1)",
+            disabled: !isEditMode,
+            
+            // Clases visuales (manteniendo las mejoras anteriores)
+            ghostClass: "sortable-ghost",
+            chosenClass: "sortable-chosen",
+            dragClass: "sortable-drag",
+            
             onAdd: async function (evt) {
                 const boxId = evt.item.dataset.unique;
                 const oldBin = evt.from.dataset.targetShelf;
                 const newBin = evt.to.dataset.targetShelf;
                 const newSlotAddress = evt.to.dataset.address;
 
-                // --- VALIDACIÓN 1: ¿EL SLOT ESTÁ OCUPADO? ---
-                // Si el slot de destino ya tiene más de un elemento (la caja nueva + la que ya estaba)
-                if (evt.to.children.length > 1) {
-                    playBeep(200, 0.3, 0.2); // Sonido de error
-                    alert("⚠️ ERROR: Este slot ya está ocupado por otra caja.");
-                    
-                    // Devolvemos la caja a donde estaba
-                    evt.from.appendChild(evt.item);
-                    return;
-                }
-
-                // --- VALIDACIÓN 2: SEGURIDAD ENTRE REPISAS ---
+                // Seguridad extra entre repisas
                 if (oldBin !== newBin) {
-                    if (!confirm(`⚠️ SEGURIDAD: ¿Mover ID ${boxId} a la repisa ${newBin}?`)) {
+                    if (!confirm(`⚠️ ¿Mover ID ${boxId} a la repisa ${newBin}?`)) {
                         evt.from.appendChild(evt.item);
                         return;
                     }
                 }
 
-                // Si pasa las validaciones, guardamos
+                // Animación de éxito
+                evt.item.classList.add('drop-animate');
+                setTimeout(() => evt.item.classList.remove('drop-animate'), 400);
+
+                // Guardado lógico
                 savePosition(boxId, newSlotAddress);
-                showToast(`Guardado en ${newSlotAddress}`);
+                showToast(`Ubicación: ${newSlotAddress}`);
                 
                 try {
                     await fetch(APPS_SCRIPT_URL, {
@@ -375,18 +470,15 @@
                             newOrder: newSlotAddress 
                         })
                     });
-                    
                     const item = inventoryData.find(i => i.id === boxId);
-                    if (item) {
-                        item.bin = newBin;
-                        item.orden = newSlotAddress;
-                    }
+                    if (item) { item.bin = newBin; item.orden = newSlotAddress; }
                     setTimeout(hideToast, 800);
                 } catch (e) {
-                    alert("Error de conexión");
+                    alert("Error de conexión al servidor");
                 }
             }
         });
+        sortableInstances.push(s);
     });
 }
 
@@ -408,10 +500,8 @@
                             slot.style.display = (search !== "") ? "none" : "block";
                             return;
                         }
-
                         const mS = box.dataset.search.includes(search);
                         const mSt = (stV === 'all' || box.dataset.estado === stV);
-                        
                         if (mSt && showR && (search === "" || mS)) {
                             slot.style.display = "block";
                             box.style.opacity = "1";
@@ -420,7 +510,6 @@
                             slot.style.display = "none";
                         }
                     });
-
                     const txtSpan = shelf.querySelector('.title-text');
                     if (txtSpan) txtSpan.textContent = `${shelf.querySelector('.shelf-title').dataset.base} (${sCount})`;
                     shelf.classList.toggle('hidden', sCount === 0 && search !== "");
@@ -432,59 +521,46 @@
             });
         }
 
-       async function transferBox(targetBin) {
-    const boxId = prompt(`Mover caja a la repisa ${targetBin}\nIngrese ID de la caja:`);
-    if (!boxId) return;
+        async function transferBox(targetBin) {
+            if (!isEditMode) return; // Doble seguridad
 
-    const item = inventoryData.find(i => i.id.toString().trim() === boxId.trim());
-    if (!item) { alert("ID no encontrado"); return; }
-    if (item.bin === targetBin) { alert("Ya está en esta repisa."); return; }
+            const boxId = prompt(`Mover caja a la repisa ${targetBin}\nIngrese ID de la caja:`);
+            if (!boxId) return;
 
-    if (confirm(`¿Mover ID ${item.id} a la repisa ${targetBin}?`)) {
-        showToast("Buscando slot vacío...");
-        
-        // Obtenemos todas las direcciones que el sistema cree que están ocupadas
-        const occupiedSlots = Object.values(positionMap);
-        let firstFreeSlot = null;
+            const item = inventoryData.find(i => i.id.toString().trim() === boxId.trim());
+            if (!item) { alert("ID no encontrado"); return; }
+            
+            showToast("Buscando slot vacío...");
+            const occupiedSlots = Object.values(positionMap);
+            let firstFreeSlot = null;
 
-        // Buscamos del 1 al 30 un número que no esté en 'occupiedSlots'
-        for (let i = 1; i <= SLOTS_PER_SHELF; i++) {
-            const potentialAddress = `${targetBin}-${i}`;
-            if (!occupiedSlots.includes(potentialAddress)) {
-                firstFreeSlot = potentialAddress;
-                break;
+            for (let i = 1; i <= SLOTS_PER_SHELF; i++) {
+                const potentialAddress = `${targetBin}-${i}`;
+                if (!occupiedSlots.includes(potentialAddress)) {
+                    firstFreeSlot = potentialAddress;
+                    break;
+                }
+            }
+
+            if (!firstFreeSlot) { alert("❌ Repisa llena."); hideToast(); return; }
+
+            try {
+                delete positionMap[item.id];
+                await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST', mode: 'no-cors',
+                    body: JSON.stringify({ id: item.id, newBin: targetBin, newOrder: firstFreeSlot })
+                });
+                savePosition(item.id, firstFreeSlot);
+                item.bin = targetBin;
+                item.orden = firstFreeSlot;
+                render(); 
+                showToast(`¡Movido a ${firstFreeSlot}!`);
+                setTimeout(hideToast, 1000);
+            } catch (e) {
+                alert("Error al transferir");
+                hideToast();
             }
         }
-
-        if (!firstFreeSlot) { 
-            alert("❌ ERROR: La repisa de destino está totalmente llena."); 
-            hideToast(); 
-            return; 
-        }
-
-        try {
-            // Borramos la posición antigua del mapa antes de asignar la nueva 
-            // (Evita que el ID viejo "bloquee" el slot donde estaba)
-            delete positionMap[item.id];
-
-            await fetch(APPS_SCRIPT_URL, {
-                method: 'POST', mode: 'no-cors',
-                body: JSON.stringify({ id: item.id, newBin: targetBin, newOrder: firstFreeSlot })
-            });
-
-            savePosition(item.id, firstFreeSlot);
-            item.bin = targetBin;
-            item.orden = firstFreeSlot;
-            
-            render(); 
-            showToast(`¡Movido a ${firstFreeSlot}!`);
-            setTimeout(hideToast, 1000);
-        } catch (e) {
-            alert("Error al transferir");
-            hideToast();
-        }
-    }
-}
 
         function populateFilters() {
             const rackSelect = document.getElementById('filterRack');
