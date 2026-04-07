@@ -94,9 +94,31 @@
         /* EL "HUECO" O SLOT */
         .slot {
             width: var(--box-size); height: var(--box-size);
-            background: rgba(150, 150, 150, 0.137); border: 1px dashed rgba(211, 32, 32, 0.1);
-            border-radius: 4px; position: relative;
+            background: rgba(150, 150, 150, 0.137); 
+            border: 1px dashed rgba(211, 32, 32, 0.1);
+            border-radius: 4px; 
+            position: relative;
         }
+
+        .slot::after {
+    content: attr(data-slot-number); /* Toma el número del atributo HTML */
+    position: absolute;
+    top: 2px;
+    left: 3px;
+    font-size: 8px;
+    color: #bbb;
+    font-weight: bold;
+    pointer-events: none; /* Para que no interfiera con el arrastre */
+}
+
+/* Ocultar el número cuando hay una caja encima */
+.slot:has(.box)::after {
+    display: none;
+}
+
+
+
+
 
         /* LA CAJA */
         .box { 
@@ -218,11 +240,11 @@
 
     <script>
         const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQxmMtrLlKEH1uQUNmUvQxXUmFJQNQc46rwfOpKMNzJytrGDRxyMjo_S2DhQIDJmXTv1o6G2fvZQZgi/pub?gid=1046628345&single=true&output=csv';
-        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwOdOZcJUyonVOTuTDr33TyDohlfYj9z-2-hLs4VSEm-MwGei7mh6cAnbQu2ejchQ5B/exec';
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxerk9BaSwQYzK8qFrv-uobpmash0q6ODL33qtZHt7KGk6f_CQzHk73pkLTmoxabr5C/exec';
         
         let inventoryData = [];
         let audioCtx = null;
-        const SLOTS_PER_SHELF = 25; // Número de huecos visibles por repisa
+        const SLOTS_PER_SHELF = 30; // Número de huecos visibles por repisa
 
         function initAudioContext() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
         function playBeep(freq, vol, dur) {
@@ -275,6 +297,19 @@ function getSavedSlot(boxId) {
        function render() {
     const container = document.getElementById('warehouse');
     container.innerHTML = '';
+    
+    // 1. LIMPIEZA DE INTEGRIDAD: Si el Bin del Excel cambió, borramos el slot viejo del localStorage
+    inventoryData.forEach(item => {
+        const savedAddress = positionMap[item.id];
+        if (savedAddress) {
+            const savedShelf = savedAddress.split('-')[0]; // Extrae "1A" de "1A-5"
+            if (savedShelf !== item.bin) {
+                delete positionMap[item.id]; // El Excel manda: si cambió de repisa, olvidamos el slot exacto
+            }
+        }
+    });
+    localStorage.setItem('z_logistics_positions', JSON.stringify(positionMap));
+
     const rackNums = [...new Set(inventoryData.map(i => i.bin.match(/\d+/)?.[0]))].filter(Boolean).sort((a,b)=>a-b);
     const shelfLetters = ['H', 'G', 'F', 'E', 'D', 'C', 'B', 'A']; 
 
@@ -287,7 +322,7 @@ function getSavedSlot(boxId) {
         shelfLetters.forEach(s => {
             const shelfId = `${r}${s}`;
             
-            // Obtener todas las cajas que pertenecen a esta repisa (ej: 1C)
+            // Cajas que el Excel dice que van en esta repisa
             let shelfItems = inventoryData.filter(i => i.bin === shelfId);
 
             const shelfEl = document.createElement('div');
@@ -302,15 +337,15 @@ function getSavedSlot(boxId) {
                 slot.className = 'slot';
                 slot.dataset.address = exactAddress;
                 slot.dataset.targetShelf = shelfId;
+                slot.setAttribute('data-slot-number', i); // <-- Aquí se asigna el número
 
-                // 1. ¿Hay alguna caja que tenga ESTA dirección grabada?
+                // ¿Hay alguna caja que pertenezca a esta repisa y tenga ESTA dirección grabada?
                 let itemToPlace = shelfItems.find(item => positionMap[item.id] === exactAddress);
 
-                // 2. Si no hay, pero hay cajas de esta repisa sin ninguna dirección grabada, tomamos una
+                // Si no hay, pero hay cajas de esta repisa que se quedaron sin dirección (huérfanas), tomamos una
                 if (!itemToPlace) {
                     itemToPlace = shelfItems.find(item => !positionMap[item.id]);
                     if (itemToPlace) {
-                        // Opcional: auto-guardar para que ya no sea "huérfana"
                         savePosition(itemToPlace.id, exactAddress);
                     }
                 }
@@ -318,7 +353,7 @@ function getSavedSlot(boxId) {
                 if (itemToPlace) {
                     const box = createBoxElement(itemToPlace);
                     slot.appendChild(box);
-                    // Sacar de la lista temporal para no repetir la caja en otro slot
+                    // Importante: quitar de la lista temporal para no duplicar en otros slots
                     shelfItems = shelfItems.filter(item => item.id !== itemToPlace.id);
                 }
 
@@ -327,9 +362,7 @@ function getSavedSlot(boxId) {
 
             const shelfTitle = document.createElement('div');
             shelfTitle.className = 'shelf-title';
-
-            // ESTA LÍNEA ES LA QUE FALTA:
-            shelfTitle.dataset.base = `${r}${s}`;
+            shelfTitle.dataset.base = shelfId;
 
             const currentCount = inventoryData.filter(i => i.bin === shelfId).length;
             shelfTitle.innerHTML = `
@@ -411,11 +444,18 @@ function initSortable() {
                 // Si acepta o es la misma repisa, procedemos a guardar
                 savePosition(boxId, newSlotAddress);
                 showToast(`Ubicación ${newSlotAddress} actualizada`);
+
+                // LOG PARA CONSOLA
+                console.log("🚀 Enviando:", { id: boxId, newBin: newBin, newOrder: newSlotAddress });
                 
                 try {
                     await fetch(APPS_SCRIPT_URL, {
                         method: 'POST', mode: 'no-cors',
-                        body: JSON.stringify({ id: boxId, newBin: newBin })
+                        body: JSON.stringify({ 
+                            id: boxId, 
+                            newBin: newBin,
+                            newOrder: newSlotAddress // <-- AHORA SE ENVÍA EL SLOT
+                        })
                     });
                     
                     const item = inventoryData.find(i => i.id === boxId);
@@ -509,10 +549,18 @@ function initSortable() {
         }
 
         try {
+
+            // LOG PARA CONSOLA
+            console.log("🚀 Enviando (Transfer):", { id: item.id, newBin: targetBin, newOrder: firstFreeSlot });
+
             // 2. Sincronizar con Google Sheets (el Bin general)
             await fetch(APPS_SCRIPT_URL, {
                 method: 'POST', mode: 'no-cors',
-                body: JSON.stringify({ id: item.id, newBin: targetBin })
+                body: JSON.stringify({ 
+                    id: item.id, 
+                    newBin: targetBin, 
+                    newOrder: firstFreeSlot // <-- AHORA SE ENVÍA EL SLOT
+                })
             });
 
             // 3. Guardar la nueva posición exacta localmente
@@ -520,6 +568,7 @@ function initSortable() {
             
             // 4. Actualizar datos en memoria y refrescar
             item.bin = targetBin;
+            item.orden = firstFreeSlot;
             render(); 
 
             showToast(`¡Movido a ${firstFreeSlot}!`);
