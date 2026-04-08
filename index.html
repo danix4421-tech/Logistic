@@ -22,32 +22,28 @@
             zoom: 1.1;
         }
 
+        /* --- NÚMEROS DE SLOT --- */
+        .slot::after {
+            content: attr(data-slot-number);
+            position: absolute; top: 2px; left: 3px;
+            font-size: 8px; color: #bbb; font-weight: bold;
+            pointer-events: none;
+            display: none;
+        }
 
-        /* --- Ajuste para los números de Slot --- */
-.slot::after {
-    content: attr(data-slot-number);
-    position: absolute; top: 2px; left: 3px;
-    font-size: 8px; color: #bbb; font-weight: bold;
-    pointer-events: none;
-    display: none; /* Oculto por defecto */
-}
-
-/* Mostrar números SOLO en modo edición y SOLO si el slot está vacío */
-body.edit-mode .slot:not(:has(.box))::after {
-    display: block;
-}
+        body.edit-mode .slot:not(:has(.box))::after { display: block; }
 
         /* --- ESTILOS MODO EDICIÓN --- */
         body:not(.edit-mode) .btn-transfer { display: none !important; }
         body:not(.edit-mode) .box { cursor: default !important; }
         body.edit-mode .rack { border: 2px solid var(--edit-accent); }
-        
         #btnToggleEdit.active { background: var(--edit-accent); color: #000; }
 
+        /* --- PANEL DE CONTROL --- */
         #controlPanel {
             position: fixed; top: 0; left: 0; width: 100%; 
             background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.2); z-index: 3000;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2); z-index: 6000;
             transform: translateY(-100%); transition: transform 0.3s ease;
             padding: 15px; box-sizing: border-box;
             display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
@@ -58,7 +54,7 @@ body.edit-mode .slot:not(:has(.box))::after {
             position: fixed; top: 15px; right: 15px; width: 45px; height: 45px; 
             background: #1e272e; color: white; border-radius: 12px; 
             display: flex; align-items: center; justify-content: center;
-            z-index: 3001; cursor: pointer; font-size: 20px;
+            z-index: 6001; cursor: pointer; font-size: 20px;
         }
 
         select, input, button { padding: 10px; border-radius: 6px; border: 1px solid #ccc; font-size: 14px; width: 100%; }
@@ -70,78 +66,69 @@ body.edit-mode .slot:not(:has(.box))::after {
         }
 
         .rack { 
-            background: rgba(150, 150, 150, 0.137); border: 2px solid #cfcece; 
-            border-radius: 10px; width: 100%; max-width: 300px; overflow: hidden;
-            transition: border 0.3s;
+            background: rgba(150, 150, 150, 0.1); border: 2px solid #cfcece; 
+            border-radius: 10px; width: fit-content; overflow: hidden;
         }
 
         .rack-title { background: var(--shelf-color); color: white; text-align: center; padding: 8px; font-weight: 800; font-size: 13px; }
         .shelf { display: flex; flex-direction: column-reverse; background: #f8fafc; border-bottom: 2px solid #cbd5e0; }
 
         .box-grid { 
-            display: grid;
-            grid-template-columns: repeat(5, var(--box-size));
-            gap: 5px; padding: 2px; 
-            justify-content: flex-start;
+            display: flex; flex-wrap: wrap-reverse;
+            width: calc((var(--box-size) + 6px) * 5); 
+            gap: 5px; padding: 5px; justify-content: flex-start;
         }
 
+       /* --- TÍTULO DE REPISA ACTUALIZADO --- */
         .shelf-title { 
-            display: grid;
-            grid-template-columns: 1fr auto 1fr; 
+            display: flex; /* Cambiado a flex */
+            justify-content: center; /* Centra el título principal */
             align-items: center;
-            padding: 4px 10px;
-            font-size: 11px;
-            font-weight: 800;
-            background: #2d3436; 
-            color: rgb(255, 255, 255);
-            border-left: 4px solid white;
-        }
-
-        .shelf-title span {
-            grid-column: 2;
-            padding: 2px 15px;
-            border-radius: 4px;
-            text-transform: uppercase;
+            padding: 4px 10px; font-size: 11px; font-weight: 800;
+            background: #2d3436; color: white;
+            position: relative; /* Para posicionar el botón absolutamente si es necesario */
         }
 
         .slot {
             width: var(--box-size); height: var(--box-size);
-            background: rgba(150, 150, 150, 0.137); 
-            border: 1px dashed rgba(211, 32, 32, 0.1);
-            border-radius: 4px; 
-            position: relative;
+            background: rgba(0,0,0,0.03); border: 1px dashed rgba(0,0,0,0.1);
+            border-radius: 4px; position: relative;
         }
 
-        .slot::after {
-            content: attr(data-slot-number);
-            position: absolute; top: 2px; left: 3px;
-            font-size: 8px; color: #bbb; font-weight: bold;
-            pointer-events: none;
-        }
-
-        .slot:has(.box)::after { display: none; }
+        /* --- CAJAS Y TOOLTIPS --- */
+        .slot:hover { z-index: 5000; } 
 
         .box { 
             width: 100%; height: 100%; border-radius: 4px; 
             background: linear-gradient(135deg, #707070 0%, #c9c9c9 100%);
             display: flex; align-items: center; justify-content: center; 
-            position: relative; cursor: grab; touch-action: none; z-index: 10;
+            position: relative; cursor: grab; touch-action: none;
         }
         
+        .box:hover { z-index: 5001 !important; outline: 2px solid white; }
+
+        .box::after {
+            content: attr(data-title);
+            position: absolute; bottom: 110%; left: 50%; transform: translateX(-50%);
+            background: rgba(0,0,0,0.95); color: #fff; padding: 5px 10px;
+            border-radius: 4px; font-size: 8px; font-weight: bold; white-space: nowrap;
+            visibility: hidden; opacity: 0; transition: 0.2s;
+            z-index: 5002; pointer-events: none; border: 1px solid #fff;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        .box:hover::after { visibility: visible; opacity: 1; transform: translateX(-50%) translateY(-5px); }
+
         .box.is-checked { border: 2px solid var(--check-color); background: #e8f5e9; }
         .box-thumb { max-width: 85%; max-height: 85%; object-fit: contain; pointer-events: none; }
         .box-label { 
-            position: absolute; top: 1px; right: 2px; z-index: 20;
-            font-size: 9px; font-weight: 900; color: white; 
-            background: rgba(0,0,0,0.6); padding: 0 2px; border-radius: 2px;
+            position: absolute; top: 1px; right: 2px; font-size: 9px; font-weight: 900; 
+            color: white; background: rgba(0,0,0,0.6); padding: 0 2px; border-radius: 2px;
         }
 
         .box-talla {
-            position: absolute; bottom: 2px; right: 3px; z-index: 25;
-            font-family: 'Courier New', Courier, monospace; font-size: 9px;
-            font-weight: bold; color: #ffffff;
-            background: rgba(0,0,0,0.6); padding: 0 2px; border-radius: 2px;
-            pointer-events: none;
+            position: absolute; bottom: 2px; right: 3px; font-size: 9px;
+            font-weight: bold; color: white; background: rgba(0,0,0,0.6); 
+            padding: 0 2px; border-radius: 2px; pointer-events: none;
         }
 
         .check-zone {
@@ -149,85 +136,47 @@ body.edit-mode .slot:not(:has(.box))::after {
             background: white; border: 1px solid #ccc; border-radius: 50%;
             z-index: 50; cursor: pointer;
         }
+
+        /* ESTADO REVISIÓN */
+        .box.status-revision {
+            background: var(--revision-color) !important;
+            border: 2px solid #fca31e;
+        }
+        .box.status-revision .box-label, .box.status-revision .box-talla {
+            color: black; background: rgba(255,255,255,0.8);
+        }
+
+
         .box.is-checked .check-zone { background: var(--check-color); border-color: white; }
 
-        .box::after {
-            content: attr(data-title);
-            position: absolute; bottom: 110%; left: 50%; transform: translateX(-50%);
-            background: rgba(0,0,0,0.9); color: rgb(255, 255, 255); padding: 4px 8px;
-            border-radius: 4px; font-size: 9px; white-space: nowrap;
-            visibility: hidden; opacity: 0; transition: opacity 0.2s;
-            z-index: 1000; pointer-events: none; border: 1px solid rgba(255,255,255,0.2);
-        }
-        .box:hover::after, .box:active::after { visibility: visible; opacity: 2; }
+        /* Colores de Nodo */
+        .shelf-node-A .shelf-title span { background-color: var(--bg-a); padding: 2px 8px; border-radius: 3px; }
+        .shelf-node-B .shelf-title span { background-color: var(--bg-b); padding: 2px 8px; border-radius: 3px; }
+        .shelf-node-C .shelf-title span { background-color: var(--bg-c); padding: 2px 8px; border-radius: 3px; }
+        .shelf-node-D .shelf-title span { background-color: var(--bg-d); padding: 2px 8px; border-radius: 3px; }
+        .shelf-node-E .shelf-title span { background-color: var(--bg-e); padding: 2px 8px; border-radius: 3px; }
+        .shelf-node-F .shelf-title span { background-color: var(--bg-f); padding: 2px 8px; border-radius: 3px; }
+        .shelf-node-G .shelf-title span { background-color: var(--bg-g); padding: 2px 8px; border-radius: 3px; }
+        .shelf-node-H .shelf-title span { background-color: var(--bg-h); padding: 2px 8px; border-radius: 3px; }
 
-        .shelf-node-A .shelf-title span { background-color: var(--bg-a); }
-        .shelf-node-B .shelf-title span { background-color: var(--bg-b); }
-        .shelf-node-C .shelf-title span { background-color: var(--bg-c); }
-        .shelf-node-D .shelf-title span { background-color: var(--bg-d); }
-        .shelf-node-E .shelf-title span { background-color: var(--bg-e); }
-        .shelf-node-F .shelf-title span { background-color: var(--bg-f); }
-        .shelf-node-G .shelf-title span { background-color: var(--bg-g); }
-        .shelf-node-H .shelf-title span { background-color: var(--bg-h); }
-
+       /* --- BOTÓN DE TRANSFERENCIA ACTUALIZADO --- */
         .btn-transfer { 
-            grid-column: 3; justify-self: end;
-            background: rgba(255,255,255,0.2); color: white; 
-            border: 1px solid white; border-radius: 4px; 
-            width: 22px; height: 22px; font-size: 10px; cursor: pointer; 
+            width: 24px; height: 24px; font-size: 14px; /* Aumentado ligeramente */
+            background: rgba(255,255,255,0.3); border: 1px solid white; border-radius: 6px; 
+            cursor: pointer; 
+            display: flex; align-items: center; justify-content: center;
+            position: absolute; right: 10px; /* Posicionado a la derecha */
+            transition: background 0.2s;
         }
+        .btn-transfer:hover { background: rgba(255,255,255,0.5); }
         #sync-toast {
             position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
             background: #2d3436; color: white; padding: 10px 20px; border-radius: 50px;
-            font-size: 13px; display: none; align-items: center; gap: 10px; z-index: 5000;
+            font-size: 13px; display: none; align-items: center; gap: 10px; z-index: 7000;
         }
         .spinner { width: 14px; height: 14px; border: 2px solid #555; border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
         .hidden { display: none !important; }
-
-
-        /* --- MEJORAS VISUALES DE ARRASTRE --- */
-
-/* La caja "fantasma" que se queda en el sitio original mientras arrastras */
-.sortable-ghost {
-    opacity: 0.4;
-    background: #dfe6e9 !important;
-    border: 2px dashed #636e72 !important;
-}
-
-/* La caja que llevas bajo el dedo/ratón */
-.sortable-drag {
-    opacity: 0.9;
-    transform: rotate(5deg) scale(1.1); /* Efecto de que la estás levantando */
-    box-shadow: 0 15px 30px rgba(0,0,0,0.3);
-    cursor: grabbing;
-}
-
-/* El slot que está a punto de recibir la caja */
-.slot.sortable-chosen {
-    background: rgba(46, 204, 113, 0.2);
-    border: 2px solid var(--check-color);
-}
-
-/* Animación de éxito al soltar */
-@keyframes dropSuccess {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.1); background-color: #27ae60; }
-    100% { transform: scale(1); }
-}
-
-.drop-animate {
-    animation: dropSuccess 0.4s ease-out;
-}
-
-/* Estilo para slots ocupados (opcional, visual) */
-.slot:has(.box) {
-    border: 1px solid rgba(0,0,0,0.05);
-    background: white;
-}
-
-
-
     </style>
 </head>
 <body onclick="initAudioContext()">
@@ -238,7 +187,9 @@ body.edit-mode .slot:not(:has(.box))::after {
         <button id="btnToggleEdit" onclick="toggleEditMode()" style="grid-column: span 2;">🔒 Modo Lectura</button>
         <select id="filterRack" onchange="applyFilters()"><option value="all">Estantes</option></select>
         <select id="filterStatus" onchange="applyFilters()"><option value="all">Estados</option></select>
-        <input type="text" id="searchId" placeholder="🔍 Buscar ID..." oninput="applyFilters()" style="grid-column: span 2;">
+
+        
+        <input type="text" id="searchId" placeholder="🔍 Buscar ID o Código..." oninput="applyFilters()" style="grid-column: span 2;">
         <button onclick="location.reload()">🔄 Actualizar</button>
         <button style="background:#d63031;" onclick="clearChecks()">Limpiar ✓</button>
     </div>
@@ -250,9 +201,59 @@ body.edit-mode .slot:not(:has(.box))::after {
         const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQxmMtrLlKEH1uQUNmUvQxXUmFJQNQc46rwfOpKMNzJytrGDRxyMjo_S2DhQIDJmXTv1o6G2fvZQZgi/pub?gid=1046628345&single=true&output=csv';
         const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxerk9BaSwQYzK8qFrv-uobpmash0q6ODL33qtZHt7KGk6f_CQzHk73pkLTmoxabr5C/exec';
         
+        // ==========================================
+        // CONFIGURACIÓN DE SLOTS POR REPISA
+        // ==========================================
+        const CUSTOM_SLOTS = {
+            "1A": 15,
+            "1B": 15,      // Estante 1, Repisa B
+            "1C": 15,      // Estante 1, Repisa C
+            "1D": 15,
+            "1E": 15,
+            "1F": 15,
+            "1G": 15,
+            "1H": 30,
+
+            "2A": 15,
+            "2B": 15,
+            "2C": 15,
+            "2D": 15,
+            "2E": 15,
+            "2F": 15,
+            "2H": 15,
+
+            "3A": 15,
+            "3B": 15,
+            "3C": 15,
+            "3D": 15,
+            "3E": 15,
+            "3F": 15,
+            "3G": 15,
+            "3H": 15,
+
+
+            "4A": 30,
+            "4B": 30,
+            "4C": 30,
+            "4D": 40,
+            "4E": 30,
+            "4F": 40,
+            "4G": 30,
+            "4H": 30,
+
+
+
+
+
+
+
+
+
+            "DEFAULT": 35  // Valor para todas las demás
+        };
+
         let inventoryData = [];
         let audioCtx = null;
-        const SLOTS_PER_SHELF = 30; 
         let positionMap = JSON.parse(localStorage.getItem('z_logistics_positions')) || {};
         let isEditMode = false;
         let sortableInstances = [];
@@ -274,24 +275,13 @@ body.edit-mode .slot:not(:has(.box))::after {
 
         function toggleMenu() { document.getElementById('controlPanel').classList.toggle('active'); }
 
-        // --- FUNCIÓN PARA CAMBIAR MODO ---
         function toggleEditMode() {
             isEditMode = !isEditMode;
             const btn = document.getElementById('btnToggleEdit');
-            
-            if (isEditMode) {
-                document.body.classList.add('edit-mode');
-                btn.classList.add('active');
-                btn.innerHTML = '🔓 Modo Edición (Activo)';
-                playBeep(800, 0.1, 0.2);
-            } else {
-                document.body.classList.remove('edit-mode');
-                btn.classList.remove('active');
-                btn.innerHTML = '🔒 Modo Lectura';
-                playBeep(400, 0.1, 0.2);
-            }
-
-            // Actualizar instancias de Sortable
+            document.body.classList.toggle('edit-mode', isEditMode);
+            btn.classList.toggle('active', isEditMode);
+            btn.innerHTML = isEditMode ? '🔓 Modo Edición (Activo)' : '🔒 Modo Lectura';
+            playBeep(isEditMode ? 800 : 400, 0.1, 0.2);
             sortableInstances.forEach(s => s.option('disabled', !isEditMode));
         }
 
@@ -307,27 +297,20 @@ body.edit-mode .slot:not(:has(.box))::after {
                     const item = { 
                         id: c[1] || "S/N", codigo: c[2] || "N/A", estado: c[3] || "N/A", 
                         bin: (c[4] || "").toUpperCase(), costo: c[9] || "0", precio: c[10] || "0", img: c[13] || "" ,
-                        talla: c[8] || "N/A",
-                        orden: c[32] || "" 
+                        talla: c[8] || "N/A", orden: c[32] || "" 
                     };
-                    if (item.orden && item.orden.includes('-')) {
-                        positionMap[item.id] = item.orden;
-                    }
+                    if (item.orden && item.orden.includes('-')) positionMap[item.id] = item.orden;
                     return item;
                 }).filter(i => i.bin !== "");
-
-                localStorage.setItem('z_logistics_positions', JSON.stringify(positionMap));
 
                 populateFilters();
                 render();
             } catch (e) { console.error(e); }
         }
 
-        function render() {
+       function render() {
             const container = document.getElementById('warehouse');
             container.innerHTML = '';
-            positionMap = JSON.parse(localStorage.getItem('z_logistics_positions')) || {};
-
             const rackNums = [...new Set(inventoryData.map(i => i.bin.match(/\d+/)?.[0]))].filter(Boolean).sort((a,b)=>a-b);
             const shelfLetters = ['H', 'G', 'F', 'E', 'D', 'C', 'B', 'A']; 
 
@@ -339,7 +322,11 @@ body.edit-mode .slot:not(:has(.box))::after {
 
                 shelfLetters.forEach(s => {
                     const shelfId = `${r}${s}`;
+                    const limit = CUSTOM_SLOTS[shelfId] || CUSTOM_SLOTS["DEFAULT"];
+                    
                     let shelfItems = inventoryData.filter(i => i.bin === shelfId);
+                    // CONTEO REAL DE CAJAS
+                    const realBoxCount = shelfItems.length;
 
                     const shelfEl = document.createElement('div');
                     shelfEl.className = `shelf shelf-node-${s}`;
@@ -347,7 +334,7 @@ body.edit-mode .slot:not(:has(.box))::after {
                     const gridEl = document.createElement('div');
                     gridEl.className = "box-grid";
 
-                    for (let i = 1; i <= SLOTS_PER_SHELF; i++) {
+                    for (let i = 1; i <= limit; i++) {
                         const exactAddress = `${shelfId}-${i}`;
                         const slot = document.createElement('div');
                         slot.className = 'slot';
@@ -356,17 +343,13 @@ body.edit-mode .slot:not(:has(.box))::after {
                         slot.setAttribute('data-slot-number', i);
 
                         let itemToPlace = shelfItems.find(item => positionMap[item.id] === exactAddress);
-
                         if (!itemToPlace) {
                             itemToPlace = shelfItems.find(item => !positionMap[item.id] || !positionMap[item.id].startsWith(shelfId));
-                            if (itemToPlace) {
-                                savePosition(itemToPlace.id, exactAddress);
-                            }
+                            if (itemToPlace) savePosition(itemToPlace.id, exactAddress);
                         }
 
                         if (itemToPlace) {
-                            const box = createBoxElement(itemToPlace);
-                            slot.appendChild(box);
+                            slot.appendChild(createBoxElement(itemToPlace));
                             shelfItems = shelfItems.filter(item => item.id !== itemToPlace.id);
                         }
                         gridEl.appendChild(slot);
@@ -375,12 +358,8 @@ body.edit-mode .slot:not(:has(.box))::after {
                     const shelfTitle = document.createElement('div');
                     shelfTitle.className = 'shelf-title';
                     shelfTitle.dataset.base = shelfId;
-
-                    const currentCount = inventoryData.filter(i => i.bin === shelfId).length;
-                    shelfTitle.innerHTML = `
-                        <span class="title-text">Repisa ${s} (${currentCount})</span>
-                        <button class="btn-transfer" onclick="transferBox('${shelfId}')">🚚</button>
-                    `;
+                    // MOSTRAR CANTIDAD DE CAJAS EN LUGAR DE SLOTS
+                    shelfTitle.innerHTML = `<span>${r}${s} (${realBoxCount})</span><button class="btn-transfer" onclick="transferBox('${shelfId}')">🚚</button>`;
 
                     shelfEl.appendChild(shelfTitle);
                     shelfEl.appendChild(gridEl);
@@ -391,14 +370,18 @@ body.edit-mode .slot:not(:has(.box))::after {
             initSortable();
             applyFilters();
         }
-
         function createBoxElement(item) {
             const box = document.createElement('div');
             box.className = 'box';
+            // --- LÓGICA DE COLOR PARA REVISIÓN ---
+            if (item.estado === "En Revision") {
+                box.classList.add('status-revision');
+            }
+
             box.dataset.unique = item.id;
             box.dataset.search = `${item.id} ${item.codigo}`.toLowerCase();
             box.dataset.estado = item.estado;
-            box.setAttribute('data-title', `${item.codigo}`);
+            box.setAttribute('data-title', item.codigo);
             
             box.innerHTML = `
                 <div class="box-label">${item.id}</div>
@@ -415,72 +398,36 @@ body.edit-mode .slot:not(:has(.box))::after {
             return box;
         }
 
-       function initSortable() {
-    sortableInstances.forEach(s => s.destroy());
-    sortableInstances = [];
-
-    document.querySelectorAll('.slot').forEach(slot => {
-        const s = new Sortable(slot, {
-            // CONFIGURACIÓN DE GRUPO INTELIGENTE
-            group: {
-                name: 'shared',
-                // Solo permite soltar si el slot está vacío (evita el desplazamiento)
-                put: function (to) {
-                    return to.el.children.length < 1;
-                }
-            },
-            sort: false,      // <--- CRUCIAL: Evita que las cajas se desplacen al pasar por encima
-            animation: 250,
-            easing: "cubic-bezier(1, 0, 0, 1)",
-            disabled: !isEditMode,
-            
-            // Clases visuales (manteniendo las mejoras anteriores)
-            ghostClass: "sortable-ghost",
-            chosenClass: "sortable-chosen",
-            dragClass: "sortable-drag",
-            
-            onAdd: async function (evt) {
-                const boxId = evt.item.dataset.unique;
-                const oldBin = evt.from.dataset.targetShelf;
-                const newBin = evt.to.dataset.targetShelf;
-                const newSlotAddress = evt.to.dataset.address;
-
-                // Seguridad extra entre repisas
-                if (oldBin !== newBin) {
-                    if (!confirm(`⚠️ ¿Mover ID ${boxId} a la repisa ${newBin}?`)) {
-                        evt.from.appendChild(evt.item);
-                        return;
+        function initSortable() {
+            sortableInstances.forEach(s => s.destroy());
+            sortableInstances = [];
+            document.querySelectorAll('.slot').forEach(slot => {
+                const s = new Sortable(slot, {
+                    group: { name: 'shared', put: to => to.el.children.length < 1 },
+                    sort: false, animation: 250, disabled: !isEditMode,
+                    ghostClass: "sortable-ghost", dragClass: "sortable-drag",
+                    onAdd: async function (evt) {
+                        const boxId = evt.item.dataset.unique;
+                        const newBin = evt.to.dataset.targetShelf;
+                        const newSlotAddress = evt.to.dataset.address;
+                        
+                        savePosition(boxId, newSlotAddress);
+                        showToast(`Sincronizando...`);
+                        
+                        try {
+                            await fetch(APPS_SCRIPT_URL, {
+                                method: 'POST', mode: 'no-cors',
+                                body: JSON.stringify({ id: boxId, newBin: newBin, newOrder: newSlotAddress })
+                            });
+                            const item = inventoryData.find(i => i.id === boxId);
+                            if (item) { item.bin = newBin; item.orden = newSlotAddress; }
+                            setTimeout(hideToast, 500);
+                        } catch (e) { alert("Error al guardar"); }
                     }
-                }
-
-                // Animación de éxito
-                evt.item.classList.add('drop-animate');
-                setTimeout(() => evt.item.classList.remove('drop-animate'), 400);
-
-                // Guardado lógico
-                savePosition(boxId, newSlotAddress);
-                showToast(`Ubicación: ${newSlotAddress}`);
-                
-                try {
-                    await fetch(APPS_SCRIPT_URL, {
-                        method: 'POST', mode: 'no-cors',
-                        body: JSON.stringify({ 
-                            id: boxId, 
-                            newBin: newBin,
-                            newOrder: newSlotAddress 
-                        })
-                    });
-                    const item = inventoryData.find(i => i.id === boxId);
-                    if (item) { item.bin = newBin; item.orden = newSlotAddress; }
-                    setTimeout(hideToast, 800);
-                } catch (e) {
-                    alert("Error de conexión al servidor");
-                }
-            }
-        });
-        sortableInstances.push(s);
-    });
-}
+                });
+                sortableInstances.push(s);
+            });
+        }
 
         function applyFilters() {
             const rV = document.getElementById('filterRack').value;
@@ -490,79 +437,77 @@ body.edit-mode .slot:not(:has(.box))::after {
             document.querySelectorAll('.rack').forEach(rack => {
                 const rId = rack.dataset.rackId;
                 const showR = (rV === 'all' || rV === rId);
-                let rCount = 0;
+                let count = 0;
 
-                rack.querySelectorAll('.shelf').forEach(shelf => {
-                    let sCount = 0;
-                    shelf.querySelectorAll('.slot').forEach(slot => {
-                        const box = slot.querySelector('.box');
-                        if (!box) {
-                            slot.style.display = (search !== "") ? "none" : "block";
-                            return;
-                        }
-                        const mS = box.dataset.search.includes(search);
-                        const mSt = (stV === 'all' || box.dataset.estado === stV);
-                        if (mSt && showR && (search === "" || mS)) {
-                            slot.style.display = "block";
-                            box.style.opacity = "1";
-                            sCount++; rCount++;
-                        } else {
-                            slot.style.display = "none";
-                        }
-                    });
-                    const txtSpan = shelf.querySelector('.title-text');
-                    if (txtSpan) txtSpan.textContent = `${shelf.querySelector('.shelf-title').dataset.base} (${sCount})`;
-                    shelf.classList.toggle('hidden', sCount === 0 && search !== "");
+                rack.querySelectorAll('.slot').forEach(slot => {
+                    const box = slot.querySelector('.box');
+                    if (!box) {
+                        slot.style.display = search ? "none" : "block";
+                        return;
+                    }
+                    const matchSearch = box.dataset.search.includes(search);
+                    const matchStatus = (stV === 'all' || box.dataset.estado === stV);
+                    
+                    if (matchStatus && showR && (search === "" || matchSearch)) {
+                        slot.style.display = "block";
+                        count++;
+                    } else {
+                        slot.style.display = "none";
+                    }
                 });
-
-                const rT = rack.querySelector('.rack-title');
-                rT.textContent = `${rT.dataset.base} (${rCount})`;
-                rack.classList.toggle('hidden', !showR || (rCount === 0 && search !== ""));
+                const rTitle = rack.querySelector('.rack-title');
+                rTitle.textContent = `${rTitle.dataset.base} (${count})`;
+                rack.classList.toggle('hidden', !showR || (count === 0 && search !== ""));
             });
         }
 
         async function transferBox(targetBin) {
-            if (!isEditMode) return; // Doble seguridad
-
-            const boxId = prompt(`Mover caja a la repisa ${targetBin}\nIngrese ID de la caja:`);
+            if (!isEditMode) return;
+            const boxId = prompt(`Mover a ${targetBin}. ID de caja:`);
             if (!boxId) return;
-
-            const item = inventoryData.find(i => i.id.toString().trim() === boxId.trim());
-            if (!item) { alert("ID no encontrado"); return; }
             
-            showToast("Buscando slot vacío...");
-            const occupiedSlots = Object.values(positionMap);
-            let firstFreeSlot = null;
-
-            for (let i = 1; i <= SLOTS_PER_SHELF; i++) {
-                const potentialAddress = `${targetBin}-${i}`;
-                if (!occupiedSlots.includes(potentialAddress)) {
-                    firstFreeSlot = potentialAddress;
-                    break;
+            // Buscar el item en los datos locales
+            const item = inventoryData.find(i => i.id.toString() === boxId);
+            if (!item) return alert("❌ ID de caja no encontrado");
+            
+            // Buscar un slot libre en la repisa destino
+            const limit = CUSTOM_SLOTS[targetBin] || CUSTOM_SLOTS["DEFAULT"];
+            const occupiedAddresses = Object.values(positionMap);
+            
+            let freeSlot = null;
+            for(let i=1; i<=limit; i++) {
+                const checkAddress = `${targetBin}-${i}`;
+                if(!occupiedAddresses.includes(checkAddress)) { 
+                    freeSlot = checkAddress; 
+                    break; 
                 }
             }
-
-            if (!firstFreeSlot) { alert("❌ Repisa llena."); hideToast(); return; }
-
+            
+            if(!freeSlot) return alert(`❌ Repisa ${targetBin} llena.`);
+            
+            showToast("Transfiriendo...");
+            
             try {
-                delete positionMap[item.id];
+                // Sincronizar con Google Sheets
                 await fetch(APPS_SCRIPT_URL, {
                     method: 'POST', mode: 'no-cors',
-                    body: JSON.stringify({ id: item.id, newBin: targetBin, newOrder: firstFreeSlot })
+                    body: JSON.stringify({ id: boxId, newBin: targetBin, newOrder: freeSlot })
                 });
-                savePosition(item.id, firstFreeSlot);
+
+                // Actualizar mapa local y datos
+                savePosition(item.id, freeSlot);
                 item.bin = targetBin;
-                item.orden = firstFreeSlot;
-                render(); 
-                showToast(`¡Movido a ${firstFreeSlot}!`);
-                setTimeout(hideToast, 1000);
+                item.orden = freeSlot;
+                
+                render(); // Esto refresca la vista y los contadores
+                hideToast();
             } catch (e) {
-                alert("Error al transferir");
+                alert("Error en la conexión");
                 hideToast();
             }
         }
 
-        function populateFilters() {
+           function populateFilters() {
             const rackSelect = document.getElementById('filterRack');
             const statusSelect = document.getElementById('filterStatus');
             const rs = [...new Set(inventoryData.map(i => i.bin.match(/\d+/)?.[0]))].filter(Boolean).sort((a,b)=>a-b);
@@ -572,8 +517,8 @@ body.edit-mode .slot:not(:has(.box))::after {
             if (sts.includes("Disponible")) statusSelect.value = "Disponible";
         }
 
-        function clearChecks() { if(confirm("¿Limpiar marcados?")) document.querySelectorAll('.box.is-checked').forEach(b => b.classList.remove('is-checked')); }
-        function showToast(txt) { const t = document.getElementById('sync-toast'); t.style.display = 'flex'; document.getElementById('sync-text').textContent = txt; }
+        function clearChecks() { if(confirm("¿Limpiar?")) document.querySelectorAll('.box.is-checked').forEach(b => b.classList.remove('is-checked')); }
+        function showToast(txt) { document.getElementById('sync-toast').style.display = 'flex'; document.getElementById('sync-text').textContent = txt; }
         function hideToast() { document.getElementById('sync-toast').style.display = 'none'; }
 
         init();
