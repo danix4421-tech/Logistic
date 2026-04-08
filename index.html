@@ -192,6 +192,15 @@
         <input type="text" id="searchId" placeholder="🔍 Buscar ID o Código..." oninput="applyFilters()" style="grid-column: span 2;">
         <button onclick="location.reload()">🔄 Actualizar</button>
         <button style="background:#d63031;" onclick="clearChecks()">Limpiar ✓</button>
+
+        <details id="summarySection" style="grid-column: span 2; background: #f1f2f6; border-radius: 8px; padding: 10px; border: 1px solid #ddd;">
+    <summary style="font-weight: bold; cursor: pointer; color: #2d3436; list-style: none; display: flex; align-items: center; gap: 8px;">
+        📊 <span>Resumen General</span> <small>(Tocar para expandir)</small>
+    </summary>
+    <div id="summaryContent" style="margin-top: 9px; font-size: 9px; line-height: 1.6; color: #2d3436;">
+        Cargando estadísticas...
+    </div>
+</details>
     </div>
 
     <div id="warehouse">Cargando almacén...</div>
@@ -240,14 +249,6 @@
             "4F": 40,
             "4G": 30,
             "4H": 30,
-
-
-
-
-
-
-
-
 
             "DEFAULT": 35  // Valor para todas las demás
         };
@@ -305,6 +306,7 @@
 
                 populateFilters();
                 render();
+                updateSummary();
             } catch (e) { console.error(e); }
         }
 
@@ -369,6 +371,7 @@
             });
             initSortable();
             applyFilters();
+            updateSummary();
         }
         function createBoxElement(item) {
             const box = document.createElement('div');
@@ -522,6 +525,55 @@
         function hideToast() { document.getElementById('sync-toast').style.display = 'none'; }
 
         init();
+
+
+        function updateSummary() {
+    const totalPares = inventoryData.length;
+    
+    // Filtrar solo los disponibles para el costo
+    const disponibles = inventoryData.filter(i => i.estado === "Disponible");
+    
+    // Cálculo del costo total (limpiando puntos de miles si existen en el CSV)
+    const costoTotal = disponibles.reduce((acc, curr) => {
+        let valor = curr.costo.toString().replace(/\./g, '').replace(',', '.');
+        return acc + (parseFloat(valor) || 0);
+    }, 0);
+
+    // Conteo por repisa
+    const perShelf = {};
+    inventoryData.forEach(i => {
+        perShelf[i.bin] = (perShelf[i.bin] || 0) + 1;
+    });
+
+    // Crear el listado de repisas ordenado
+    const shelfBreakdown = Object.entries(perShelf)
+        .sort((a, b) => a[0].localeCompare(b[0]))
+        .map(([bin, count]) => `<span style="display:inline-block; background:#fff; padding:2px 6px; border-radius:4px; margin:2px; border:2px solid #eee;"><b>${bin}:</b> ${count}</span>`)
+        .join("");
+
+    const formatter = new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP', minimumFractionDigits: 0 });
+
+    document.getElementById('summaryContent').innerHTML = `
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+            <div style="background: #fff; padding: 10px; border-radius: 6px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                <div style="font-size: 11px; color: #666; text-transform: uppercase;">Total Pares</div>
+                <div style="font-size: 18px; font-weight: 900;">${totalPares}</div>
+            </div>
+            <div style="background: #fff; padding: 10px; border-radius: 6px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                <div style="font-size: 11px; color: #666; text-transform: uppercase;">Inversión (Disp.)</div>
+                <div style="font-size: 18px; font-weight: 900;">${formatter.format(costoTotal)}</div>
+            </div>
+        </div>
+        <div style="background: #fff; padding: 10px;bg-slate-50 border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+            <div style="font-size: 11px; color: #666; text-transform: uppercase; margin-bottom: 5px;">Distribución por Repisa</div>
+            <div style="display: flex; flex-wrap: wrap">${shelfBreakdown}</div>
+        </div>
+    `;
+}
+
+
+
+
     </script>
 </body>
 </html>
