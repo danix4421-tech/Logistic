@@ -296,9 +296,15 @@
                 inventoryData = rows.slice(1).map(row => {
                     const c = row.split(sep).map(cell => cell.trim());
                     const item = { 
-                        id: c[1] || "S/N", codigo: c[2] || "N/A", estado: c[3] || "N/A", 
-                        bin: (c[4] || "").toUpperCase(), costo: c[9] || "0", precio: c[10] || "0", img: c[13] || "" ,
-                        talla: c[8] || "N/A", orden: c[32] || "" 
+                        id: c[1] || "S/N", 
+                        codigo: c[2] || "N/A", 
+                        estado: c[3] || "N/A", 
+                        bin: (c[4] || "").toUpperCase(), 
+                        costo: c[9] || "0", 
+                        precio: c[10] || "0", 
+                        img: c[13] || "" ,
+                        talla: c[8] || "N/A", 
+                        orden: c[22] || "" 
                     };
                     if (item.orden && item.orden.includes('-')) positionMap[item.id] = item.orden;
                     return item;
